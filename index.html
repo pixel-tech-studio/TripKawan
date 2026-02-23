@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ===================== SEO META TAGS ===================== -->
+  <title>TripKawan — Plan Group Trips &amp; Split Expenses Together</title>
+  <meta name="description" content="TripKawan helps friend groups plan trips and split expenses without the stress. Collaborative itinerary, automatic expense splitting, and simple settlement — all in one place." />
+  <meta name="keywords" content="group travel planner, split expenses travel, plan trip with friends, travel app ASEAN, group trip organizer, expense sharing app, travel with friends" />
+  <meta name="author" content="TripKawan" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://tripkawan.com/" />
+
+  <!-- ===================== OPEN GRAPH (SOCIAL SHARING) ===================== -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://tripkawan.com/" />
+  <meta property="og:title" content="TripKawan — Plan Group Trips &amp; Split Expenses Together" />
+  <meta property="og:description" content="We're building a simple tool for group travelers to plan itineraries and share costs — all in one place. Help us shape it!" />
+  <meta property="og:image" content="https://tripkawan.com/og-image.jpg" />
+  <meta property="og:site_name" content="TripKawan" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- ===================== TWITTER CARD ===================== -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="TripKawan — Plan Group Trips &amp; Split Expenses Together" />
+  <meta name="twitter:description" content="Group travel planning made simple. Split expenses, plan together, travel stress-free." />
+  <meta name="twitter:image" content="https://tripkawan.com/og-image.jpg" />
+
+  <!-- Inline SVG favicon (plane emoji) — no external file needed -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>" />
+
+  <!-- ===================== FONTS ===================== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- ===================== ICONS (Font Awesome CDN) ===================== -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- ===================== STYLES ===================== -->
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- ===================== GOOGLE ANALYTICS PLACEHOLDER ===================== -->
+  <!--
+    SETUP: Replace G-XXXXXXXXXX with your real GA4 Measurement ID
+    Get yours at: https://analytics.google.com
+  -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script> -->
+</head>
+
+<body>
+
+  <!-- ===================== STICKY NAVIGATION ===================== -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="#" class="nav-logo">
+        <span class="logo-icon">✈️</span>
+        <span class="logo-text">TripKawan</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#problem">Problem</a></li>
+        <li><a href="#solution">Solution</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#feedback" class="nav-cta-link">Give Feedback</a></li>
+      </ul>
+      <a href="#feedback" class="btn btn-primary nav-btn">🚀 Join Early Access</a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+    <!-- Mobile menu -->
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="#problem" class="mobile-link">Problem</a>
+      <a href="#solution" class="mobile-link">Solution</a>
+      <a href="#how-it-works" class="mobile-link">How It Works</a>
+      <a href="#feedback" class="btn btn-primary mobile-cta">🚀 Join Early Access</a>
+    </div>
+  </nav>
+
+  <!-- ===================== HERO SECTION ===================== -->
+  <section class="hero" id="hero">
+    <!-- Decorative floating travel elements -->
+    <div class="hero-floats" aria-hidden="true">
+      <span class="float-el float-1">✈️</span>
+      <span class="float-el float-2">🌍</span>
+      <span class="float-el float-3">📍</span>
+      <span class="float-el float-4">💰</span>
+      <span class="float-el float-5">🗺️</span>
+      <span class="float-el float-6">🏝️</span>
+    </div>
+
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge reveal">
+          <span class="badge-dot"></span>
+          Now collecting early feedback
+        </div>
+
+        <h1 class="hero-title reveal">
+          Plan trips together.<br />
+          <span class="gradient-text">Split expenses</span> without stress.
+        </h1>
+
+        <p class="hero-subtitle reveal">
+          We're building a simple tool for group travelers to plan itineraries
+          and share costs — all in one place.
+        </p>
+
+        <div class="hero-cta reveal">
+          <a href="#feedback" class="btn btn-primary btn-lg">
+            🚀 Join Early Access
+          </a>
+          <a href="#feedback" class="btn btn-outline btn-lg">
+            💬 Give Feedback <span class="btn-hint">(2 min)</span>
+          </a>
+        </div>
+
+        <!-- Social proof (placeholder — update with real numbers) -->
+        <div class="hero-social-proof reveal">
+          <div class="proof-avatars">
+            <span class="proof-avatar">😊</span>
+            <span class="proof-avatar">🧑‍💻</span>
+            <span class="proof-avatar">👩‍🦱</span>
+            <span class="proof-avatar">🧔</span>
+          </div>
+          <p class="proof-text"><strong>120+ travelers</strong> already on the waitlist</p>
+        </div>
+      </div>
+
+      <!-- Hero visual: mock app card -->
+      <div class="hero-visual reveal">
+        <div class="mock-card">
+          <div class="mock-card-header">
+            <span class="mock-dot red"></span>
+            <span class="mock-dot yellow"></span>
+            <span class="mock-dot green"></span>
+            <span class="mock-title">Bali Trip 🌴 — 5 people</span>
+          </div>
+          <div class="mock-card-body">
+            <div class="mock-itinerary">
+              <div class="mock-day">
+                <span class="mock-day-label">Day 1</span>
+                <div class="mock-activity">🛬 Arrive at DPS Airport</div>
+                <div class="mock-activity">🏨 Check in — The Layar Villa</div>
+              </div>
+              <div class="mock-day">
+                <span class="mock-day-label">Day 2</span>
+                <div class="mock-activity">🌅 Sunrise at Mount Batur</div>
+                <div class="mock-activity">🍜 Lunch at Warung Babi Guling</div>
+              </div>
+            </div>
+            <div class="mock-expense-bar">
+              <div class="mock-expense-title">💸 Group Expenses</div>
+              <div class="mock-expense-row">
+                <span>Villa (5 nights)</span>
+                <span class="mock-amount">RM 320 / person</span>
+              </div>
+              <div class="mock-expense-row">
+                <span>Food &amp; Transport</span>
+                <span class="mock-amount">RM 180 / person</span>
+              </div>
+              <div class="mock-settle-btn">✅ Everyone settled up!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PROBLEM SECTION ===================== -->
+  <section class="problem" id="problem">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">The Problem</span>
+        <h2 class="section-title">
+          Planning trips with friends<br />
+          <span class="highlight">shouldn't be this hard.</span>
+        </h2>
+        <p class="section-subtitle">
+          Every group trip starts with excitement — and quickly turns into a mess of chats, spreadsheets, and awkward IOUs.
+        </p>
+      </div>
+
+      <div class="problem-grid">
+        <!-- Pain point cards -->
+        <div class="problem-card reveal">
+          <div class="problem-icon">💬</div>
+          <h3>Lost itinerary in chat</h3>
+          <p>Plans buried under 300 WhatsApp messages. Nobody knows what's confirmed.</p>
+        </div>
+        <div class="problem-card reveal">
+          <div class="problem-icon">📊</div>
+          <h3>Confusing expense tracking</h3>
+          <p>Who paid for dinner? Google Sheets formulas breaking at 2am.</p>
+        </div>
+        <div class="problem-card reveal">
+          <div class="problem-icon">😬</div>
+          <h3>Awkward money conversations</h3>
+          <p>Chasing friends for repayments ruins the vibe after every trip.</p>
+        </div>
+        <div class="problem-card reveal">
+          <div class="problem-icon">📱</div>
+          <h3>Too many apps</h3>
+          <p>WhatsApp for plans. Sheets for expenses. Notes for checklists. It's exhausting.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SOLUTION SECTION ===================== -->
+  <section class="solution" id="solution">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">The Solution</span>
+        <h2 class="section-title">
+          One place for your<br />
+          <span class="gradient-text">whole group trip</span>
+        </h2>
+        <p class="section-subtitle">
+          TripKawan brings planning, expenses, and communication into one clean, simple app.
+        </p>
+      </div>
+
+      <div class="solution-grid">
+        <div class="solution-card reveal">
+          <div class="solution-icon-wrap teal">
+            <i class="fas fa-map-marked-alt"></i>
+          </div>
+          <h3>Collaborative Itinerary</h3>
+          <p>Build the trip plan together in real-time. Everyone can add, edit, and vote on activities.</p>
+        </div>
+        <div class="solution-card reveal">
+          <div class="solution-icon-wrap orange">
+            <i class="fas fa-wallet"></i>
+          </div>
+          <h3>Automatic Expense Split</h3>
+          <p>Log expenses on the go. TripKawan instantly calculates who owes what — no spreadsheet needed.</p>
+        </div>
+        <div class="solution-card reveal">
+          <div class="solution-icon-wrap purple">
+            <i class="fas fa-clipboard-list"></i>
+          </div>
+          <h3>Shared Notes &amp; Checklist</h3>
+          <p>Packing lists, booking confirmations, emergency contacts — all in one shared space.</p>
+        </div>
+        <div class="solution-card reveal">
+          <div class="solution-icon-wrap green">
+            <i class="fas fa-handshake"></i>
+          </div>
+          <h3>Simple Settlement</h3>
+          <p>One-tap settle up at the end of the trip. No more awkward "hey, you owe me" messages.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== HOW IT WORKS ===================== -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">How It Works</span>
+        <h2 class="section-title">Simple as 1, 2, 3</h2>
+        <p class="section-subtitle">Get your whole group organized in minutes.</p>
+      </div>
+
+      <div class="steps-wrapper">
+        <div class="step reveal">
+          <div class="step-number">01</div>
+          <div class="step-icon-wrap">
+            <i class="fas fa-plane-departure"></i>
+          </div>
+          <h3>Create a Trip</h3>
+          <p>Name your trip, set dates, and pick your destination. Takes 30 seconds.</p>
+        </div>
+        <div class="step-connector" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+        <div class="step reveal">
+          <div class="step-number">02</div>
+          <div class="step-icon-wrap">
+            <i class="fas fa-user-friends"></i>
+          </div>
+          <h3>Invite Friends</h3>
+          <p>Share a link. Everyone joins instantly — no app download required.</p>
+        </div>
+        <div class="step-connector" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+        <div class="step reveal">
+          <div class="step-number">03</div>
+          <div class="step-icon-wrap">
+            <i class="fas fa-umbrella-beach"></i>
+          </div>
+          <h3>Travel Stress-Free</h3>
+          <p>Plan together, track expenses automatically, and settle up at the end.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== QUESTIONNAIRE SECTION ===================== -->
+  <section class="feedback-section" id="feedback">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">Early Access</span>
+        <h2 class="section-title">
+          Help us build<br />
+          <span class="gradient-text">TripKawan</span>
+        </h2>
+        <p class="section-subtitle">
+          Answer 6 quick questions and shape the future of group travel. Takes 2 minutes.
+        </p>
+      </div>
+
+      <div class="form-card reveal" id="form-card">
+        <form id="feedback-form" novalidate>
+
+          <!-- Q1: Name -->
+          <div class="form-group">
+            <label class="form-label" for="name">
+              <i class="fas fa-user form-label-icon"></i>
+              Your name <span class="optional">(optional)</span>
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              class="form-input"
+              placeholder="e.g. Alex"
+              autocomplete="name"
+            />
+          </div>
+
+          <!-- Q2: Email -->
+          <div class="form-group">
+            <label class="form-label" for="email">
+              <i class="fas fa-envelope form-label-icon"></i>
+              Email address <span class="optional">(optional — we'll notify you at launch)</span>
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="form-input"
+              placeholder="you@email.com"
+              autocomplete="email"
+            />
+          </div>
+
+          <!-- Q3: Traveled with group? -->
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-users form-label-icon"></i>
+              Have you traveled with a group in the last 6 months?
+            </label>
+            <div class="radio-group">
+              <label class="radio-card">
+                <input type="radio" name="group_travel" value="yes" />
+                <span class="radio-body">
+                  <span class="radio-emoji">✅</span>
+                  <span>Yes</span>
+                </span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="group_travel" value="no" />
+                <span class="radio-body">
+                  <span class="radio-emoji">❌</span>
+                  <span>No</span>
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Q4: Current tools -->
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-tools form-label-icon"></i>
+              What tools do you currently use to plan group trips?
+              <span class="optional">(select all that apply)</span>
+            </label>
+            <div class="checkbox-group">
+              <label class="checkbox-card">
+                <input type="checkbox" name="tools" value="whatsapp" />
+                <span class="checkbox-body">
+                  <span>💬</span> WhatsApp
+                </span>
+              </label>
+              <label class="checkbox-card">
+                <input type="checkbox" name="tools" value="google_sheets" />
+                <span class="checkbox-body">
+                  <span>📊</span> Google Sheets
+                </span>
+              </label>
+              <label class="checkbox-card">
+                <input type="checkbox" name="tools" value="notes" />
+                <span class="checkbox-body">
+                  <span>📝</span> Notes
+                </span>
+              </label>
+            </div>
+            <input
+              type="text"
+              name="tools_other"
+              class="form-input mt-sm"
+              placeholder="Other — tell us what you use..."
+            />
+          </div>
+
+          <!-- Q5: Biggest pain point -->
+          <div class="form-group">
+            <label class="form-label" for="pain_point">
+              <i class="fas fa-heart-broken form-label-icon"></i>
+              What is the biggest pain point when planning group trips?
+            </label>
+            <textarea
+              id="pain_point"
+              name="pain_point"
+              class="form-textarea"
+              rows="4"
+              placeholder="e.g. Tracking who paid for what is always a mess..."
+            ></textarea>
+          </div>
+
+          <!-- Q6: Most useful feature -->
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-star form-label-icon"></i>
+              Which feature sounds most useful to you?
+            </label>
+            <div class="radio-group feature-radio-group">
+              <label class="radio-card">
+                <input type="radio" name="feature" value="expense_splitting" />
+                <span class="radio-body">
+                  <span class="radio-emoji">💸</span>
+                  <span>Expense splitting</span>
+                </span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="feature" value="shared_itinerary" />
+                <span class="radio-body">
+                  <span class="radio-emoji">🗺️</span>
+                  <span>Shared itinerary</span>
+                </span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="feature" value="budget_tracking" />
+                <span class="radio-body">
+                  <span class="radio-emoji">📊</span>
+                  <span>Budget tracking</span>
+                </span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="feature" value="all_in_one" />
+                <span class="radio-body">
+                  <span class="radio-emoji">🎯</span>
+                  <span>All-in-one place</span>
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Q7: Would you use it? -->
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-thumbs-up form-label-icon"></i>
+              Would you use a tool like TripKawan?
+            </label>
+            <div class="radio-group">
+              <label class="radio-card">
+                <input type="radio" name="likelihood" value="definitely" />
+                <span class="radio-body">
+                  <span class="radio-emoji">🔥</span>
+                  <span>Definitely</span>
+                </span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="likelihood" value="maybe" />
+                <span class="radio-body">
+                  <span class="radio-emoji">🤔</span>
+                  <span>Maybe</span>
+                </span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="likelihood" value="not_sure" />
+                <span class="radio-body">
+                  <span class="radio-emoji">🙂</span>
+                  <span>Not sure</span>
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Q8: Feature wish -->
+          <div class="form-group">
+            <label class="form-label" for="wish_feature">
+              <i class="fas fa-magic form-label-icon"></i>
+              Any feature you wish existed?
+              <span class="optional">(optional)</span>
+            </label>
+            <textarea
+              id="wish_feature"
+              name="wish_feature"
+              class="form-textarea"
+              rows="3"
+              placeholder="Dream big — we're listening..."
+            ></textarea>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" class="btn btn-primary btn-lg btn-full" id="submit-btn">
+            <span class="btn-text">✍️ Submit Feedback</span>
+            <span class="btn-loader" style="display:none;">
+              <i class="fas fa-spinner fa-spin"></i> Sending...
+            </span>
+          </button>
+
+          <!-- Error message -->
+          <div class="form-error" id="form-error" style="display:none;">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="form-error-msg">Something went wrong. Please try again.</span>
+          </div>
+        </form>
+
+        <!-- Success message (hidden until form is submitted) -->
+        <div class="form-success" id="form-success" style="display:none;">
+          <div class="success-icon">🌍</div>
+          <h3>Thank you for helping shape TripKawan!</h3>
+          <p>Your feedback means the world to us. We'll keep you posted on our progress.</p>
+          <div class="success-share">
+            <p class="success-share-text">Share with fellow traveler friends:</p>
+            <div class="share-buttons">
+              <a href="#" class="share-btn whatsapp" id="success-wa" target="_blank" rel="noopener">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+              </a>
+              <a href="#" class="share-btn facebook" id="success-fb" target="_blank" rel="noopener">
+                <i class="fab fa-facebook"></i> Facebook
+              </a>
+              <a href="#" class="share-btn twitter" id="success-x" target="_blank" rel="noopener">
+                <i class="fa-brands fa-x-twitter"></i> X
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== FINAL CTA ===================== -->
+  <section class="final-cta" id="cta">
+    <div class="cta-bg-blobs" aria-hidden="true">
+      <div class="cta-blob blob-1"></div>
+      <div class="cta-blob blob-2"></div>
+    </div>
+    <div class="container">
+      <div class="cta-content reveal">
+        <h2 class="cta-title">Help us build the future<br />of group travel</h2>
+        <p class="cta-subtitle">
+          Join hundreds of travelers helping shape TripKawan — the tool that makes group trips stress-free.
+        </p>
+        <div class="cta-buttons">
+          <a href="#feedback" class="btn btn-white btn-lg">✉️ Join Waitlist</a>
+          <a href="#feedback" class="btn btn-outline-white btn-lg">💬 Give Feedback</a>
+        </div>
+
+        <!-- Social share buttons in CTA -->
+        <div class="cta-share">
+          <p class="cta-share-label">Spread the word:</p>
+          <div class="share-buttons">
+            <a href="#" class="share-btn whatsapp" id="cta-wa" target="_blank" rel="noopener">
+              <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>
+            <a href="#" class="share-btn facebook" id="cta-fb" target="_blank" rel="noopener">
+              <i class="fab fa-facebook"></i> Facebook
+            </a>
+            <a href="#" class="share-btn twitter" id="cta-x" target="_blank" rel="noopener">
+              <i class="fa-brands fa-x-twitter"></i> X
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <a href="#" class="nav-logo footer-logo">
+          <span class="logo-icon">✈️</span>
+          <span class="logo-text">TripKawan</span>
+        </a>
+        <p class="footer-tagline">Plan together. Travel better.</p>
+        <p class="footer-copy">
+          &copy; 2024 TripKawan. Built with ❤️ by fellow travelers.
+          <br />
+          <a href="mailto:hello@tripkawan.com">hello@tripkawan.com</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================== STICKY CTA BUTTON ===================== -->
+  <!-- Appears after user scrolls past the hero -->
+  <div class="sticky-cta" id="sticky-cta">
+    <a href="#feedback" class="btn btn-primary sticky-cta-btn">
+      🚀 Join Early Access
+    </a>
+  </div>
+
+  <!-- ===================== EXIT INTENT POPUP ===================== -->
+  <!-- Triggered when user's mouse leaves the viewport heading upward -->
+  <div class="popup-overlay" id="exit-popup" aria-modal="true" role="dialog" style="display:none;">
+    <div class="popup-card">
+      <button class="popup-close" id="popup-close" aria-label="Close popup">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="popup-emoji">✈️</div>
+      <h3 class="popup-title">Before you go...</h3>
+      <p class="popup-text">
+        Want to help us improve group travel? It takes just 2 minutes.
+      </p>
+      <div class="popup-cta">
+        <a href="#feedback" class="btn btn-primary btn-lg popup-yes-btn" id="popup-yes">
+          💬 Sure, I'll help!
+        </a>
+        <button class="popup-no" id="popup-no">No thanks, I'll leave</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== SCRIPTS ===================== -->
+  <script src="js/main.js"></script>
+</body>
+</html>
