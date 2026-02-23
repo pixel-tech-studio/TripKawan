@@ -53,11 +53,105 @@
     gtag('js', new Date());
     gtag('config', 'G-XXXXXXXXXX');
   </script> -->
+
+  <!-- ===================== FACEBOOK PIXEL PLACEHOLDER ===================== -->
+  <!--
+    SETUP: Replace YOUR_PIXEL_ID with your Facebook Pixel ID
+    Get yours at: https://business.facebook.com/events_manager
+  -->
+  <!-- <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'YOUR_PIXEL_ID');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"/></noscript> -->
+
+  <!-- ===================== STRUCTURED DATA (JSON-LD) ===================== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "TripKawan",
+        "description": "TripKawan helps friend groups plan trips and split expenses without the stress. Collaborative itinerary, automatic expense splitting, and simple settlement — all in one place.",
+        "url": "https://tripkawan.com/",
+        "applicationCategory": "TravelApplication",
+        "operatingSystem": "Web",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "MYR"
+        },
+        "featureList": [
+          "Collaborative itinerary planning",
+          "Automatic group expense splitting",
+          "Shared notes and checklists",
+          "Simple one-tap settlement"
+        ]
+      },
+      {
+        "@type": "Organization",
+        "name": "TripKawan",
+        "url": "https://tripkawan.com/",
+        "logo": "https://tripkawan.com/og-image.jpg",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "email": "hello@tripkawan.com",
+          "contactType": "Customer Support"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is TripKawan?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "TripKawan is a group travel planning app designed for friends and families in Malaysia and ASEAN. It combines collaborative itinerary planning and automatic expense splitting into one simple, stress-free tool."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does group expense splitting work?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Log any expense during your trip and TripKawan automatically calculates who owes what. At the end of the trip, you get a simple settlement summary — no spreadsheets or awkward chats needed."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is TripKawan free?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes — TripKawan is completely free during our early access phase. We are collecting feedback to build the best possible product for group travelers."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Who is TripKawan for?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "TripKawan is built for small friend groups, families, and colleagues in Malaysia and across ASEAN who love to travel together and want a stress-free way to plan itineraries and split costs."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
 </head>
 
 <body>
 
   <!-- ===================== STICKY NAVIGATION ===================== -->
+  <header>
   <nav class="navbar" id="navbar">
     <div class="nav-container">
       <a href="#" class="nav-logo">
@@ -83,6 +177,9 @@
       <a href="#feedback" class="btn btn-primary mobile-cta">🚀 Join Early Access</a>
     </div>
   </nav>
+  </header>
+
+  <main>
 
   <!-- ===================== HERO SECTION ===================== -->
   <section class="hero" id="hero">
@@ -297,6 +394,63 @@
           <h3>Travel Stress-Free</h3>
           <p>Plan together, track expenses automatically, and settle up at the end.</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ SECTION ===================== -->
+  <section class="faq-section" id="faq" aria-labelledby="faq-heading">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">FAQ</span>
+        <h2 class="section-title" id="faq-heading">
+          Common <span class="gradient-text">questions</span>
+        </h2>
+        <p class="section-subtitle">Everything you need to know about TripKawan.</p>
+      </div>
+
+      <div class="faq-list">
+
+        <article class="faq-item reveal">
+          <button class="faq-question" aria-expanded="false" aria-controls="faq-a1">
+            <span>What is TripKawan?</span>
+            <i class="fas fa-plus faq-icon" aria-hidden="true"></i>
+          </button>
+          <div class="faq-answer" id="faq-a1" role="region">
+            <p>TripKawan is a group travel planning app designed for friends and families in Malaysia and ASEAN. It brings collaborative itinerary planning and automatic expense splitting into one simple, stress-free tool — no more juggling WhatsApp, spreadsheets, and Notes apps.</p>
+          </div>
+        </article>
+
+        <article class="faq-item reveal">
+          <button class="faq-question" aria-expanded="false" aria-controls="faq-a2">
+            <span>How does group expense splitting work?</span>
+            <i class="fas fa-plus faq-icon" aria-hidden="true"></i>
+          </button>
+          <div class="faq-answer" id="faq-a2" role="region">
+            <p>Log any expense during your trip — meals, transport, accommodation — and TripKawan automatically calculates who owes what. At the end of the trip you get a simple settlement summary so everyone knows exactly what to pay back.</p>
+          </div>
+        </article>
+
+        <article class="faq-item reveal">
+          <button class="faq-question" aria-expanded="false" aria-controls="faq-a3">
+            <span>Is TripKawan free to use?</span>
+            <i class="fas fa-plus faq-icon" aria-hidden="true"></i>
+          </button>
+          <div class="faq-answer" id="faq-a3" role="region">
+            <p>Yes — TripKawan is completely free during our early access phase. We're collecting feedback from real travelers to build the best possible product before launch.</p>
+          </div>
+        </article>
+
+        <article class="faq-item reveal">
+          <button class="faq-question" aria-expanded="false" aria-controls="faq-a4">
+            <span>Who is TripKawan built for?</span>
+            <i class="fas fa-plus faq-icon" aria-hidden="true"></i>
+          </button>
+          <div class="faq-answer" id="faq-a4" role="region">
+            <p>TripKawan is built for small friend groups, families, and colleagues in Malaysia and across ASEAN who travel together and want a stress-free way to plan itineraries and split trip costs without awkward money conversations.</p>
+          </div>
+        </article>
+
       </div>
     </div>
   </section>
@@ -585,6 +739,8 @@
     </div>
   </section>
 
+  </main>
+
   <!-- ===================== FOOTER ===================== -->
   <footer class="footer">
     <div class="container">
@@ -595,7 +751,7 @@
         </a>
         <p class="footer-tagline">Plan together. Travel better.</p>
         <p class="footer-copy">
-          &copy; 2024 TripKawan. Built with ❤️ by fellow travelers.
+          &copy; 2026 TripKawan. Built with ❤️ by fellow travelers.
           <br />
           <a href="mailto:hello@tripkawan.com">hello@tripkawan.com</a>
         </p>

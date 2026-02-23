@@ -411,6 +411,29 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 /* ============================================================
+   11. FAQ ACCORDION
+   ============================================================ */
+document.querySelectorAll('.faq-question').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item     = btn.closest('.faq-item');
+    const isOpen   = item.classList.contains('open');
+
+    // Close all open items
+    document.querySelectorAll('.faq-item.open').forEach(open => {
+      open.classList.remove('open');
+      open.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+    });
+
+    // Open clicked item if it was closed
+    if (!isOpen) {
+      item.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+      trackEvent('faq_opened', { question: btn.querySelector('span').textContent });
+    }
+  });
+});
+
+/* ============================================================
    INIT LOG
    ============================================================ */
 console.info('✈️ TripKawan landing page loaded successfully!');
