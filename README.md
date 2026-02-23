@@ -45,7 +45,6 @@ npm run dev
 
 # OR for production
 npm start
-```
 
 The API will be available at `http://localhost:3001`.
 
