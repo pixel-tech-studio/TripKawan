@@ -372,10 +372,9 @@ setShareUrls('cta-wa', 'cta-fb', 'cta-x');
 */
 function trackEvent(eventName, params = {}) {
   // --- Google Analytics 4 ---
-  // Uncomment below after adding the GA4 script to index.html:
-  // if (typeof gtag === 'function') {
-  //   gtag('event', eventName, params);
-  // }
+  if (typeof gtag === 'function') {
+    gtag('event', eventName, params);
+  }
 
   // Dev log (remove in production)
   console.info(`[Analytics] ${eventName}`, params);
