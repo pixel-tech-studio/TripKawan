@@ -1,8 +1,0 @@
-# robots.txt — TripKawan
-# Allow all crawlers to index the site
-
-User-agent: *
-Allow: /
-
-# Sitemap location
-Sitemap: https://tripkawan.vercel.app/sitemap.xml
