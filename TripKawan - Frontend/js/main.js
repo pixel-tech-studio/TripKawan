@@ -17,7 +17,7 @@
    CONFIG
    ============================================================ */
 
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyOHA5K-xTnvsjZV2M1h79G3E8n7oMwcx3X6bZJ3MSUTBZmBGVKmssx2JfhVzpuF_85/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwgD8QHdHJn6-G-n8HaXCU2l9Ojki7adtN04LxZkQ29BlYg65nzjQR7fiwhpcuHozKa/exec';
 
 // Social sharing text & URL
 const SHARE_URL  = encodeURIComponent(window.location.href);
