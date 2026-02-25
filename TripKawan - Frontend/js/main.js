@@ -6,7 +6,7 @@
  *  2. Mobile hamburger menu
  *  3. Scroll-reveal animations (Intersection Observer)
  *  4. Radio / checkbox card highlight (selected state)
- *  5. Feedback form submission to backend API
+ *  5. Feedback form submission to Google Sheets
  *  6. Exit-intent popup
  *  7. Sticky CTA button visibility
  *  8. Social sharing URLs
@@ -174,11 +174,11 @@ feedbackForm.addEventListener('submit', async (e) => {
   try {
     // Google Apps Script requires mode: 'no-cors' to avoid CORS preflight issues.
     // The response is opaque (unreadable) but the data is saved to the Sheet.
+    // Content-Type is not sent with no-cors requests; Apps Script reads the raw body regardless.
     await fetch(GOOGLE_SCRIPT_URL, {
-      method:  'POST',
-      mode:    'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(formData),
+      method: 'POST',
+      mode:   'no-cors',
+      body:   JSON.stringify(formData),
     });
 
     // === SUCCESS ===
@@ -207,16 +207,6 @@ feedbackForm.addEventListener('submit', async (e) => {
     console.error('[TripKawan] Form submission error:', err);
   }
 });
-
-// Fallback: save response to localStorage when backend is unreachable
-function saveToLocalStorage(data) {
-  try {
-    const existing = JSON.parse(localStorage.getItem('tripkawan_feedback') || '[]');
-    existing.push(data);
-    localStorage.setItem('tripkawan_feedback', JSON.stringify(existing));
-    console.info('[TripKawan] Feedback saved locally (backend unavailable).');
-  } catch (_) { /* ignore */ }
-}
 
 /* ============================================================
    6. EXIT-INTENT POPUP
@@ -353,13 +343,7 @@ setShareUrls('cta-wa', 'cta-fb', 'cta-x');
 
 /* ============================================================
    9. ANALYTICS EVENT TRACKING
-   ============================================================
-   These are stub functions.  Replace the console.log calls with
-   real GA4 gtag() calls once you set up Google Analytics.
-
-   Example GA4 call:
-     gtag('event', 'feedback_submitted', { email_provided: true });
-*/
+   ============================================================ */
 function trackEvent(eventName, params = {}) {
   // --- Google Analytics 4 ---
   if (typeof gtag === 'function') {
