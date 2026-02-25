@@ -17,10 +17,10 @@
    CONFIG
    ============================================================ */
 
-// Backend API URL — change this to your deployed backend URL.
-// For local development: http://localhost:3001
-// For production: https://your-backend.onrender.com
-const API_BASE_URL = 'http://localhost:3001';
+// Google Apps Script Web App URL — paste your deployed script URL here.
+// Steps: Extensions → Apps Script → Deploy → New deployment → Web app
+// Execute as: Me | Who has access: Anyone → Copy the URL below.
+const GOOGLE_SCRIPT_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
 
 // Social sharing text & URL
 const SHARE_URL  = encodeURIComponent(window.location.href);
@@ -172,16 +172,14 @@ feedbackForm.addEventListener('submit', async (e) => {
   const formData = collectFormData(feedbackForm);
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/feedback`, {
+    // Google Apps Script requires mode: 'no-cors' to avoid CORS preflight issues.
+    // The response is opaque (unreadable) but the data is saved to the Sheet.
+    await fetch(GOOGLE_SCRIPT_URL, {
       method:  'POST',
+      mode:    'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify(formData),
     });
-
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      throw new Error(err.message || `Server error (${response.status})`);
-    }
 
     // === SUCCESS ===
     trackEvent('feedback_submitted', { email_provided: !!formData.email });
@@ -203,18 +201,10 @@ feedbackForm.addEventListener('submit', async (e) => {
     submitBtn.disabled      = false;
 
     // Show error message
-    formErrorMsg.textContent = err.message || 'Something went wrong. Please try again.';
+    formErrorMsg.textContent = 'Something went wrong. Please try again.';
     formError.style.display  = 'flex';
 
     console.error('[TripKawan] Form submission error:', err);
-
-    // Fallback: if backend is unreachable, save locally and show success anyway
-    if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
-      saveToLocalStorage(formData);
-      feedbackForm.style.display = 'none';
-      formSuccess.style.display  = 'block';
-      setShareUrls('success-wa', 'success-fb', 'success-x');
-    }
   }
 });
 
@@ -436,4 +426,4 @@ document.querySelectorAll('.faq-question').forEach(btn => {
    INIT LOG
    ============================================================ */
 console.info('✈️ TripKawan landing page loaded successfully!');
-console.info(`🔗 API endpoint: ${API_BASE_URL}`);
+console.info(`🔗 Google Sheets endpoint: ${GOOGLE_SCRIPT_URL}`);
