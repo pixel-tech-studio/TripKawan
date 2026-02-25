@@ -20,7 +20,7 @@
 // Google Apps Script Web App URL — paste your deployed script URL here.
 // Steps: Extensions → Apps Script → Deploy → New deployment → Web app
 // Execute as: Me | Who has access: Anyone → Copy the URL below.
-const GOOGLE_SCRIPT_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbye0fU1UAKSpVlNhbjhWLxXE_3Sp_JLkb9gnnW9pVBXGqmL_53fPxSCyVy9tXSrehm8/exec';
 
 // Social sharing text & URL
 const SHARE_URL  = encodeURIComponent(window.location.href);
