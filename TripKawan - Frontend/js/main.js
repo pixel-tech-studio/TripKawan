@@ -10,17 +10,14 @@
  *  6. Exit-intent popup
  *  7. Sticky CTA button visibility
  *  8. Social sharing URLs
- *  9. Basic analytics event tracking (console stubs — replace with GA4)
+ *  9. Analytics event tracking (GA4)
  */
 
 /* ============================================================
    CONFIG
    ============================================================ */
 
-// Google Apps Script Web App URL — paste your deployed script URL here.
-// Steps: Extensions → Apps Script → Deploy → New deployment → Web app
-// Execute as: Me | Who has access: Anyone → Copy the URL below.
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbye0fU1UAKSpVlNhbjhWLxXE_3Sp_JLkb9gnnW9pVBXGqmL_53fPxSCyVy9tXSrehm8/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyOHA5K-xTnvsjZV2M1h79G3E8n7oMwcx3X6bZJ3MSUTBZmBGVKmssx2JfhVzpuF_85/exec';
 
 // Social sharing text & URL
 const SHARE_URL  = encodeURIComponent(window.location.href);
@@ -350,8 +347,7 @@ function trackEvent(eventName, params = {}) {
     gtag('event', eventName, params);
   }
 
-  // Dev log (remove in production)
-  console.info(`[Analytics] ${eventName}`, params);
+
 }
 
 // Track page view on load
