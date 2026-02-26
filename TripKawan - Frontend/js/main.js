@@ -208,10 +208,12 @@ feedbackForm.addEventListener('submit', async (e) => {
 /* ============================================================
    6. EXIT-INTENT POPUP
    ============================================================ */
-const exitPopup   = document.getElementById('exit-popup');
-const popupClose  = document.getElementById('popup-close');
-const popupNo     = document.getElementById('popup-no');
-const popupYes    = document.getElementById('popup-yes');
+const exitPopup       = document.getElementById('exit-popup');
+const popupClose      = document.getElementById('popup-close');
+const popupNo         = document.getElementById('popup-no');
+const popupEmailForm  = document.getElementById('popup-email-form');
+const popupEmailInput = document.getElementById('popup-email-input');
+const popupSuccessMsg = document.getElementById('popup-success');
 
 let popupShown = false;
 
@@ -263,9 +265,30 @@ popupNo.addEventListener('click', () => {
   trackEvent('exit_popup_declined', {});
 });
 
-popupYes.addEventListener('click', () => {
-  hidePopup();
-  trackEvent('exit_popup_accepted', {});
+// Inline email capture — best-effort POST, always show success
+popupEmailForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = popupEmailInput.value.trim();
+  if (!email) return;
+
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode:   'no-cors',
+      body:   JSON.stringify({
+        email,
+        timestamp: new Date().toISOString(),
+        source:    'exit_popup',
+      }),
+    });
+  } catch (_) {
+    // best-effort — sheet save still likely succeeded
+  }
+
+  trackEvent('exit_popup_email_captured', {});
+  popupEmailForm.style.display  = 'none';
+  popupSuccessMsg.style.display = 'block';
+  setTimeout(hidePopup, 2000);
 });
 
 // Close popup when clicking the overlay background
@@ -400,6 +423,42 @@ document.querySelectorAll('.faq-question').forEach(btn => {
       trackEvent('faq_opened', { question: btn.querySelector('span').textContent });
     }
   });
+});
+
+/* ============================================================
+   12. SCROLL DEPTH TRACKING
+   ============================================================ */
+const depthMilestones = new Set();
+
+window.addEventListener('scroll', () => {
+  const total = document.body.scrollHeight - window.innerHeight;
+  if (total <= 0) return;
+
+  const pct = (window.scrollY / total) * 100;
+
+  [
+    [25, '25'],
+    [50, '50'],
+    [75, '75'],
+    [90, 'reached_form_section'],
+  ].forEach(([threshold, label]) => {
+    if (pct >= threshold && !depthMilestones.has(threshold)) {
+      depthMilestones.add(threshold);
+      trackEvent('scroll_depth', { depth: label });
+    }
+  });
+});
+
+/* ============================================================
+   13. FORM FIELD FOCUS TRACKING
+   ============================================================ */
+const trackedFields = new Set();
+
+feedbackForm.addEventListener('focusin', (e) => {
+  const field = e.target.name;
+  if (!field || trackedFields.has(field)) return;
+  trackedFields.add(field);
+  trackEvent('form_field_focus', { field });
 });
 
 /* ============================================================

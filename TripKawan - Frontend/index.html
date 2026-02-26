@@ -29,6 +29,8 @@
 
   <!-- Inline SVG favicon (plane emoji) — no external file needed -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>" />
+  <meta name="theme-color" content="#0EA5E9" />
 
   <!-- ===================== FONTS ===================== -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -223,7 +225,7 @@
             <span class="proof-avatar">👩‍🦱</span>
             <span class="proof-avatar">🧔</span>
           </div>
-          <p class="proof-text"><strong>120+ travelers</strong> already on the waitlist</p>
+          <p class="proof-text">Be onf of the <strong>first</strong> to shape it</p>
         </div>
       </div>
 
@@ -461,7 +463,7 @@
           <span class="gradient-text">TripKawan</span>
         </h2>
         <p class="section-subtitle">
-          Answer 6 quick questions and shape the future of group travel. Takes 2 minutes.
+          Answer a few quick questions and shape the future of group travel. Takes 2 minutes.
         </p>
       </div>
 
@@ -680,7 +682,7 @@
           <h3>Thank you for helping shape TripKawan!</h3>
           <p>Your feedback means the world to us. We'll keep you posted on our progress.</p>
           <div class="success-share">
-            <p class="success-share-text">Share with fellow traveler friends:</p>
+            <p class="success-share-text">Know someone who hates splitting bills on trips? Send them this.</p>
             <div class="share-buttons">
               <a href="#" class="share-btn whatsapp" id="success-wa" target="_blank" rel="noopener">
                 <i class="fab fa-whatsapp"></i> WhatsApp
@@ -709,7 +711,7 @@
       <div class="cta-content reveal">
         <h2 class="cta-title">Help us build the future<br />of group travel</h2>
         <p class="cta-subtitle">
-          Join hundreds of travelers helping shape TripKawan — the tool that makes group trips stress-free.
+          Be with us. Be the travelers to help shape TripKawan — the tool that makes group trips stress-free.
         </p>
         <div class="cta-buttons">
           <a href="#feedback" class="btn btn-white btn-lg">✉️ Join Waitlist</a>
@@ -773,14 +775,24 @@
       <div class="popup-emoji">✈️</div>
       <h3 class="popup-title">Before you go...</h3>
       <p class="popup-text">
-        Want to help us improve group travel? It takes just 2 minutes.
+        Just leave your email — we'll let you know when TripKawan launches.
       </p>
-      <div class="popup-cta">
-        <a href="#feedback" class="btn btn-primary btn-lg popup-yes-btn" id="popup-yes">
-          💬 Sure, I'll help!
-        </a>
-        <button class="popup-no" id="popup-no">No thanks, I'll leave</button>
+      <form class="popup-email-form" id="popup-email-form" novalidate>
+        <input
+          type="email"
+          id="popup-email-input"
+          class="popup-email-input"
+          placeholder="your@email.com"
+          autocomplete="email"
+        />
+        <button type="submit" class="btn btn-primary popup-submit-btn">
+          Notify me at launch
+        </button>
+      </form>
+      <div class="popup-success-msg" id="popup-success" style="display:none;">
+        ✅ Done! We'll be in touch.
       </div>
+      <button class="popup-no" id="popup-no">No thanks, I'll leave</button>
     </div>
   </div>
 
