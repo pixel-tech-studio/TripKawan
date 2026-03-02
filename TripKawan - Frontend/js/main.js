@@ -369,12 +369,7 @@ function trackEvent(eventName, params = {}) {
   if (typeof gtag === 'function') {
     gtag('event', eventName, params);
   }
-
-
 }
-
-// Track page view on load
-trackEvent('page_view', { page: window.location.pathname });
 
 // Track CTA button clicks
 document.querySelectorAll('[href="#feedback"]').forEach(btn => {
@@ -429,23 +424,30 @@ document.querySelectorAll('.faq-question').forEach(btn => {
    12. SCROLL DEPTH TRACKING
    ============================================================ */
 const depthMilestones = new Set();
+let scrollTicking = false;
 
 window.addEventListener('scroll', () => {
-  const total = document.body.scrollHeight - window.innerHeight;
-  if (total <= 0) return;
+  if (scrollTicking) return;
+  scrollTicking = true;
 
-  const pct = (window.scrollY / total) * 100;
+  requestAnimationFrame(() => {
+    const total = document.body.scrollHeight - window.innerHeight;
+    if (total > 0) {
+      const pct = (window.scrollY / total) * 100;
 
-  [
-    [25, '25'],
-    [50, '50'],
-    [75, '75'],
-    [90, 'reached_form_section'],
-  ].forEach(([threshold, label]) => {
-    if (pct >= threshold && !depthMilestones.has(threshold)) {
-      depthMilestones.add(threshold);
-      trackEvent('scroll_depth', { depth: label });
+      [
+        [25, '25'],
+        [50, '50'],
+        [75, '75'],
+        [90, 'reached_form_section'],
+      ].forEach(([threshold, label]) => {
+        if (pct >= threshold && !depthMilestones.has(threshold)) {
+          depthMilestones.add(threshold);
+          trackEvent('scroll_depth', { depth: label });
+        }
+      });
     }
+    scrollTicking = false;
   });
 });
 
@@ -462,7 +464,42 @@ feedbackForm.addEventListener('focusin', (e) => {
 });
 
 /* ============================================================
+   14. COOKIE CONSENT
+   ============================================================ */
+const cookieBanner  = document.getElementById('cookie-banner');
+const cookieAccept  = document.getElementById('cookie-accept');
+const cookieDecline = document.getElementById('cookie-decline');
+
+function loadGA() {
+  gtag('consent', 'update', { analytics_storage: 'granted' });
+  // Only inject the script if it hasn't been loaded yet (i.e., no prior consent in localStorage)
+  if (!document.querySelector('script[src*="googletagmanager.com/gtag/js"]')) {
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-48EF0Q4SGP';
+    document.head.appendChild(s);
+    gtag('js', new Date());
+    gtag('config', 'G-48EF0Q4SGP', { send_page_view: true });
+  }
+}
+
+// Show banner only if user hasn't made a choice yet
+if (!localStorage.getItem('cookie_consent')) {
+  cookieBanner.classList.add('visible');
+}
+
+cookieAccept.addEventListener('click', () => {
+  localStorage.setItem('cookie_consent', 'accepted');
+  cookieBanner.classList.remove('visible');
+  loadGA();
+});
+
+cookieDecline.addEventListener('click', () => {
+  localStorage.setItem('cookie_consent', 'declined');
+  cookieBanner.classList.remove('visible');
+});
+
+/* ============================================================
    INIT LOG
    ============================================================ */
-console.info('✈️ TripKawan landing page loaded successfully!');
-console.info(`🔗 Google Sheets endpoint: ${GOOGLE_SCRIPT_URL}`);
+console.info('TripKawan landing page loaded successfully!');

@@ -44,12 +44,26 @@
   <link rel="stylesheet" href="css/styles.css" />
 
   <!-- ===================== GOOGLE ANALYTICS ===================== -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-48EF0Q4SGP"></script>
+  <!-- GA loaded after cookie consent — see consent logic in main.js -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-48EF0Q4SGP');
+
+    // Default: deny analytics storage until consent is given
+    gtag('consent', 'default', {
+      analytics_storage: 'denied'
+    });
+
+    // If user previously consented, load GA immediately
+    if (localStorage.getItem('cookie_consent') === 'accepted') {
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-48EF0Q4SGP';
+      document.head.appendChild(s);
+      gtag('js', new Date());
+      gtag('config', 'G-48EF0Q4SGP', { send_page_view: true });
+    }
   </script>
 
   <!-- ===================== FACEBOOK PIXEL PLACEHOLDER ===================== -->
@@ -793,6 +807,16 @@
         ✅ Done! We'll be in touch.
       </div>
       <button class="popup-no" id="popup-no">No thanks, I'll leave</button>
+    </div>
+  </div>
+
+  <!-- ===================== COOKIE CONSENT BANNER ===================== -->
+  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent">
+    <p>We use cookies to understand how visitors interact with our site via Google Analytics.
+       No personal data is sold or shared with third parties.</p>
+    <div class="cookie-banner-actions">
+      <button class="cookie-btn cookie-btn-accept" id="cookie-accept">Accept</button>
+      <button class="cookie-btn cookie-btn-decline" id="cookie-decline">Decline</button>
     </div>
   </div>
 
