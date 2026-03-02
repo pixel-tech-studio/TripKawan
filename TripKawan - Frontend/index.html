@@ -10,7 +10,10 @@
   <meta name="keywords" content="group travel planner, split expenses travel, plan trip with friends, travel app ASEAN, group trip organizer, expense sharing app, travel with friends" />
   <meta name="author" content="TripKawan" />
   <meta name="robots" content="index, follow" />
+  <meta name="format-detection" content="telephone=no" />
   <link rel="canonical" href="https://tripkawan.vercel.app/" />
+  <link rel="alternate" hreflang="en" href="https://tripkawan.vercel.app/" />
+  <link rel="alternate" hreflang="x-default" href="https://tripkawan.vercel.app/" />
 
   <!-- ===================== OPEN GRAPH (SOCIAL SHARING) ===================== -->
   <meta property="og:type" content="website" />
@@ -18,8 +21,11 @@
   <meta property="og:title" content="TripKawan — Plan Group Trips &amp; Split Expenses Together" />
   <meta property="og:description" content="We're building a simple tool for group travelers to plan itineraries and share costs — all in one place. Help us shape it!" />
   <meta property="og:image" content="https://tripkawan.vercel.app/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/jpeg" />
   <meta property="og:site_name" content="TripKawan" />
-  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale" content="en_MY" />
 
   <!-- ===================== TWITTER CARD ===================== -->
   <meta name="twitter:card" content="summary_large_image" />
@@ -31,14 +37,18 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>" />
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>" />
   <meta name="theme-color" content="#0EA5E9" />
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- ===================== RESOURCE PRELOADING ===================== -->
+  <link rel="preload" href="css/styles.css" as="style" />
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" as="style" crossorigin />
+  <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+  <link rel="dns-prefetch" href="https://www.google-analytics.com" />
 
   <!-- ===================== FONTS ===================== -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-
-  <!-- ===================== ICONS (Font Awesome CDN) ===================== -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
   <!-- ===================== STYLES ===================== -->
   <link rel="stylesheet" href="css/styles.css" />
@@ -95,23 +105,31 @@
         "url": "https://tripkawan.vercel.app/",
         "applicationCategory": "TravelApplication",
         "operatingSystem": "Web",
+        "inLanguage": "en",
+        "areaServed": {
+          "@type": "Place",
+          "name": "ASEAN"
+        },
         "offers": {
           "@type": "Offer",
           "price": "0",
-          "priceCurrency": "MYR"
+          "priceCurrency": "MYR",
+          "availability": "https://schema.org/PreOrder"
         },
         "featureList": [
           "Collaborative itinerary planning",
           "Automatic group expense splitting",
           "Shared notes and checklists",
           "Simple one-tap settlement"
-        ]
+        ],
+        "screenshot": "https://tripkawan.vercel.app/og-image.jpg"
       },
       {
         "@type": "Organization",
         "name": "TripKawan",
         "url": "https://tripkawan.vercel.app/",
         "logo": "https://tripkawan.vercel.app/og-image.jpg",
+        "sameAs": [],
         "contactPoint": {
           "@type": "ContactPoint",
           "email": "trvlurway@gmail.com",
@@ -162,6 +180,15 @@
 
 <body>
 
+  <a href="#main-content" class="skip-to-content">Skip to main content</a>
+
+  <noscript>
+    <style>
+      .reveal { opacity: 1 !important; transform: none !important; }
+      .cookie-banner { display: none !important; }
+    </style>
+  </noscript>
+
   <!-- ===================== STICKY NAVIGATION ===================== -->
   <header>
   <nav class="navbar" id="navbar">
@@ -178,7 +205,7 @@
       </ul>
       <a href="#feedback" class="btn btn-primary nav-btn">🚀 Join Early Access</a>
       <button class="hamburger" id="hamburger" aria-label="Open menu">
-        <i class="fas fa-bars"></i>
+        <svg class="icon-svg hamburger-icon" id="hamburger-icon" viewBox="0 0 448 512" fill="currentColor"><path d="M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z"/></svg>
       </button>
     </div>
     <!-- Mobile menu -->
@@ -191,7 +218,7 @@
   </nav>
   </header>
 
-  <main>
+  <main id="main-content">
 
   <!-- ===================== HERO SECTION ===================== -->
   <section class="hero" id="hero">
@@ -340,28 +367,28 @@
       <div class="solution-grid">
         <div class="solution-card reveal">
           <div class="solution-icon-wrap teal">
-            <i class="fas fa-map-marked-alt"></i>
+            <svg class="icon-svg" viewBox="0 0 576 512" fill="currentColor"><path d="M408 120c0 54.6-73.1 151.9-105.2 192c-7.7 9.6-22 9.6-29.6 0C241.1 271.9 168 174.6 168 120C168 53.7 221.7 0 288 0s120 53.7 120 120zm8 80.4c3.5-6.9 6.7-13.8 9.6-20.6c.5-1.2 1-2.5 1.5-3.7l116-46.4C558.9 123.4 576 135 576 152l0 270.8c0 9.8-6 18.6-15.1 22.3L416 503l0-302.6zM137.6 138.3c2.4 14.1 7.2 28.3 12.8 41.5c2.9 6.8 6.1 13.7 9.6 20.6l0 251.4L32.9 502.7C17.1 509 0 497.4 0 480.4L0 209.6c0-9.8 6-18.6 15.1-22.3l122.6-49zM327.8 332c13.9-17.4 35.7-45.7 56.2-77l0 249.3L192 449.4L192 255c20.5 31.3 42.3 59.6 56.2 77c20.5 25.6 59.1 25.6 79.6 0zM288 152a40 40 0 1 0 0-80 40 40 0 1 0 0 80z"/></svg>
           </div>
           <h3>Collaborative Itinerary</h3>
           <p>Build the trip plan together in real-time. Everyone can add, edit, and vote on activities.</p>
         </div>
         <div class="solution-card reveal">
           <div class="solution-icon-wrap orange">
-            <i class="fas fa-wallet"></i>
+            <svg class="icon-svg" viewBox="0 0 512 512" fill="currentColor"><path d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-224c0-35.3-28.7-64-64-64L80 128c-8.8 0-16-7.2-16-16s7.2-16 16-16l368 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L64 32zM416 272a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>
           </div>
           <h3>Automatic Expense Split</h3>
           <p>Log expenses on the go. TripKawan instantly calculates who owes what — no spreadsheet needed.</p>
         </div>
         <div class="solution-card reveal">
           <div class="solution-icon-wrap purple">
-            <i class="fas fa-clipboard-list"></i>
+            <svg class="icon-svg" viewBox="0 0 384 512" fill="currentColor"><path d="M192 0c-41.8 0-77.4 26.7-90.5 64L64 64C28.7 64 0 92.7 0 128L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64l-37.5 0C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM72 272a24 24 0 1 1 48 0 24 24 0 1 1 -48 0zm104-16l128 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-128 0c-8.8 0-16-7.2-16-16s7.2-16 16-16zM72 368a24 24 0 1 1 48 0 24 24 0 1 1 -48 0zm88 0c0-8.8 7.2-16 16-16l128 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-128 0c-8.8 0-16-7.2-16-16z"/></svg>
           </div>
           <h3>Shared Notes &amp; Checklist</h3>
           <p>Packing lists, booking confirmations, emergency contacts — all in one shared space.</p>
         </div>
         <div class="solution-card reveal">
           <div class="solution-icon-wrap green">
-            <i class="fas fa-handshake"></i>
+            <svg class="icon-svg" viewBox="0 0 640 512" fill="currentColor"><path d="M323.4 85.2l-96.8 78.4c-16.1 13-19.2 36.4-7 53.1c12.9 17.8 38 21.3 55.3 7.8l99.3-77.2c7-5.4 17-4.2 22.5 2.8s4.2 17-2.8 22.5l-20.9 16.2L512 316.8 512 128l-.7 0-3.9-2.5L434.8 79c-15.3-9.8-33.2-15-51.4-15c-21.8 0-43 7.5-60 21.2zm22.8 124.4l-51.7 40.2C263 274.4 217.3 268 193.7 235.6c-22.2-30.5-16.6-73.1 12.7-96.8l83.2-67.3c-11.6-4.9-24.1-7.4-36.8-7.4C234 64 215.7 69.6 200 80l-72 48 0 224 28.2 0 91.4 83.4c19.6 17.9 49.9 16.5 67.8-3.1c5.5-6.1 9.2-13.2 11.1-20.6l17 15.6c19.5 17.9 49.9 16.6 67.8-2.9c4.5-4.9 7.8-10.6 9.9-16.5c19.4 13 45.8 10.3 62.1-7.5c17.9-19.5 16.6-49.9-2.9-67.8l-134.2-123zM16 128c-8.8 0-16 7.2-16 16L0 352c0 17.7 14.3 32 32 32l32 0c17.7 0 32-14.3 32-32l0-224-80 0zM48 320a16 16 0 1 1 0 32 16 16 0 1 1 0-32zM544 128l0 224c0 17.7 14.3 32 32 32l32 0c17.7 0 32-14.3 32-32l0-208c0-8.8-7.2-16-16-16l-80 0zm32 208a16 16 0 1 1 32 0 16 16 0 1 1 -32 0z"/></svg>
           </div>
           <h3>Simple Settlement</h3>
           <p>One-tap settle up at the end of the trip. No more awkward "hey, you owe me" messages.</p>
@@ -383,25 +410,25 @@
         <div class="step reveal">
           <div class="step-number">01</div>
           <div class="step-icon-wrap">
-            <i class="fas fa-plane-departure"></i>
+            <svg class="icon-svg" viewBox="0 0 640 512" fill="currentColor"><path d="M381 114.9L186.1 41.8c-16.7-6.2-35.2-5.3-51.1 2.7L89.1 67.4C78 73 77.2 88.5 87.6 95.2l146.9 94.5L136 240 77.8 214.1c-8.7-3.9-18.8-3.7-27.3 .6L18.3 230.8c-9.3 4.7-11.8 16.8-5 24.7l73.1 85.3c6.1 7.1 15 11.2 24.3 11.2l137.7 0c5 0 9.9-1.2 14.3-3.4L535.6 212.2c46.5-23.3 82.5-63.3 100.8-112C645.9 75 627.2 48 600.2 48l-57.4 0c-20.2 0-40.2 4.8-58.2 14L381 114.9zM0 480c0 17.7 14.3 32 32 32l576 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L32 448c-17.7 0-32 14.3-32 32z"/></svg>
           </div>
           <h3>Create a Trip</h3>
           <p>Name your trip, set dates, and pick your destination. Takes 30 seconds.</p>
         </div>
-        <div class="step-connector" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+        <div class="step-connector" aria-hidden="true"><svg class="icon-svg" viewBox="0 0 448 512" fill="currentColor"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg></div>
         <div class="step reveal">
           <div class="step-number">02</div>
           <div class="step-icon-wrap">
-            <i class="fas fa-user-friends"></i>
+            <svg class="icon-svg" viewBox="0 0 640 512" fill="currentColor"><path d="M96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM0 482.3C0 383.8 79.8 304 178.3 304l91.4 0C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7L29.7 512C13.3 512 0 498.7 0 482.3zM609.3 512l-137.8 0c5.4-9.4 8.6-20.3 8.6-32l0-8c0-60.7-27.1-115.2-69.8-151.8c2.4-.1 4.7-.2 7.1-.2l61.4 0C567.8 320 640 392.2 640 481.3c0 17-13.8 30.7-30.7 30.7zM432 256c-31 0-59-12.6-79.3-32.9C372.4 196.5 384 163.6 384 128c0-26.8-6.6-52.1-18.3-74.3C384.3 40.1 407.2 32 432 32c61.9 0 112 50.1 112 112s-50.1 112-112 112z"/></svg>
           </div>
           <h3>Invite Friends</h3>
           <p>Share a link. Everyone joins instantly — no app download required.</p>
         </div>
-        <div class="step-connector" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+        <div class="step-connector" aria-hidden="true"><svg class="icon-svg" viewBox="0 0 448 512" fill="currentColor"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg></div>
         <div class="step reveal">
           <div class="step-number">03</div>
           <div class="step-icon-wrap">
-            <i class="fas fa-umbrella-beach"></i>
+            <svg class="icon-svg" viewBox="0 0 576 512" fill="currentColor"><path d="M346.3 271.8l-60.1-21.9L214 448 32 448c-17.7 0-32 14.3-32 32s14.3 32 32 32l512 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-261.9 0 64.1-176.2zm121.1-.2l-3.3 9.1 67.7 24.6c18.1 6.6 38-4.2 39.6-23.4c6.5-78.5-23.9-155.5-80.8-208.5c2 8 3.2 16.3 3.4 24.8l.2 6c1.8 57-7.3 113.8-26.8 167.4zM462 99.1c-1.1-34.4-22.5-64.8-54.4-77.4c-.9-.4-1.9-.7-2.8-1.1c-33-11.7-69.8-2.4-93.1 23.8l-4 4.5C272.4 88.3 245 134.2 226.8 184l-3.3 9.1L434 269.7l3.3-9.1c18.1-49.8 26.6-102.5 24.9-155.5l-.2-6zM107.2 112.9c-11.1 15.7-2.8 36.8 15.3 43.4l71 25.8 3.3-9.1c19.5-53.6 49.1-103 87.1-145.5l4-4.5c6.2-6.9 13.1-13 20.5-18.2c-79.6 2.5-154.7 42.2-201.2 108z"/></svg>
           </div>
           <h3>Travel Stress-Free</h3>
           <p>Plan together, track expenses automatically, and settle up at the end.</p>
@@ -426,7 +453,7 @@
         <article class="faq-item reveal">
           <button class="faq-question" aria-expanded="false" aria-controls="faq-a1">
             <span>What is TripKawan?</span>
-            <i class="fas fa-plus faq-icon" aria-hidden="true"></i>
+            <svg class="icon-svg faq-icon" aria-hidden="true" viewBox="0 0 448 512" fill="currentColor"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg>
           </button>
           <div class="faq-answer" id="faq-a1" role="region">
             <p>TripKawan is a group travel planning app designed for friends and families in Malaysia and ASEAN. It brings collaborative itinerary planning and automatic expense splitting into one simple, stress-free tool — no more juggling WhatsApp, spreadsheets, and Notes apps.</p>
@@ -436,7 +463,7 @@
         <article class="faq-item reveal">
           <button class="faq-question" aria-expanded="false" aria-controls="faq-a2">
             <span>How does group expense splitting work?</span>
-            <i class="fas fa-plus faq-icon" aria-hidden="true"></i>
+            <svg class="icon-svg faq-icon" aria-hidden="true" viewBox="0 0 448 512" fill="currentColor"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg>
           </button>
           <div class="faq-answer" id="faq-a2" role="region">
             <p>Log any expense during your trip — meals, transport, accommodation — and TripKawan automatically calculates who owes what. At the end of the trip you get a simple settlement summary so everyone knows exactly what to pay back.</p>
@@ -446,7 +473,7 @@
         <article class="faq-item reveal">
           <button class="faq-question" aria-expanded="false" aria-controls="faq-a3">
             <span>Is TripKawan free to use?</span>
-            <i class="fas fa-plus faq-icon" aria-hidden="true"></i>
+            <svg class="icon-svg faq-icon" aria-hidden="true" viewBox="0 0 448 512" fill="currentColor"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg>
           </button>
           <div class="faq-answer" id="faq-a3" role="region">
             <p>Yes — TripKawan is completely free during our early access phase. We're collecting feedback from real travelers to build the best possible product before launch.</p>
@@ -456,7 +483,7 @@
         <article class="faq-item reveal">
           <button class="faq-question" aria-expanded="false" aria-controls="faq-a4">
             <span>Who is TripKawan built for?</span>
-            <i class="fas fa-plus faq-icon" aria-hidden="true"></i>
+            <svg class="icon-svg faq-icon" aria-hidden="true" viewBox="0 0 448 512" fill="currentColor"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg>
           </button>
           <div class="faq-answer" id="faq-a4" role="region">
             <p>TripKawan is built for small friend groups, families, and colleagues in Malaysia and across ASEAN who travel together and want a stress-free way to plan itineraries and split trip costs without awkward money conversations.</p>
@@ -487,7 +514,7 @@
           <!-- Q1: Name -->
           <div class="form-group">
             <label class="form-label" for="name">
-              <i class="fas fa-user form-label-icon"></i>
+              <svg class="icon-svg form-label-icon" viewBox="0 0 448 512" fill="currentColor"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z"/></svg>
               Your name <span class="optional">(optional)</span>
             </label>
             <input
@@ -503,7 +530,7 @@
           <!-- Q2: Email -->
           <div class="form-group">
             <label class="form-label" for="email">
-              <i class="fas fa-envelope form-label-icon"></i>
+              <svg class="icon-svg form-label-icon" viewBox="0 0 512 512" fill="currentColor"><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48L48 64zM0 176L0 384c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-208L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z"/></svg>
               Email address <span class="optional">(optional — we'll notify you at launch)</span>
             </label>
             <input
@@ -519,7 +546,7 @@
           <!-- Q3: Traveled with group? -->
           <div class="form-group">
             <label class="form-label">
-              <i class="fas fa-users form-label-icon"></i>
+              <svg class="icon-svg form-label-icon" viewBox="0 0 640 512" fill="currentColor"><path d="M144 0a80 80 0 1 1 0 160A80 80 0 1 1 144 0zM512 0a80 80 0 1 1 0 160A80 80 0 1 1 512 0zM0 298.7C0 239.8 47.8 192 106.7 192l42.7 0c15.9 0 31 3.5 44.6 9.7c-1.3 7.2-1.9 14.7-1.9 22.3c0 38.2 16.8 72.5 43.3 96c-.2 0-.4 0-.7 0L21.3 320C9.6 320 0 310.4 0 298.7zM405.3 320c-.2 0-.4 0-.7 0c26.6-23.5 43.3-57.8 43.3-96c0-7.6-.7-15-1.9-22.3c13.6-6.3 28.7-9.7 44.6-9.7l42.7 0C592.2 192 640 239.8 640 298.7c0 11.8-9.6 21.3-21.3 21.3l-213.3 0zM224 224a96 96 0 1 1 192 0 96 96 0 1 1 -192 0zM128 485.3C128 411.7 187.7 352 261.3 352l117.3 0C452.3 352 512 411.7 512 485.3c0 14.7-11.9 26.7-26.7 26.7l-330.7 0c-14.7 0-26.7-11.9-26.7-26.7z"/></svg>
               Have you traveled with a group in the last 6 months?
             </label>
             <div class="radio-group">
@@ -543,7 +570,7 @@
           <!-- Q4: Current tools -->
           <div class="form-group">
             <label class="form-label">
-              <i class="fas fa-tools form-label-icon"></i>
+              <svg class="icon-svg form-label-icon" viewBox="0 0 512 512" fill="currentColor"><path d="M78.6 5C69.1-2.4 55.6-1.5 47 7L7 47c-8.5 8.5-9.4 22-2.1 31.6l80 104c4.5 5.9 11.6 9.4 19 9.4l54.1 0 109 109c-14.7 29-10 65.4 14.3 89.6l112 112c12.5 12.5 32.8 12.5 45.3 0l64-64c12.5-12.5 12.5-32.8 0-45.3l-112-112c-24.2-24.2-60.6-29-89.6-14.3l-109-109 0-54.1c0-7.5-3.5-14.5-9.4-19L78.6 5zM19.9 396.1C7.2 408.8 0 426.1 0 444.1C0 481.6 30.4 512 67.9 512c18 0 35.3-7.2 48-19.9L233.7 374.3c-7.8-20.9-9-43.6-3.6-65.1l-61.7-61.7L19.9 396.1zM512 144c0-10.5-1.1-20.7-3.2-30.5c-2.4-11.2-16.1-14.1-24.2-6l-63.9 63.9c-3 3-7.1 4.7-11.3 4.7L352 176c-8.8 0-16-7.2-16-16l0-57.4c0-4.2 1.7-8.3 4.7-11.3l63.9-63.9c8.1-8.1 5.2-21.8-6-24.2C388.7 1.1 378.5 0 368 0C288.5 0 224 64.5 224 144l0 .8 85.3 85.3c36-9.1 75.8 .5 104 28.7L429 274.5c49-23 83-72.8 83-130.5zM56 432a24 24 0 1 1 48 0 24 24 0 1 1 -48 0z"/></svg>
               What tools do you currently use to plan group trips?
               <span class="optional">(select all that apply)</span>
             </label>
@@ -578,7 +605,7 @@
           <!-- Q5: Biggest pain point -->
           <div class="form-group">
             <label class="form-label" for="pain_point">
-              <i class="fas fa-heart-broken form-label-icon"></i>
+              <svg class="icon-svg form-label-icon" viewBox="0 0 512 512" fill="currentColor"><path d="M119.4 44.1c23.3-3.9 46.8-1.9 68.6 5.3l49.8 77.5-75.4 75.4c-1.5 1.5-2.4 3.6-2.3 5.8s1 4.2 2.6 5.7l112 104c2.9 2.7 7.4 2.9 10.5 .3s3.8-7 1.7-10.4l-60.4-98.1 90.7-75.6c2.6-2.1 3.5-5.7 2.4-8.8L296.8 61.8c28.5-16.7 62.4-23.2 95.7-17.6C461.5 55.6 512 115.2 512 185.1l0 5.8c0 41.5-17.2 81.2-47.6 109.5L283.7 469.1c-7.5 7-17.4 10.9-27.7 10.9s-20.2-3.9-27.7-10.9L47.6 300.4C17.2 272.1 0 232.4 0 190.9l0-5.8c0-69.9 50.5-129.5 119.4-141z"/></svg>
               What is the biggest pain point when planning group trips?
             </label>
             <textarea
@@ -593,7 +620,7 @@
           <!-- Q6: Most useful feature -->
           <div class="form-group">
             <label class="form-label">
-              <i class="fas fa-star form-label-icon"></i>
+              <svg class="icon-svg form-label-icon" viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
               Which feature sounds most useful to you?
             </label>
             <div class="radio-group feature-radio-group">
@@ -631,7 +658,7 @@
           <!-- Q7: Would you use it? -->
           <div class="form-group">
             <label class="form-label">
-              <i class="fas fa-thumbs-up form-label-icon"></i>
+              <svg class="icon-svg form-label-icon" viewBox="0 0 512 512" fill="currentColor"><path d="M313.4 32.9c26 5.2 42.9 30.5 37.7 56.5l-2.3 11.4c-5.3 26.7-15.1 52.1-28.8 75.2l144 0c26.5 0 48 21.5 48 48c0 18.5-10.5 34.6-25.9 42.6C497 275.4 504 288.9 504 304c0 23.4-16.8 42.9-38.9 47.1c4.4 7.3 6.9 15.8 6.9 24.9c0 21.3-13.9 39.4-33.1 45.6c.7 3.3 1.1 6.8 1.1 10.4c0 26.5-21.5 48-48 48l-97.5 0c-19 0-37.5-5.6-53.3-16.1l-38.5-25.7C176 420.4 160 390.4 160 358.3l0-38.3 0-48 0-24.9c0-29.2 13.3-56.7 36-75l7.4-5.9c26.5-21.2 44.6-51 51.2-84.2l2.3-11.4c5.2-26 30.5-42.9 56.5-37.7zM32 192l64 0c17.7 0 32 14.3 32 32l0 224c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32L0 224c0-17.7 14.3-32 32-32z"/></svg>
               Would you use a tool like TripKawan?
             </label>
             <div class="radio-group">
@@ -662,7 +689,7 @@
           <!-- Q8: Feature wish -->
           <div class="form-group">
             <label class="form-label" for="wish_feature">
-              <i class="fas fa-magic form-label-icon"></i>
+              <svg class="icon-svg form-label-icon" viewBox="0 0 576 512" fill="currentColor"><path d="M234.7 42.7L197 56.8c-3 1.1-5 4-5 7.2s2 6.1 5 7.2l37.7 14.1L248.8 123c1.1 3 4 5 7.2 5s6.1-2 7.2-5l14.1-37.7L315 71.2c3-1.1 5-4 5-7.2s-2-6.1-5-7.2L277.3 42.7 263.2 5c-1.1-3-4-5-7.2-5s-6.1 2-7.2 5L234.7 42.7zM46.1 395.4c-18.7 18.7-18.7 49.1 0 67.9l34.6 34.6c18.7 18.7 49.1 18.7 67.9 0L529.9 116.5c18.7-18.7 18.7-49.1 0-67.9L495.3 14.1c-18.7-18.7-49.1-18.7-67.9 0L46.1 395.4zM484.6 82.6l-105 105-23.3-23.3 105-105 23.3 23.3zM7.5 117.2C3 118.9 0 123.2 0 128s3 9.1 7.5 10.8L64 160l21.2 56.5c1.7 4.5 6 7.5 10.8 7.5s9.1-3 10.8-7.5L128 160l56.5-21.2c4.5-1.7 7.5-6 7.5-10.8s-3-9.1-7.5-10.8L128 96 106.8 39.5C105.1 35 100.8 32 96 32s-9.1 3-10.8 7.5L64 96 7.5 117.2zm352 256c-4.5 1.7-7.5 6-7.5 10.8s3 9.1 7.5 10.8L416 416l21.2 56.5c1.7 4.5 6 7.5 10.8 7.5s9.1-3 10.8-7.5L480 416l56.5-21.2c4.5-1.7 7.5-6 7.5-10.8s-3-9.1-7.5-10.8L480 352l-21.2-56.5c-1.7-4.5-6-7.5-10.8-7.5s-9.1 3-10.8 7.5L416 352l-56.5 21.2z"/></svg>
               Any feature you wish existed?
               <span class="optional">(optional)</span>
             </label>
@@ -679,13 +706,13 @@
           <button type="submit" class="btn btn-primary btn-lg btn-full" id="submit-btn">
             <span class="btn-text">✍️ Submit Feedback</span>
             <span class="btn-loader" style="display:none;">
-              <i class="fas fa-spinner fa-spin"></i> Sending...
+              <svg class="icon-svg icon-spin" viewBox="0 0 512 512" fill="currentColor"><path d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z"/></svg> Sending...
             </span>
           </button>
 
           <!-- Error message -->
           <div class="form-error" id="form-error" style="display:none;">
-            <i class="fas fa-exclamation-circle"></i>
+            <svg class="icon-svg" viewBox="0 0 512 512" fill="currentColor"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm0-384c13.3 0 24 10.7 24 24l0 112c0 13.3-10.7 24-24 24s-24-10.7-24-24l0-112c0-13.3 10.7-24 24-24zM224 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"/></svg>
             <span id="form-error-msg">Something went wrong. Please try again.</span>
           </div>
         </form>
@@ -699,13 +726,13 @@
             <p class="success-share-text">Know someone who hates splitting bills on trips? Send them this.</p>
             <div class="share-buttons">
               <a href="#" class="share-btn whatsapp" id="success-wa" target="_blank" rel="noopener">
-                <i class="fab fa-whatsapp"></i> WhatsApp
+                <svg class="icon-svg" viewBox="0 0 448 512" fill="currentColor"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg> WhatsApp
               </a>
               <a href="#" class="share-btn facebook" id="success-fb" target="_blank" rel="noopener">
-                <i class="fab fa-facebook"></i> Facebook
+                <svg class="icon-svg" viewBox="0 0 512 512" fill="currentColor"><path d="M512 256C512 114.6 397.4 0 256 0S0 114.6 0 256C0 376 82.7 476.8 194.2 504.5V334.2H141.4V256h52.8V222.3c0-87.1 39.4-127.5 125-127.5c16.2 0 44.2 3.2 55.7 6.4V172c-6-.6-16.5-1-29.6-1c-42 0-58.2 15.9-58.2 57.2V256h83.6l-14.4 78.2H287V510.1C413.8 494.8 512 386.9 512 256h0z"/></svg> Facebook
               </a>
               <a href="#" class="share-btn twitter" id="success-x" target="_blank" rel="noopener">
-                <i class="fa-brands fa-x-twitter"></i> X
+                <svg class="icon-svg" viewBox="0 0 512 512" fill="currentColor"><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/></svg> X
               </a>
             </div>
           </div>
@@ -737,13 +764,13 @@
           <p class="cta-share-label">Spread the word:</p>
           <div class="share-buttons">
             <a href="#" class="share-btn whatsapp" id="cta-wa" target="_blank" rel="noopener">
-              <i class="fab fa-whatsapp"></i> WhatsApp
+              <svg class="icon-svg" viewBox="0 0 448 512" fill="currentColor"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg> WhatsApp
             </a>
             <a href="#" class="share-btn facebook" id="cta-fb" target="_blank" rel="noopener">
-              <i class="fab fa-facebook"></i> Facebook
+              <svg class="icon-svg" viewBox="0 0 512 512" fill="currentColor"><path d="M512 256C512 114.6 397.4 0 256 0S0 114.6 0 256C0 376 82.7 476.8 194.2 504.5V334.2H141.4V256h52.8V222.3c0-87.1 39.4-127.5 125-127.5c16.2 0 44.2 3.2 55.7 6.4V172c-6-.6-16.5-1-29.6-1c-42 0-58.2 15.9-58.2 57.2V256h83.6l-14.4 78.2H287V510.1C413.8 494.8 512 386.9 512 256h0z"/></svg> Facebook
             </a>
             <a href="#" class="share-btn twitter" id="cta-x" target="_blank" rel="noopener">
-              <i class="fa-brands fa-x-twitter"></i> X
+              <svg class="icon-svg" viewBox="0 0 512 512" fill="currentColor"><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/></svg> X
             </a>
           </div>
         </div>
@@ -784,7 +811,7 @@
   <div class="popup-overlay" id="exit-popup" aria-modal="true" role="dialog" style="display:none;">
     <div class="popup-card">
       <button class="popup-close" id="popup-close" aria-label="Close popup">
-        <i class="fas fa-times"></i>
+        <svg class="icon-svg" viewBox="0 0 384 512" fill="currentColor"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
       </button>
       <div class="popup-emoji">✈️</div>
       <h3 class="popup-title">Before you go...</h3>

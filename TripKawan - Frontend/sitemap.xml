@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
   <!-- Homepage / Landing page -->
   <url>
     <loc>https://tripkawan.vercel.app/</loc>
-    <lastmod>2026-02-23</lastmod>
+    <lastmod>2026-03-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://tripkawan.vercel.app/og-image.jpg</image:loc>
+      <image:title>TripKawan - Group Trip Planning and Expense Splitting App</image:title>
+      <image:caption>TripKawan helps friend groups in Malaysia and ASEAN plan trips and split expenses together</image:caption>
+    </image:image>
   </url>
 
 </urlset>

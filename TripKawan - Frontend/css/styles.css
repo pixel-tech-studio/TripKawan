@@ -113,6 +113,74 @@ ul {
   list-style: none;
 }
 
+/* Skip to content — visually hidden, shown on focus */
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--teal);
+  color: var(--white);
+  padding: 0.75rem 1.5rem;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  z-index: 9999;
+  transition: top 0.2s ease;
+  text-decoration: none;
+}
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* ======================== INLINE SVG ICONS ======================== */
+.icon-svg {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Solution/How-it-works section icons */
+.solution-icon-wrap .icon-svg,
+.step-icon-wrap .icon-svg {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+/* Form label icons */
+.form-label-icon {
+  width: 0.9em;
+  height: 0.9em;
+  margin-right: 0.3rem;
+}
+
+/* FAQ toggle icon */
+.faq-icon {
+  width: 0.75em;
+  height: 0.75em;
+  transition: transform var(--transition);
+}
+.faq-item.open .faq-icon {
+  transform: rotate(45deg);
+}
+
+/* Spinner animation */
+@keyframes icon-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.icon-spin {
+  animation: icon-spin 1s linear infinite;
+}
+
+/* Hamburger icon */
+.hamburger .icon-svg {
+  width: 1.25em;
+  height: 1.25em;
+}
+
 /* ======================== TYPOGRAPHY ======================== */
 h1, h2, h3, h4 {
   line-height: 1.2;
@@ -322,7 +390,7 @@ h1, h2, h3, h4 {
 }
 .nav-links a {
   font-size: var(--text-sm);
-  font-weight: 500;
+  font-weight: 600;
   color: var(--gray-700);
   transition: color var(--transition);
 }
@@ -356,7 +424,7 @@ h1, h2, h3, h4 {
 .mobile-menu.open { display: flex; }
 .mobile-link {
   font-size: var(--text-base);
-  font-weight: 500;
+  font-weight: 600;
   color: var(--gray-700);
 }
 .mobile-cta { width: 100%; justify-content: center; }
@@ -420,7 +488,7 @@ h1, h2, h3, h4 {
   padding: 0.35rem 1rem;
   border-radius: var(--radius-full);
   font-size: var(--text-sm);
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: var(--sp-lg);
   backdrop-filter: blur(8px);
 }
@@ -548,7 +616,7 @@ h1, h2, h3, h4 {
   border-radius: var(--radius-sm);
   font-size: var(--text-sm);
   margin-bottom: 0.25rem;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .mock-expense-bar {
@@ -835,7 +903,7 @@ h1, h2, h3, h4 {
   border: 2px solid var(--gray-100);
   border-radius: var(--radius-md);
   font-size: var(--text-sm);
-  font-weight: 500;
+  font-weight: 600;
   color: var(--gray-700);
   background: var(--white);
   transition: all var(--transition);

@@ -1,0 +1,17 @@
+{
+  "name": "TripKawan - Group Trip Planner",
+  "short_name": "TripKawan",
+  "description": "Plan group trips and split expenses with friends",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#0EA5E9",
+  "icons": [
+    {
+      "src": "/og-image.jpg",
+      "sizes": "1200x630",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}

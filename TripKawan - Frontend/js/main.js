@@ -43,22 +43,28 @@ window.addEventListener('scroll', () => {
    ============================================================ */
 const hamburger  = document.getElementById('hamburger');
 const mobileMenu = document.getElementById('mobile-menu');
+const hamburgerIcon = document.getElementById('hamburger-icon');
+const barsPath = 'M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z';
+const timesPath = 'M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z';
+let menuOpen = false;
+
+function setHamburgerIcon(open) {
+  menuOpen = open;
+  const path = hamburgerIcon.querySelector('path');
+  hamburgerIcon.setAttribute('viewBox', open ? '0 0 384 512' : '0 0 448 512');
+  path.setAttribute('d', open ? timesPath : barsPath);
+}
 
 hamburger.addEventListener('click', () => {
   mobileMenu.classList.toggle('open');
-  // Swap icon between bars and times
-  const icon = hamburger.querySelector('i');
-  icon.classList.toggle('fa-bars');
-  icon.classList.toggle('fa-times');
+  setHamburgerIcon(!menuOpen);
 });
 
 // Close mobile menu when a link is clicked
 mobileMenu.querySelectorAll('a').forEach(link => {
   link.addEventListener('click', () => {
     mobileMenu.classList.remove('open');
-    const icon = hamburger.querySelector('i');
-    icon.classList.add('fa-bars');
-    icon.classList.remove('fa-times');
+    setHamburgerIcon(false);
   });
 });
 
