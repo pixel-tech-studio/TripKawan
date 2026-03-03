@@ -4,12 +4,12 @@
 
   <!-- Homepage / Landing page -->
   <url>
-    <loc>https://tripkawan.vercel.app/</loc>
+    <loc>https://tripkawan.my/</loc>
     <lastmod>2026-03-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
-      <image:loc>https://tripkawan.vercel.app/og-image.jpg</image:loc>
+      <image:loc>https://tripkawan.my/og-image.jpg</image:loc>
       <image:title>TripKawan - Group Trip Planning and Expense Splitting App</image:title>
       <image:caption>TripKawan helps friend groups in Malaysia and ASEAN plan trips and split expenses together</image:caption>
     </image:image>

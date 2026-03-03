@@ -5,4 +5,4 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://tripkawan.vercel.app/sitemap.xml
+Sitemap: https://tripkawan.my/sitemap.xml

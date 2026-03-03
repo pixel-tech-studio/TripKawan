@@ -94,7 +94,7 @@ function sendConfirmationEmail(data) {
           <p style="margin-top:32px;">Cheers,<br><strong>The TripKawan Team</strong></p>
         </div>
         <p style="font-size:11px;color:#999;text-align:center;margin-top:16px;">
-          You're receiving this because you submitted feedback at tripkawan.vercel.app.
+          You're receiving this because you submitted feedback at tripkawan.my.
         </p>
       </div>
     `;
