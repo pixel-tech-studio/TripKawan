@@ -77,11 +77,14 @@ function extractGoldPrice(text) {
 }
 
 function extractSilverPrice(text) {
-  // Format: "RM 1367 = 100.0000 gram" — divide by 100 to get per-gram price
-  const m = text.match(/RM\s*([\d,]+\.?\d*)\s*=\s*100\.0000/i);
-  if (m) {
+  // Format: "RM 1367 = 100.0000 gram" — divide by 100 to get per-gram price.
+  // Use global match: a gold-bar "RM 69,775 = 100.0000 gram" may appear first;
+  // we skip any price outside the realistic silver range (100–15000 per 100g).
+  const re = /RM\s*([\d,]+\.?\d*)\s*=\s*100\.0000/gi;
+  let m;
+  while ((m = re.exec(text)) !== null) {
     const price100g = parsePrice(m[1]);
-    if (price100g !== null && price100g >= 100 && price100g <= 50000) {
+    if (price100g !== null && price100g >= 100 && price100g <= 15000) {
       return Math.round((price100g / 100) * 10000) / 10000;
     }
   }
