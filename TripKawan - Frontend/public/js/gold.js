@@ -3,8 +3,9 @@
    Reads from Google Sheets gviz JSON API (public read-only)
    ============================================================ */
 
-const SHEET_ID  = '1q_kujQAzMPdCA0QDA8XCgB_E6TjH89nvVim9jas5qBw';
-const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Daily`;
+const SHEET_ID      = '1q_kujQAzMPdCA0QDA8XCgB_E6TjH89nvVim9jas5qBw';
+const SHEET_URL     = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Daily`;
+const CHANGES_URL   = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Changes`;
 const TROY_OZ   = 31.1035; // grams per troy ounce
 
 // State
@@ -34,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
       _currency = btn.dataset.currency;
       const days = parseInt(document.querySelector('.range-btn.active').dataset.days, 10);
       renderAll(filterRows(_allRows, days));
-      renderHistoryTable();
     });
   });
 
@@ -46,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
       _unit = btn.dataset.unit;
       const days = parseInt(document.querySelector('.range-btn.active').dataset.days, 10);
       renderAll(filterRows(_allRows, days));
-      renderHistoryTable();
     });
   });
 });
@@ -66,13 +65,11 @@ async function fetchAndRender() {
 
     hideState();
     renderAll(filterRows(_allRows, 30));
-    renderHistoryTable();         // show cached localStorage history immediately
   } catch (err) {
     showState(`Failed to load data: ${err.message}`, true);
   }
 
-  // Fetch live price from Public Gold and update history if changed
-  fetchAndRecordLivePrice();
+  fetchChangesFromSheet();
 }
 
 // ── Parse gviz response ──────────────────────────────────────
@@ -310,76 +307,55 @@ function buildOrUpdate(id, labels, data, label, color) {
   });
 }
 
-// ── Price History (live price → localStorage) ─────────────────
-// Fetches live GAP/SAP from the Vercel edge proxy (/api/pg-prices).
-// Records a new entry only when price changes. Keeps last 10.
+// ── Price History (GitHub Actions → Google Sheets "Changes" tab) ──────────────
+// Automated detection: GH Actions scrapes every 30 min, writes changes to
+// the "Changes" sheet tab (max 10 rows). Frontend reads from there.
 
-const HISTORY_KEY = 'tk_price_history';
-
-function loadHistory() {
-  try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
-  catch { return []; }
-}
-
-function saveHistory(arr) {
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(arr.slice(-10)));
-}
-
-async function fetchAndRecordLivePrice() {
+async function fetchChangesFromSheet() {
   try {
-    const res = await fetch('/api/pg-prices', { cache: 'no-store' });
+    const res = await fetch(CHANGES_URL);
     if (!res.ok) return;
-    const { gap_price_myr, sap_price_myr } = await res.json();
-    if (gap_price_myr == null || sap_price_myr == null) return;
-
-    const hist = loadHistory();
-    const last = hist[hist.length - 1];
-    if (!last || last.gap !== gap_price_myr || last.sap !== sap_price_myr) {
-      const fx = _allRows[_allRows.length - 1]?.fx ?? null;
-      hist.push({ ts: new Date().toISOString(), gap: gap_price_myr, sap: sap_price_myr, fx });
-      saveHistory(hist);
-    }
-    renderHistoryTable();
+    const text = await res.text();
+    const rows = parseChangesRows(text); // oldest-first [{ts, gap, sap}]
+    renderHistoryTable(rows.slice().reverse()); // newest-first
   } catch { /* silently ignore — panel stays hidden */ }
 }
 
-function renderHistoryTable() {
+function parseChangesRows(text) {
+  const json = JSON.parse(text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1));
+  return (json.table?.rows ?? [])
+    .filter(r => r.c?.[0]?.v)
+    .map(r => ({ ts: r.c[0].v, gap: toNum(r.c[1]?.v), sap: toNum(r.c[2]?.v) }));
+}
+
+function renderHistoryTable(hist) {
   const panel = document.getElementById('history-panel');
   if (!panel) return;
-  const hist = loadHistory().slice().reverse(); // newest first
-  if (hist.length === 0) { panel.style.display = 'none'; return; }
+  if (!hist || hist.length === 0) { panel.style.display = 'none'; return; }
   panel.style.display = '';
 
   const tbody = panel.querySelector('tbody');
   tbody.innerHTML = '';
   hist.forEach((row, i) => {
-    const older  = hist[i + 1];
-    const gapVal = convertPG(row.gap, row.fx);
-    const sapVal = convertPG(row.sap, row.fx);
-    const gapOld = older ? convertPG(older.gap, older.fx) : null;
-    const sapOld = older ? convertPG(older.sap, older.fx) : null;
+    const older = hist[i + 1]; // next in array = older entry
     const tr = document.createElement('tr');
     tr.innerHTML =
-      `<td>${fmtISOtoMYT(row.ts)}</td>` +
-      `<td>${gapVal !== null ? gapVal.toFixed(2) : '—'}</td>` +
-      `<td>${fmtDelta(gapVal, gapOld, 2)}</td>` +
-      `<td>${sapVal !== null ? sapVal.toFixed(4) : '—'}</td>` +
-      `<td>${fmtDelta(sapVal, sapOld, 4)}</td>`;
+      `<td>${fmtChangesTs(row.ts)}</td>` +
+      `<td>${row.gap !== null ? row.gap.toFixed(2) : '—'}</td>` +
+      `<td>${fmtDelta(row.gap, older?.gap ?? null, 2)}</td>` +
+      `<td>${row.sap !== null ? row.sap.toFixed(4) : '—'}</td>` +
+      `<td>${fmtDelta(row.sap, older?.sap ?? null, 4)}</td>`;
     tbody.appendChild(tr);
   });
 
   const unitEl = panel.querySelector('.hist-unit');
-  if (unitEl) unitEl.textContent = `${_currency} / ${_unit}`;
+  if (unitEl) unitEl.textContent = 'MYR / g';
 }
 
-function fmtISOtoMYT(iso) {
-  const myt = new Date(new Date(iso).getTime() + 8 * 3600_000);
-  const dd  = String(myt.getUTCDate()).padStart(2, '0');
-  const mm  = String(myt.getUTCMonth() + 1).padStart(2, '0');
-  const yy  = myt.getUTCFullYear();
-  const hh  = String(myt.getUTCHours()).padStart(2, '0');
-  const min = String(myt.getUTCMinutes()).padStart(2, '0');
-  return `${dd}/${mm}/${yy} ${hh}:${min}`;
+// Reformat "YYYY-MM-DD HH:MM" → "DD/MM/YYYY HH:MM"
+function fmtChangesTs(ts) {
+  const m = String(ts).match(/^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}:\d{2})/);
+  return m ? `${m[3]}/${m[2]}/${m[1]} ${m[4]}` : ts;
 }
 
 function fmtDelta(val, prevVal, dec) {
