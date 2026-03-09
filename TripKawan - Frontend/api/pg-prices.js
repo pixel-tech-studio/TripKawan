@@ -32,8 +32,9 @@ export default async function handler() {
     }
 
     const html = await response.text();
-    // Decode common HTML entities before stripping tags so prices aren't mangled
+    // Decode HTML entities before stripping tags so prices aren't mangled
     const text = html
+      .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code, 10)))
       .replace(/&nbsp;/gi, " ")
       .replace(/&amp;/gi, "&")
       .replace(/<[^>]+>/g, " ")
