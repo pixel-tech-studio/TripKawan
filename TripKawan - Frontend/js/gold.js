@@ -8,10 +8,10 @@ const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tq
 const TROY_OZ   = 31.1035; // grams per troy ounce
 
 // State
-let _allRows   = [];
-let _currency  = 'MYR'; // 'MYR' | 'USD'
-let _unit      = 'g';   // 'g'   | 'oz'
-const _charts  = {};
+let _allRows  = [];
+let _currency = 'MYR'; // 'MYR' | 'USD'
+let _unit     = 'g';   // 'g'   | 'oz'
+const _charts = {};
 
 // ── Boot ────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
@@ -66,10 +66,12 @@ async function fetchAndRender() {
 
     hideState();
     renderAll(filterRows(_allRows, 30));
-    maybeRecordHistory(_allRows[_allRows.length - 1]);
   } catch (err) {
     showState(`Failed to load data: ${err.message}`, true);
   }
+
+  // Fetch live price from Public Gold and record if changed
+  fetchAndRecordLivePrice();
 }
 
 // ── Parse gviz response ──────────────────────────────────────
@@ -307,7 +309,10 @@ function buildOrUpdate(id, labels, data, label, color) {
   });
 }
 
-// ── Price History (localStorage) ─────────────────────────────
+// ── Price History (live price → localStorage) ─────────────────
+// Fetches live GAP/SAP from the Vercel edge proxy (/api/pg-prices).
+// Records a new entry only when price changes. Keeps last 10.
+
 const HISTORY_KEY = 'tk_price_history';
 
 function loadHistory() {
@@ -319,15 +324,22 @@ function saveHistory(arr) {
   localStorage.setItem(HISTORY_KEY, JSON.stringify(arr.slice(-10)));
 }
 
-function maybeRecordHistory(latest) {
-  if (!latest || latest.gap === null) return;
-  const hist = loadHistory();
-  const last = hist[hist.length - 1];
-  if (!last || last.gap !== latest.gap || last.sap !== latest.sap) {
-    hist.push({ ts: new Date().toISOString(), gap: latest.gap, sap: latest.sap, fx: latest.fx });
-    saveHistory(hist);
-  }
-  renderHistoryTable();
+async function fetchAndRecordLivePrice() {
+  try {
+    const res = await fetch('/api/pg-prices');
+    if (!res.ok) return;
+    const { gap_price_myr, sap_price_myr } = await res.json();
+    if (gap_price_myr == null || sap_price_myr == null) return;
+
+    const hist = loadHistory();
+    const last = hist[hist.length - 1];
+    if (!last || last.gap !== gap_price_myr || last.sap !== sap_price_myr) {
+      const fx = _allRows[_allRows.length - 1]?.fx ?? null;
+      hist.push({ ts: new Date().toISOString(), gap: gap_price_myr, sap: sap_price_myr, fx });
+      saveHistory(hist);
+    }
+    renderHistoryTable();
+  } catch { /* silently ignore — panel stays hidden */ }
 }
 
 function renderHistoryTable() {
