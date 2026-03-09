@@ -327,7 +327,7 @@ function saveHistory(arr) {
 
 async function fetchAndRecordLivePrice() {
   try {
-    const res = await fetch('/api/pg-prices');
+    const res = await fetch('/api/pg-prices', { cache: 'no-store' });
     if (!res.ok) return;
     const { gap_price_myr, sap_price_myr } = await res.json();
     if (gap_price_myr == null || sap_price_myr == null) return;
