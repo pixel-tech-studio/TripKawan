@@ -32,14 +32,20 @@ export default async function handler() {
     }
 
     const html = await response.text();
-    const text = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+    // Decode common HTML entities before stripping tags so prices aren't mangled
+    const text = html
+      .replace(/&nbsp;/gi, " ")
+      .replace(/&amp;/gi, "&")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/\s+/g, " ");
 
     const gap = extractGoldPrice(text);
     const sap = extractSilverPrice(text);
 
-    const snippet = text.slice(0, 800);
-    if (gap === null) return json({ error: "Could not extract GAP price", snippet }, 422);
-    if (sap === null) return json({ error: "Could not extract SAP price", snippet }, 422);
+    // Debug: find all "RM ... = 100.0000" contexts for diagnosing SAP failures
+    const contexts = [...text.matchAll(/RM.{0,60}100\.0000/gi)].map(m => m[0]);
+    if (gap === null) return json({ error: "Could not extract GAP price", contexts, len: text.length }, 422);
+    if (sap === null) return json({ error: "Could not extract SAP price", contexts, len: text.length }, 422);
 
     return json({ gap_price_myr: gap, sap_price_myr: sap });
   } catch (err) {
