@@ -66,11 +66,12 @@ async function fetchAndRender() {
 
     hideState();
     renderAll(filterRows(_allRows, 30));
+    renderHistoryTable();         // show cached localStorage history immediately
   } catch (err) {
     showState(`Failed to load data: ${err.message}`, true);
   }
 
-  // Fetch live price from Public Gold and record if changed
+  // Fetch live price from Public Gold and update history if changed
   fetchAndRecordLivePrice();
 }
 
