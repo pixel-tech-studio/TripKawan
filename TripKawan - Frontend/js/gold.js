@@ -78,7 +78,7 @@ function parseSheetRows(text) {
     .filter(r => r.c && r.c[0] && r.c[0].v)
     .map(r => ({
       date: parseGvizDate(r.c[0].v),
-      time: r.c[1]?.v ? String(r.c[1].v) : '',
+      time: r.c[1]?.v ? parseGvizTime(r.c[1].v) : '',
       gap:  toNum(r.c[2]?.v),   // MYR/g
       sap:  toNum(r.c[3]?.v),   // MYR/g
       xau:  toNum(r.c[4]?.v),   // USD/oz
@@ -89,6 +89,14 @@ function parseSheetRows(text) {
 }
 
 // gviz encodes dates as "Date(year,month,day)" with 0-indexed months
+// gviz encodes time-of-day as "Date(1899,11,30,H,M,S)"
+function parseGvizTime(v) {
+  const s = String(v);
+  const m = s.match(/^Date\(\d+,\d+,\d+,(\d+),(\d+)/);
+  if (m) return `${String(m[1]).padStart(2, '0')}:${String(m[2]).padStart(2, '0')}`;
+  return s;
+}
+
 function parseGvizDate(v) {
   const s = String(v);
   const m = s.match(/^Date\((\d+),(\d+),(\d+)\)/);
@@ -150,8 +158,13 @@ function renderAll(rows) {
   document.getElementById('charts-grid').style.display = '';
 
   const latest = rows[rows.length - 1];
-  document.getElementById('last-updated').textContent =
-    latest ? `Last updated: ${latest.date} ${latest.time} MYT` : 'No data';
+  if (latest) {
+    const [y, mo, d] = latest.date.split('-');
+    document.getElementById('last-updated').textContent =
+      `Last updated: ${d}/${mo}/${y} ${latest.time} MYT`;
+  } else {
+    document.getElementById('last-updated').textContent = 'No data';
+  }
 
   // Update chart heading labels
   const lbl = unitLabel();
@@ -210,7 +223,10 @@ function setCard(id, val, prevVal, decimals) {
 
 // ── Charts ───────────────────────────────────────────────────
 function renderCharts(rows) {
-  const labels = rows.map(r => r.date);
+  const labels = rows.map(r => {
+    const [y, mo, d] = r.date.split('-');
+    return `${d}/${mo}/${y}`;
+  });
 
   buildOrUpdate('chart-gap', labels, rows.map(r => convertPG(r.gap, r.fx)),    `GAP ${unitLabel()}`,       '#F59E0B');
   buildOrUpdate('chart-sap', labels, rows.map(r => convertPG(r.sap, r.fx)),    `SAP ${unitLabel()}`,       '#94A3B8');
