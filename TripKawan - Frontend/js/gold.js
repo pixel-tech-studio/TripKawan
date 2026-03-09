@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
       _currency = btn.dataset.currency;
       const days = parseInt(document.querySelector('.range-btn.active').dataset.days, 10);
       renderAll(filterRows(_allRows, days));
+      renderHistoryTable();
     });
   });
 
@@ -45,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
       _unit = btn.dataset.unit;
       const days = parseInt(document.querySelector('.range-btn.active').dataset.days, 10);
       renderAll(filterRows(_allRows, days));
+      renderHistoryTable();
     });
   });
 });
@@ -64,6 +66,7 @@ async function fetchAndRender() {
 
     hideState();
     renderAll(filterRows(_allRows, 30));
+    maybeRecordHistory(_allRows[_allRows.length - 1]);
   } catch (err) {
     showState(`Failed to load data: ${err.message}`, true);
   }
@@ -302,6 +305,78 @@ function buildOrUpdate(id, labels, data, label, color) {
       interaction: { mode: 'nearest', axis: 'x', intersect: false },
     }
   });
+}
+
+// ── Price History (localStorage) ─────────────────────────────
+const HISTORY_KEY = 'tk_price_history';
+
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
+  catch { return []; }
+}
+
+function saveHistory(arr) {
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(arr.slice(-10)));
+}
+
+function maybeRecordHistory(latest) {
+  if (!latest || latest.gap === null) return;
+  const hist = loadHistory();
+  const last = hist[hist.length - 1];
+  if (!last || last.gap !== latest.gap || last.sap !== latest.sap) {
+    hist.push({ ts: new Date().toISOString(), gap: latest.gap, sap: latest.sap, fx: latest.fx });
+    saveHistory(hist);
+  }
+  renderHistoryTable();
+}
+
+function renderHistoryTable() {
+  const panel = document.getElementById('history-panel');
+  if (!panel) return;
+  const hist = loadHistory().slice().reverse(); // newest first
+  if (hist.length === 0) { panel.style.display = 'none'; return; }
+  panel.style.display = '';
+
+  const tbody = panel.querySelector('tbody');
+  tbody.innerHTML = '';
+  hist.forEach((row, i) => {
+    const older  = hist[i + 1];
+    const gapVal = convertPG(row.gap, row.fx);
+    const sapVal = convertPG(row.sap, row.fx);
+    const gapOld = older ? convertPG(older.gap, older.fx) : null;
+    const sapOld = older ? convertPG(older.sap, older.fx) : null;
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      `<td>${fmtISOtoMYT(row.ts)}</td>` +
+      `<td>${gapVal !== null ? gapVal.toFixed(2) : '—'}</td>` +
+      `<td>${fmtDelta(gapVal, gapOld, 2)}</td>` +
+      `<td>${sapVal !== null ? sapVal.toFixed(4) : '—'}</td>` +
+      `<td>${fmtDelta(sapVal, sapOld, 4)}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  const unitEl = panel.querySelector('.hist-unit');
+  if (unitEl) unitEl.textContent = `${_currency} / ${_unit}`;
+}
+
+function fmtISOtoMYT(iso) {
+  const myt = new Date(new Date(iso).getTime() + 8 * 3600_000);
+  const dd  = String(myt.getUTCDate()).padStart(2, '0');
+  const mm  = String(myt.getUTCMonth() + 1).padStart(2, '0');
+  const yy  = myt.getUTCFullYear();
+  const hh  = String(myt.getUTCHours()).padStart(2, '0');
+  const min = String(myt.getUTCMinutes()).padStart(2, '0');
+  return `${dd}/${mm}/${yy} ${hh}:${min}`;
+}
+
+function fmtDelta(val, prevVal, dec) {
+  if (val === null || prevVal === null) return '<span class="hist-flat">—</span>';
+  const diff = val - prevVal;
+  if (Math.abs(diff) < Math.pow(10, -(dec + 1))) return '<span class="hist-flat">—</span>';
+  const cls   = diff > 0 ? 'hist-up' : 'hist-down';
+  const arrow = diff > 0 ? '▲' : '▼';
+  const sign  = diff > 0 ? '+' : '';
+  return `<span class="${cls}">${arrow} ${sign}${diff.toFixed(dec)}</span>`;
 }
 
 // ── Helpers ──────────────────────────────────────────────────
