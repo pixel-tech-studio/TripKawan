@@ -284,7 +284,7 @@ function buildOrUpdate(id, labels, data, label, color) {
         },
         y: {
           beginAtZero: false,
-          ticks: { font: { family: 'Poppins', size: 11 }, color: '#94A3B8', callback: v => v.toLocaleString() },
+          ticks: { font: { family: 'Poppins', size: 11 }, color: '#94A3B8', callback: v => v.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) },
           grid: { color: '#F1F5F9' },
         }
       },
