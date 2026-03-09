@@ -56,37 +56,23 @@ function parsePrice(raw) {
   return isNaN(num) ? null : num;
 }
 
-const RM = "RM?\\s*([\\d,]+\\.?\\d*)";
-
 function extractGoldPrice(text) {
-  const patterns = [
-    new RegExp(`GAP[\\s\\S]*?1\\.0000[\\s\\S]*?(?:Sell|PG\\s*Sell)[\\s\\S]*?${RM}`, "i"),
-    new RegExp(`(?:Sell|PG\\s*Sell)[\\s\\S]*?GAP[\\s\\S]*?1\\.0000[\\s\\S]*?${RM}`, "i"),
-    new RegExp(`Gold[\\s\\S]*?1\\.0000[\\s\\S]*?${RM}`, "i"),
-  ];
-  for (const pattern of patterns) {
-    const match = text.match(pattern);
-    if (match) {
-      const price = parsePrice(match[1]);
-      if (price !== null && price >= 100 && price <= 2000) return price;
-    }
+  // Format: "RM 712 = 1.0000 gram" — price comes before the quantity
+  const m = text.match(/RM\s*([\d,]+\.?\d*)\s*=\s*1\.0000/i);
+  if (m) {
+    const price = parsePrice(m[1]);
+    if (price !== null && price >= 100 && price <= 2000) return price;
   }
   return null;
 }
 
 function extractSilverPrice(text) {
-  const patterns = [
-    new RegExp(`SAP[\\s\\S]*?100\\.0000[\\s\\S]*?(?:Sell|PG\\s*Sell)[\\s\\S]*?${RM}`, "i"),
-    new RegExp(`(?:Sell|PG\\s*Sell)[\\s\\S]*?SAP[\\s\\S]*?100\\.0000[\\s\\S]*?${RM}`, "i"),
-    new RegExp(`Silver[\\s\\S]*?100\\.0000[\\s\\S]*?${RM}`, "i"),
-  ];
-  for (const pattern of patterns) {
-    const match = text.match(pattern);
-    if (match) {
-      const price100g = parsePrice(match[1]);
-      if (price100g !== null && price100g >= 100 && price100g <= 50000) {
-        return Math.round((price100g / 100) * 10000) / 10000;
-      }
+  // Format: "RM 1367 = 100.0000 gram" — divide by 100 to get per-gram price
+  const m = text.match(/RM\s*([\d,]+\.?\d*)\s*=\s*100\.0000/i);
+  if (m) {
+    const price100g = parsePrice(m[1]);
+    if (price100g !== null && price100g >= 100 && price100g <= 50000) {
+      return Math.round((price100g / 100) * 10000) / 10000;
     }
   }
   return null;
