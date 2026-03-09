@@ -3,24 +3,47 @@
    Reads from Google Sheets gviz JSON API (public read-only)
    ============================================================ */
 
-const SHEET_ID = '1q_kujQAzMPdCA0QDA8XCgB_E6TjH89nvVim9jas5qBw';
+const SHEET_ID  = '1q_kujQAzMPdCA0QDA8XCgB_E6TjH89nvVim9jas5qBw';
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Daily`;
+const TROY_OZ   = 31.1035; // grams per troy ounce
 
-// Chart.js instances — cached to allow range-switch updates without DOM rebuilds
-const _charts = {};
-
-// Full dataset after initial fetch
-let _allRows = [];
+// State
+let _allRows   = [];
+let _currency  = 'MYR'; // 'MYR' | 'USD'
+let _unit      = 'g';   // 'g'   | 'oz'
+const _charts  = {};
 
 // ── Boot ────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   fetchAndRender();
 
+  // Range buttons
   document.querySelectorAll('.range-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      const days = parseInt(btn.dataset.days, 10);
+      renderAll(filterRows(_allRows, parseInt(btn.dataset.days, 10)));
+    });
+  });
+
+  // Currency toggle
+  document.querySelectorAll('[data-currency]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-currency]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      _currency = btn.dataset.currency;
+      const days = parseInt(document.querySelector('.range-btn.active').dataset.days, 10);
+      renderAll(filterRows(_allRows, days));
+    });
+  });
+
+  // Unit toggle
+  document.querySelectorAll('[data-unit]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-unit]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      _unit = btn.dataset.unit;
+      const days = parseInt(document.querySelector('.range-btn.active').dataset.days, 10);
       renderAll(filterRows(_allRows, days));
     });
   });
@@ -40,30 +63,42 @@ async function fetchAndRender() {
     }
 
     hideState();
-    renderAll(filterRows(_allRows, 30)); // default: 1M
+    renderAll(filterRows(_allRows, 30));
   } catch (err) {
-    showState(`Failed to load data: ${err.message}. Make sure the sheet is shared as "Anyone with the link — Viewer".`, true);
+    showState(`Failed to load data: ${err.message}`, true);
   }
 }
 
 // ── Parse gviz response ──────────────────────────────────────
 function parseSheetRows(text) {
-  // gviz wraps response in /*O_o*/ google.visualization.Query.setResponse({...});
   const json = JSON.parse(text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1));
   const rows = json.table?.rows ?? [];
 
   return rows
     .filter(r => r.c && r.c[0] && r.c[0].v)
     .map(r => ({
-      date:   String(r.c[0].v),
-      time:   r.c[1]?.v ? String(r.c[1].v) : '',
-      gap:    toNum(r.c[2]?.v),
-      sap:    toNum(r.c[3]?.v),
-      xau:    toNum(r.c[4]?.v),
-      xag:    toNum(r.c[5]?.v),
-      fx:     toNum(r.c[6]?.v),
+      date: parseGvizDate(r.c[0].v),
+      time: r.c[1]?.v ? String(r.c[1].v) : '',
+      gap:  toNum(r.c[2]?.v),   // MYR/g
+      sap:  toNum(r.c[3]?.v),   // MYR/g
+      xau:  toNum(r.c[4]?.v),   // USD/oz
+      xag:  toNum(r.c[5]?.v),   // USD/oz
+      fx:   toNum(r.c[6]?.v),   // USD/MYR rate
     }))
     .sort((a, b) => a.date.localeCompare(b.date));
+}
+
+// gviz encodes dates as "Date(year,month,day)" with 0-indexed months
+function parseGvizDate(v) {
+  const s = String(v);
+  const m = s.match(/^Date\((\d+),(\d+),(\d+)\)/);
+  if (m) {
+    const y  = m[1];
+    const mo = String(parseInt(m[2], 10) + 1).padStart(2, '0');
+    const d  = String(m[3]).padStart(2, '0');
+    return `${y}-${mo}-${d}`;
+  }
+  return s; // already "YYYY-MM-DD"
 }
 
 function toNum(v) {
@@ -74,11 +109,37 @@ function toNum(v) {
 
 // ── Filter by range ──────────────────────────────────────────
 function filterRows(rows, days) {
-  if (!days) return rows; // 0 = All
+  if (!days) return rows;
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - days);
   const cutoffStr = cutoff.toISOString().slice(0, 10);
   return rows.filter(r => r.date >= cutoffStr);
+}
+
+// ── Conversions ──────────────────────────────────────────────
+// GAP/SAP are stored as MYR/g. Spot Gold/Silver as USD/oz.
+// Convert everything to the currently selected currency + unit.
+
+function convertPG(val, fx) {
+  // Input: MYR/g
+  if (val === null || fx === null) return null;
+  let v = val;
+  if (_currency === 'USD') v = v / fx;
+  if (_unit === 'oz')      v = v * TROY_OZ;
+  return v;
+}
+
+function convertSpot(val, fx) {
+  // Input: USD/oz
+  if (val === null || fx === null) return null;
+  let v = val;
+  if (_currency === 'MYR') v = v * fx;
+  if (_unit === 'g')       v = v / TROY_OZ;
+  return v;
+}
+
+function unitLabel() {
+  return `(${_currency}/${_unit})`;
 }
 
 // ── Render everything ────────────────────────────────────────
@@ -91,6 +152,13 @@ function renderAll(rows) {
   const latest = rows[rows.length - 1];
   document.getElementById('last-updated').textContent =
     latest ? `Last updated: ${latest.date} ${latest.time} MYT` : 'No data';
+
+  // Update chart heading labels
+  const lbl = unitLabel();
+  ['gap','sap','xau','xag'].forEach(id => {
+    const el = document.getElementById(`label-${id}`);
+    if (el) el.textContent = lbl;
+  });
 }
 
 // ── Summary cards ────────────────────────────────────────────
@@ -99,11 +167,20 @@ function updateCards(rows) {
   const prev   = rows[rows.length - 2];
   if (!latest) return;
 
-  setCard('gap', latest.gap,  prev?.gap,  2);
-  setCard('sap', latest.sap,  prev?.sap,  4);
-  setCard('xau', latest.xau,  prev?.xau,  2);
-  setCard('xag', latest.xag,  prev?.xag,  4);
-  setCard('fx',  latest.fx,   prev?.fx,   4);
+  const fx = latest.fx;
+
+  setCard('gap', convertPG(latest.gap, fx),    convertPG(prev?.gap, prev?.fx),    2);
+  setCard('sap', convertPG(latest.sap, fx),    convertPG(prev?.sap, prev?.fx),    4);
+  setCard('xau', convertSpot(latest.xau, fx),  convertSpot(prev?.xau, prev?.fx),  2);
+  setCard('xag', convertSpot(latest.xag, fx),  convertSpot(prev?.xag, prev?.fx),  4);
+  setCard('fx',  latest.fx,                    prev?.fx,                           4);
+
+  // Update card unit labels
+  const lbl = `${_currency} / ${_unit}`;
+  ['gap','sap','xau','xag'].forEach(id => {
+    const el = document.querySelector(`#val-${id} ~ .card-unit`);
+    if (el) el.textContent = lbl;
+  });
 }
 
 function setCard(id, val, prevVal, decimals) {
@@ -135,16 +212,17 @@ function setCard(id, val, prevVal, decimals) {
 function renderCharts(rows) {
   const labels = rows.map(r => r.date);
 
-  buildOrUpdate('chart-gap', labels, rows.map(r => r.gap),  'GAP (MYR/g)',  '#F59E0B');
-  buildOrUpdate('chart-sap', labels, rows.map(r => r.sap),  'SAP (MYR/g)',  '#94A3B8');
-  buildOrUpdate('chart-xau', labels, rows.map(r => r.xau),  'Spot Gold USD','#F97316');
-  buildOrUpdate('chart-fx',  labels, rows.map(r => r.fx),   'USD/MYR',      '#0EA5E9');
+  buildOrUpdate('chart-gap', labels, rows.map(r => convertPG(r.gap, r.fx)),    `GAP ${unitLabel()}`,       '#F59E0B');
+  buildOrUpdate('chart-sap', labels, rows.map(r => convertPG(r.sap, r.fx)),    `SAP ${unitLabel()}`,       '#94A3B8');
+  buildOrUpdate('chart-xau', labels, rows.map(r => convertSpot(r.xau, r.fx)),  `Spot Gold ${unitLabel()}`, '#F97316');
+  buildOrUpdate('chart-xag', labels, rows.map(r => convertSpot(r.xag, r.fx)),  `Spot Silver ${unitLabel()}`,'#64748B');
 }
 
 function buildOrUpdate(id, labels, data, label, color) {
   if (_charts[id]) {
     _charts[id].data.labels = labels;
     _charts[id].data.datasets[0].data = data;
+    _charts[id].data.datasets[0].label = label;
     _charts[id].update('none');
     return;
   }
@@ -176,26 +254,21 @@ function buildOrUpdate(id, labels, data, label, color) {
           mode: 'index',
           intersect: false,
           callbacks: {
-            label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y !== null ? ctx.parsed.y.toLocaleString() : 'N/A'}`
+            label: ctx => {
+              const v = ctx.parsed.y;
+              return v !== null ? `${ctx.dataset.label}: ${v.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}` : 'N/A';
+            }
           }
         }
       },
       scales: {
         x: {
-          ticks: {
-            maxTicksLimit: 8,
-            font: { family: 'Poppins', size: 11 },
-            color: '#94A3B8',
-          },
+          ticks: { maxTicksLimit: 8, font: { family: 'Poppins', size: 11 }, color: '#94A3B8' },
           grid: { display: false },
         },
         y: {
           beginAtZero: false,
-          ticks: {
-            font: { family: 'Poppins', size: 11 },
-            color: '#94A3B8',
-            callback: v => v.toLocaleString(),
-          },
+          ticks: { font: { family: 'Poppins', size: 11 }, color: '#94A3B8', callback: v => v.toLocaleString() },
           grid: { color: '#F1F5F9' },
         }
       },

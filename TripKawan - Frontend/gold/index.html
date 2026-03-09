@@ -47,7 +47,13 @@
       color: var(--gray-400);
     }
 
-    /* ── Range buttons ── */
+    /* ── Controls (range + toggles) ── */
+    .controls-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--sp-md);
+    }
     .range-controls {
       display: flex;
       gap: var(--sp-sm);
@@ -70,6 +76,31 @@
       background: var(--teal);
       border-color: var(--teal);
       color: var(--white);
+    }
+    /* Toggle pills */
+    .toggle-group {
+      display: flex;
+      background: var(--gray-50);
+      border-radius: var(--radius-full);
+      padding: 3px;
+      gap: 2px;
+    }
+    .toggle-btn {
+      padding: 0.3rem 0.85rem;
+      border-radius: var(--radius-full);
+      border: none;
+      background: transparent;
+      font-family: var(--font);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--gray-500);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .toggle-btn.active {
+      background: var(--white);
+      color: var(--dark);
+      box-shadow: var(--shadow-sm);
     }
 
     /* ── Summary cards ── */
@@ -195,12 +226,22 @@
       <h1>Gold &amp; <span>Silver</span> Prices</h1>
       <div class="dash-meta">
         <span id="last-updated">Loading...</span>
-        <div class="range-controls">
-          <button class="range-btn active" data-days="30">1M</button>
-          <button class="range-btn" data-days="90">3M</button>
-          <button class="range-btn" data-days="180">6M</button>
-          <button class="range-btn" data-days="365">1Y</button>
-          <button class="range-btn" data-days="0">All</button>
+        <div class="controls-row">
+          <div class="range-controls">
+            <button class="range-btn active" data-days="30">1M</button>
+            <button class="range-btn" data-days="90">3M</button>
+            <button class="range-btn" data-days="180">6M</button>
+            <button class="range-btn" data-days="365">1Y</button>
+            <button class="range-btn" data-days="0">All</button>
+          </div>
+          <div class="toggle-group">
+            <button class="toggle-btn active" data-currency="MYR">MYR</button>
+            <button class="toggle-btn" data-currency="USD">USD</button>
+          </div>
+          <div class="toggle-group">
+            <button class="toggle-btn active" data-unit="g">/ g</button>
+            <button class="toggle-btn" data-unit="oz">/ oz</button>
+          </div>
         </div>
       </div>
     </div>
@@ -245,20 +286,20 @@
     <!-- Charts -->
     <div class="charts-grid" id="charts-grid" style="display:none;">
       <div class="chart-card">
-        <h2>GAP — Gold Accumulation Price <span>(MYR/g)</span></h2>
+        <h2>GAP — Gold Accumulation Price <span id="label-gap">(MYR/g)</span></h2>
         <div class="chart-wrap"><canvas id="chart-gap"></canvas></div>
       </div>
       <div class="chart-card">
-        <h2>SAP — Silver Accumulation Price <span>(MYR/g)</span></h2>
+        <h2>SAP — Silver Accumulation Price <span id="label-sap">(MYR/g)</span></h2>
         <div class="chart-wrap"><canvas id="chart-sap"></canvas></div>
       </div>
       <div class="chart-card">
-        <h2>Spot Gold <span>(USD/oz)</span></h2>
+        <h2>Spot Gold <span id="label-xau">(USD/oz)</span></h2>
         <div class="chart-wrap"><canvas id="chart-xau"></canvas></div>
       </div>
       <div class="chart-card">
-        <h2>USD / MYR Rate</h2>
-        <div class="chart-wrap"><canvas id="chart-fx"></canvas></div>
+        <h2>Spot Silver <span id="label-xag">(USD/oz)</span></h2>
+        <div class="chart-wrap"><canvas id="chart-xag"></canvas></div>
       </div>
     </div>
 
