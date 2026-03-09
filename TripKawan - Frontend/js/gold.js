@@ -234,6 +234,17 @@ function renderCharts(rows) {
   buildOrUpdate('chart-xag', labels, rows.map(r => convertSpot(r.xag, r.fx)),  `Spot Silver ${unitLabel()}`,'#64748B');
 }
 
+// Y-axis formatter: all ticks in a chart use the same decimal places
+// (determined by the tick with the most decimal places, capped at 2)
+function yTickFmt(v, _i, ticks) {
+  const maxDec = ticks.reduce((m, t) => {
+    const s = t.value.toFixed(10).replace(/\.?0+$/, '');
+    const dot = s.indexOf('.');
+    return Math.max(m, dot >= 0 ? Math.min(s.length - dot - 1, 2) : 0);
+  }, 0);
+  return v.toLocaleString(undefined, {minimumFractionDigits: maxDec, maximumFractionDigits: maxDec});
+}
+
 function buildOrUpdate(id, labels, data, label, color) {
   if (_charts[id]) {
     _charts[id].data.labels = labels;
@@ -284,7 +295,7 @@ function buildOrUpdate(id, labels, data, label, color) {
         },
         y: {
           beginAtZero: false,
-          ticks: { font: { family: 'Poppins', size: 11 }, color: '#94A3B8', callback: v => v.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}) },
+          ticks: { font: { family: 'Poppins', size: 11 }, color: '#94A3B8', callback: yTickFmt },
           grid: { color: '#F1F5F9' },
         }
       },
