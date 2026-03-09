@@ -352,10 +352,22 @@ function renderHistoryTable(hist) {
   if (unitEl) unitEl.textContent = 'MYR / g';
 }
 
-// Reformat "YYYY-MM-DD HH:MM" → "DD/MM/YYYY HH:MM"
+// Format gviz datetime or plain string → "DD/MM/YYYY HH:MM"
 function fmtChangesTs(ts) {
-  const m = String(ts).match(/^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}:\d{2})/);
-  return m ? `${m[3]}/${m[2]}/${m[1]} ${m[4]}` : ts;
+  const s = String(ts);
+  // gviz encodes stored datetimes as "Date(year,month0,day,h,m,s)"
+  const gviz = s.match(/^Date\((\d+),(\d+),(\d+),(\d+),(\d+)/);
+  if (gviz) {
+    const y  = gviz[1];
+    const mo = String(parseInt(gviz[2], 10) + 1).padStart(2, '0');
+    const d  = String(gviz[3]).padStart(2, '0');
+    const hh = String(gviz[4]).padStart(2, '0');
+    const mi = String(gviz[5]).padStart(2, '0');
+    return `${d}/${mo}/${y} ${hh}:${mi}`;
+  }
+  // Fallback: plain "YYYY-MM-DD HH:MM" string
+  const plain = s.match(/^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}:\d{2})/);
+  return plain ? `${plain[3]}/${plain[2]}/${plain[1]} ${plain[4]}` : s;
 }
 
 function fmtDelta(val, prevVal, dec) {
