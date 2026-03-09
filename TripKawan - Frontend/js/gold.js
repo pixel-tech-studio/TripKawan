@@ -234,11 +234,20 @@ function renderCharts(rows) {
   buildOrUpdate('chart-xag', labels, rows.map(r => convertSpot(r.xag, r.fx)),  `Spot Silver ${unitLabel()}`,'#64748B');
 }
 
+function makeTickFmt(data) {
+  const hasDecimals = data.some(v => v !== null && Math.abs(v % 1) > 1e-9);
+  return hasDecimals
+    ? v => v.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})
+    : v => v.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0});
+}
+
 function buildOrUpdate(id, labels, data, label, color) {
+  const tickFmt = makeTickFmt(data);
   if (_charts[id]) {
     _charts[id].data.labels = labels;
     _charts[id].data.datasets[0].data = data;
     _charts[id].data.datasets[0].label = label;
+    _charts[id].options.scales.y.ticks.callback = tickFmt;
     _charts[id].update('none');
     return;
   }
@@ -284,7 +293,7 @@ function buildOrUpdate(id, labels, data, label, color) {
         },
         y: {
           beginAtZero: false,
-          ticks: { font: { family: 'Poppins', size: 11 }, color: '#94A3B8', callback: v => v.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}) },
+          ticks: { font: { family: 'Poppins', size: 11 }, color: '#94A3B8', callback: tickFmt },
           grid: { color: '#F1F5F9' },
         }
       },
