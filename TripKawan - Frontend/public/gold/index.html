@@ -284,7 +284,10 @@
         <span class="logo-icon">✈️</span>
         <span class="logo-text">TripKawan</span>
       </a>
-      <span style="margin-left:auto;font-size:var(--text-sm);color:#C9A227;font-weight:600;">Gold &amp; Silver Tracker</span>
+      <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:0.15rem;">
+        <span style="font-size:var(--text-sm);color:#C9A227;font-weight:600;">Gold &amp; Silver Tracker</span>
+        <span id="last-updated" style="font-size:var(--text-xs);color:var(--gray-400);">Loading...</span>
+      </div>
     </div>
   </nav>
 
@@ -295,7 +298,6 @@
       <h1>Gold &amp; <span>Silver</span> Prices</h1>
       <div class="dash-meta">
         <div class="dash-meta-left">
-          <span id="last-updated">Loading...</span>
           <div class="fx-inline">
             <span class="fx-inline-label">USD/MYR</span>
             <span class="fx-inline-val" id="val-fx">—</span>
@@ -405,6 +407,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="../js/gold.js?v=18"></script>
+  <script src="../js/gold.js?v=19"></script>
 </body>
 </html>
