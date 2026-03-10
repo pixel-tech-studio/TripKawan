@@ -51,6 +51,16 @@
       font-size: var(--text-sm);
       color: var(--gray-400);
     }
+    .dash-meta-left { display: flex; flex-direction: column; gap: 0.35rem; }
+    .fx-inline { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; }
+    .fx-inline-label {
+      font-size: var(--text-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--gray-400);
+    }
+    .fx-inline-val { font-size: var(--text-xl); font-weight: 800; color: var(--dark); }
 
     /* ── Controls (range + toggles) ── */
     .controls-row {
@@ -59,6 +69,7 @@
       flex-wrap: wrap;
       gap: var(--sp-md);
     }
+    .toggle-controls { display: flex; gap: var(--sp-md); margin-left: auto; }
     .range-controls {
       display: flex;
       gap: var(--sp-sm);
@@ -111,7 +122,7 @@
     /* ── Summary cards ── */
     .summary-cards {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: var(--sp-md);
       margin-bottom: var(--sp-xl);
     }
@@ -252,7 +263,7 @@
 
     /* ── Responsive ── */
     @media (max-width: 1024px) {
-      .summary-cards { grid-template-columns: repeat(3, 1fr); }
+      .summary-cards { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 768px) {
       .summary-cards { grid-template-columns: repeat(2, 1fr); }
@@ -283,7 +294,14 @@
     <div class="dash-header">
       <h1>Gold &amp; <span>Silver</span> Prices</h1>
       <div class="dash-meta">
-        <span id="last-updated">Loading...</span>
+        <div class="dash-meta-left">
+          <span id="last-updated">Loading...</span>
+          <div class="fx-inline">
+            <span class="fx-inline-label">USD/MYR</span>
+            <span class="fx-inline-val" id="val-fx">—</span>
+            <span class="card-delta" id="dlt-fx"></span>
+          </div>
+        </div>
         <div class="controls-row">
           <div class="range-controls">
             <button class="range-btn active" data-days="30">1M</button>
@@ -292,13 +310,15 @@
             <button class="range-btn" data-days="365">1Y</button>
             <button class="range-btn" data-days="0">All</button>
           </div>
-          <div class="toggle-group">
-            <button class="toggle-btn active" data-currency="MYR">MYR</button>
-            <button class="toggle-btn" data-currency="USD">USD</button>
-          </div>
-          <div class="toggle-group">
-            <button class="toggle-btn active" data-unit="g">/ g</button>
-            <button class="toggle-btn" data-unit="oz">/ oz</button>
+          <div class="toggle-controls">
+            <div class="toggle-group">
+              <button class="toggle-btn active" data-currency="MYR">MYR</button>
+              <button class="toggle-btn" data-currency="USD">USD</button>
+            </div>
+            <div class="toggle-group">
+              <button class="toggle-btn active" data-unit="g">/ g</button>
+              <button class="toggle-btn" data-unit="oz">/ oz</button>
+            </div>
           </div>
         </div>
       </div>
@@ -332,12 +352,6 @@
         <div class="card-value" id="val-xag">—</div>
         <div class="card-unit">USD / oz</div>
         <div class="card-delta" id="dlt-xag"></div>
-      </div>
-      <div class="summary-card">
-        <div class="card-label">USD / MYR</div>
-        <div class="card-value" id="val-fx">—</div>
-        <div class="card-unit">Rate</div>
-        <div class="card-delta" id="dlt-fx"></div>
       </div>
     </div>
 
@@ -393,6 +407,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="../js/gold.js?v=16"></script>
+  <script src="../js/gold.js?v=17"></script>
 </body>
 </html>
