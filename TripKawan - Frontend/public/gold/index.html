@@ -69,7 +69,6 @@
       flex-wrap: wrap;
       gap: var(--sp-md);
     }
-    .toggle-controls { display: flex; gap: var(--sp-md); margin-left: auto; }
     .range-controls {
       display: flex;
       gap: var(--sp-sm);
@@ -310,15 +309,13 @@
             <button class="range-btn" data-days="365">1Y</button>
             <button class="range-btn" data-days="0">All</button>
           </div>
-          <div class="toggle-controls">
-            <div class="toggle-group">
-              <button class="toggle-btn active" data-currency="MYR">MYR</button>
-              <button class="toggle-btn" data-currency="USD">USD</button>
-            </div>
-            <div class="toggle-group">
-              <button class="toggle-btn active" data-unit="g">/ g</button>
-              <button class="toggle-btn" data-unit="oz">/ oz</button>
-            </div>
+          <div class="toggle-group">
+            <button class="toggle-btn active" data-currency="MYR">MYR</button>
+            <button class="toggle-btn" data-currency="USD">USD</button>
+          </div>
+          <div class="toggle-group">
+            <button class="toggle-btn active" data-unit="g">/ g</button>
+            <button class="toggle-btn" data-unit="oz">/ oz</button>
           </div>
         </div>
       </div>
