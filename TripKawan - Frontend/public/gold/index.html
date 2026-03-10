@@ -6,7 +6,7 @@
   <title>Gold & Silver Prices — TripKawan</title>
   <meta name="robots" content="noindex" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥇</text></svg>" />
-  <meta name="theme-color" content="#0EA5E9" />
+  <meta name="theme-color" content="#C9A227" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,8 +14,12 @@
   <link rel="stylesheet" href="../css/styles.css" />
 
   <style>
-    /* ── Layout ── */
-    body { background: var(--off-white); }
+    /* ── Gold & Silver theme overrides ── */
+    body {
+      background: var(--off-white);
+      --gold-accent: #C9A227;
+      --gold-hover:  #A07D1C;
+    }
 
     .dash-container {
       max-width: 1200px;
@@ -33,7 +37,7 @@
       color: var(--dark);
       margin-bottom: var(--sp-xs);
     }
-    .dash-header h1 span { color: var(--teal); }
+    .dash-header h1 span { color: var(--gold-accent); }
     .dash-meta {
       display: flex;
       align-items: center;
@@ -71,10 +75,10 @@
       cursor: pointer;
       transition: all var(--transition);
     }
-    .range-btn:hover { border-color: var(--teal); color: var(--teal); }
+    .range-btn:hover { border-color: var(--gold-accent); color: var(--gold-accent); }
     .range-btn.active {
-      background: var(--teal);
-      border-color: var(--teal);
+      background: var(--gold-accent);
+      border-color: var(--gold-accent);
       color: var(--white);
     }
     /* Toggle pills */
@@ -98,7 +102,7 @@
       transition: all var(--transition);
     }
     .toggle-btn.active {
-      background: var(--teal);
+      background: var(--gold-accent);
       color: var(--white);
       box-shadow: var(--shadow-sm);
     }
@@ -268,7 +272,7 @@
         <span class="logo-icon">✈️</span>
         <span class="logo-text">TripKawan</span>
       </a>
-      <span style="margin-left:auto;font-size:var(--text-sm);color:var(--gray-400);font-weight:600;">Gold &amp; Silver Tracker</span>
+      <span style="margin-left:auto;font-size:var(--text-sm);color:#C9A227;font-weight:600;">Gold &amp; Silver Tracker</span>
     </div>
   </nav>
 
@@ -388,6 +392,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="../js/gold.js?v=15"></script>
+  <script src="../js/gold.js?v=16"></script>
 </body>
 </html>

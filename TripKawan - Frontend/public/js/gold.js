@@ -231,9 +231,9 @@ function renderCharts(rows) {
     return `${d}/${mo}/${y}`;
   });
 
-  buildOrUpdate('chart-gap', labels, rows.map(r => convertPG(r.gap, r.fx)),    `GAP ${unitLabel()}`,       '#F59E0B');
+  buildOrUpdate('chart-gap', labels, rows.map(r => convertPG(r.gap, r.fx)),    `GAP ${unitLabel()}`,       '#9B1C1C');
   buildOrUpdate('chart-sap', labels, rows.map(r => convertPG(r.sap, r.fx)),    `SAP ${unitLabel()}`,       '#94A3B8');
-  buildOrUpdate('chart-xau', labels, rows.map(r => convertSpot(r.xau, r.fx)),  `Spot Gold ${unitLabel()}`, '#F97316');
+  buildOrUpdate('chart-xau', labels, rows.map(r => convertSpot(r.xau, r.fx)),  `Spot Gold ${unitLabel()}`, '#D97706');
   buildOrUpdate('chart-xag', labels, rows.map(r => convertSpot(r.xag, r.fx)),  `Spot Silver ${unitLabel()}`,'#64748B');
 }
 
