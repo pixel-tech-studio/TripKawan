@@ -186,10 +186,10 @@ function updateCards(rows) {
   const fx = latest.fx;
 
   setCard('gap', convertPG(latest.gap, fx),    convertPG(prev?.gap, prev?.fx),    2);
-  setCard('sap', convertPG(latest.sap, fx),    convertPG(prev?.sap, prev?.fx),    4);
+  setCard('sap', convertPG(latest.sap, fx),    convertPG(prev?.sap, prev?.fx),    2);
   setCard('xau', convertSpot(latest.xau, fx),  convertSpot(prev?.xau, prev?.fx),  2);
-  setCard('xag', convertSpot(latest.xag, fx),  convertSpot(prev?.xag, prev?.fx),  4);
-  setCard('fx',  latest.fx,                    prev?.fx,                           4);
+  setCard('xag', convertSpot(latest.xag, fx),  convertSpot(prev?.xag, prev?.fx),  2);
+  setCard('fx',  latest.fx,                    prev?.fx,                           2);
 
   // Update card unit labels
   const lbl = `${_currency} / ${_unit}`;
@@ -286,7 +286,7 @@ function buildOrUpdate(id, labels, data, label, color) {
           callbacks: {
             label: ctx => {
               const v = ctx.parsed.y;
-              return v !== null ? `${ctx.dataset.label}: ${v.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}` : 'N/A';
+              return v !== null ? `${ctx.dataset.label}: ${v.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : 'N/A';
             }
           }
         }
@@ -343,8 +343,8 @@ function renderHistoryTable(hist) {
       `<td>${fmtChangesTs(row.ts)}</td>` +
       `<td>${row.gap !== null ? row.gap.toFixed(2) : '—'}</td>` +
       `<td>${fmtDelta(row.gap, older?.gap ?? null, 2)}</td>` +
-      `<td>${row.sap !== null ? row.sap.toFixed(4) : '—'}</td>` +
-      `<td>${fmtDelta(row.sap, older?.sap ?? null, 4)}</td>`;
+      `<td>${row.sap !== null ? row.sap.toFixed(2) : '—'}</td>` +
+      `<td>${fmtDelta(row.sap, older?.sap ?? null, 2)}</td>`;
     tbody.appendChild(tr);
   });
 
