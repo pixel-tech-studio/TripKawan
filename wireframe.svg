@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="870" viewBox="0 0 1500 870">
+  <defs>
+    <marker id="a1" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,9 3.5,0 7" fill="#2563EB"/>
+    </marker>
+    <marker id="a2" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,9 3.5,0 7" fill="#16A34A"/>
+    </marker>
+    <marker id="a3" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,9 3.5,0 7" fill="#D97706"/>
+    </marker>
+  </defs>
+
+  <!-- ── Background ── -->
+  <rect width="1500" height="870" fill="#EFF1F5"/>
+
+  <!-- ── Title ── -->
+  <text x="750" y="30" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="16" font-weight="700" fill="#0F172A">Data Flow Wireframe — tripkawan.my/gold</text>
+
+  <!-- ══════════════════════════════════════════════
+       LEFT PANEL: Data Sources
+  ══════════════════════════════════════════════ -->
+
+  <!-- ① Vercel Edge Function -->
+  <rect x="14" y="198" width="305" height="84" rx="10" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="166" y="221" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="12" font-weight="700" fill="#1E3A8A">① Vercel Edge Function</text>
+  <text x="166" y="239" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#1D4ED8">/api/pg-prices.js</text>
+  <text x="166" y="256" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#2563EB">Fetches publicgold.com.my on every page load</text>
+  <text x="166" y="272" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#2563EB">Returns: GAP · SAP · Spot Gold · Spot Silver · FX</text>
+
+  <!-- ② GH Actions → Changes tab -->
+  <rect x="14" y="346" width="305" height="102" rx="10" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="166" y="368" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="12" font-weight="700" fill="#14532D">② GitHub Actions  ⏰ Every 20 min</text>
+  <text x="166" y="386" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#166534">hourly_scrape.py · scrapes all 3 sources</text>
+  <text x="166" y="402" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#166534">→ Google Sheets: Changes tab</text>
+  <text x="166" y="418" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#15803D">Only writes when GAP or SAP changed</text>
+  <text x="166" y="436" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#15803D">Keeps max 10 rows · auto-deletes oldest</text>
+
+  <!-- ③ GH Actions → Daily tab -->
+  <rect x="14" y="578" width="305" height="102" rx="10" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="166" y="600" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="12" font-weight="700" fill="#78350F">③ GitHub Actions  🌙 Daily 12:05 AM</text>
+  <text x="166" y="618" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#92400E">daily_sync.py · scrapes all 3 sources</text>
+  <text x="166" y="634" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#92400E">→ Google Sheets: Daily tab</text>
+  <text x="166" y="650" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#D97706">One row per day · unlimited history</text>
+  <text x="166" y="666" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#D97706">Powers all 4 historical charts</text>
+
+  <!-- ══════════════════════════════════════════════
+       BROWSER FRAME
+  ══════════════════════════════════════════════ -->
+
+  <!-- Outer browser shell -->
+  <rect x="345" y="44" width="1140" height="806" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="2"/>
+
+  <!-- Browser chrome (address bar area) -->
+  <rect x="345" y="44" width="1140" height="40" rx="12" fill="#E2E8F0"/>
+  <rect x="345" y="64" width="1140" height="20" fill="#E2E8F0"/>
+  <!-- Address bar -->
+  <rect x="560" y="52" width="510" height="22" rx="11" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+  <text x="815" y="67" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="11" fill="#475569">tripkawan.my/gold</text>
+  <!-- Dots -->
+  <circle cx="375" cy="63" r="5" fill="#EF4444"/>
+  <circle cx="395" cy="63" r="5" fill="#F59E0B"/>
+  <circle cx="415" cy="63" r="5" fill="#22C55E"/>
+
+  <!-- ── NAVBAR ── -->
+  <rect x="345" y="84" width="1140" height="42" fill="#0F172A"/>
+  <text x="1280" y="110" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="12" font-weight="600" fill="#C9A227">Gold &amp; Silver Tracker</text>
+
+  <!-- ── HEADER + CONTROLS ── -->
+  <rect x="345" y="126" width="1140" height="80" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1"/>
+  <!-- H1 -->
+  <text x="390" y="158" font-family="'Segoe UI',Arial,sans-serif" font-size="20" font-weight="800" fill="#0F172A">Gold &amp; </text>
+  <text x="476" y="158" font-family="'Segoe UI',Arial,sans-serif" font-size="20" font-weight="800" fill="#C9A227">Silver</text>
+  <text x="534" y="158" font-family="'Segoe UI',Arial,sans-serif" font-size="20" font-weight="800" fill="#0F172A"> Prices</text>
+  <text x="390" y="176" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#94A3B8">Last updated: 10/03/2026 01:03 MYT</text>
+  <!-- Range buttons -->
+  <rect x="820" y="142" width="38" height="24" rx="12" fill="#C9A227"/>
+  <text x="839" y="158" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" font-weight="700" fill="#FFF">1M</text>
+  <rect x="864" y="142" width="38" height="24" rx="12" fill="#FFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="883" y="158" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#64748B">3M</text>
+  <rect x="908" y="142" width="38" height="24" rx="12" fill="#FFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="927" y="158" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#64748B">6M</text>
+  <rect x="952" y="142" width="38" height="24" rx="12" fill="#FFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="971" y="158" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#64748B">1Y</text>
+  <rect x="996" y="142" width="38" height="24" rx="12" fill="#FFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="1015" y="158" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#64748B">All</text>
+  <!-- Currency toggle -->
+  <rect x="1048" y="140" width="88" height="28" rx="14" fill="#F1F5F9"/>
+  <rect x="1051" y="143" width="40" height="22" rx="11" fill="#C9A227"/>
+  <text x="1071" y="158" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" font-weight="700" fill="#FFF">MYR</text>
+  <text x="1115" y="158" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#64748B">USD</text>
+  <!-- Unit toggle -->
+  <rect x="1148" y="140" width="88" height="28" rx="14" fill="#F1F5F9"/>
+  <rect x="1151" y="143" width="40" height="22" rx="11" fill="#C9A227"/>
+  <text x="1171" y="158" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" font-weight="700" fill="#FFF">/ g</text>
+  <text x="1215" y="158" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#64748B">/ oz</text>
+
+  <!-- ── LIVE PRICE CARDS ── (5 cards) -->
+  <!-- Label badge -->
+  <rect x="1255" y="213" width="210" height="20" rx="10" fill="#DBEAFE"/>
+  <text x="1360" y="226" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#1D4ED8" font-weight="600">① from Vercel Edge Function</text>
+
+  <!-- Card 1: GAP -->
+  <rect x="365" y="220" width="200" height="88" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <rect x="365" y="220" width="200" height="4" rx="2" fill="#9B1C1C"/>
+  <text x="378" y="242" font-family="'Segoe UI',Arial,sans-serif" font-size="9" font-weight="700" fill="#94A3B8">GAP (GOLD)</text>
+  <text x="378" y="268" font-family="'Segoe UI',Arial,sans-serif" font-size="22" font-weight="800" fill="#0F172A">706.00</text>
+  <text x="378" y="284" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#94A3B8">MYR / g</text>
+  <text x="378" y="300" font-family="'Segoe UI',Arial,sans-serif" font-size="10" font-weight="600" fill="#EF4444">▼ -8.00 (-1.12%)</text>
+
+  <!-- Card 2: SAP -->
+  <rect x="581" y="220" width="200" height="88" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <rect x="581" y="220" width="200" height="4" rx="2" fill="#94A3B8"/>
+  <text x="594" y="242" font-family="'Segoe UI',Arial,sans-serif" font-size="9" font-weight="700" fill="#94A3B8">SAP (SILVER)</text>
+  <text x="594" y="268" font-family="'Segoe UI',Arial,sans-serif" font-size="22" font-weight="800" fill="#0F172A">13.65</text>
+  <text x="594" y="284" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#94A3B8">MYR / g</text>
+  <text x="594" y="300" font-family="'Segoe UI',Arial,sans-serif" font-size="10" font-weight="600" fill="#22C55E">▲ +0.02 (0.15%)</text>
+
+  <!-- Card 3: Spot Gold -->
+  <rect x="797" y="220" width="200" height="88" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <rect x="797" y="220" width="200" height="4" rx="2" fill="#D97706"/>
+  <text x="810" y="242" font-family="'Segoe UI',Arial,sans-serif" font-size="9" font-weight="700" fill="#94A3B8">SPOT GOLD</text>
+  <text x="810" y="268" font-family="'Segoe UI',Arial,sans-serif" font-size="22" font-weight="800" fill="#0F172A">650.26</text>
+  <text x="810" y="284" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#94A3B8">MYR / g</text>
+  <text x="810" y="300" font-family="'Segoe UI',Arial,sans-serif" font-size="10" font-weight="600" fill="#EF4444">▼ -5.49 (-0.84%)</text>
+
+  <!-- Card 4: Spot Silver -->
+  <rect x="1013" y="220" width="200" height="88" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <rect x="1013" y="220" width="200" height="4" rx="2" fill="#64748B"/>
+  <text x="1026" y="242" font-family="'Segoe UI',Arial,sans-serif" font-size="9" font-weight="700" fill="#94A3B8">SPOT SILVER</text>
+  <text x="1026" y="268" font-family="'Segoe UI',Arial,sans-serif" font-size="22" font-weight="800" fill="#0F172A">10.81</text>
+  <text x="1026" y="284" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#94A3B8">MYR / g</text>
+  <text x="1026" y="300" font-family="'Segoe UI',Arial,sans-serif" font-size="10" font-weight="600" fill="#22C55E">▲ +0.09 (0.80%)</text>
+
+  <!-- Card 5: USD/MYR -->
+  <rect x="1229" y="220" width="200" height="88" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <rect x="1229" y="220" width="200" height="4" rx="2" fill="#C9A227"/>
+  <text x="1242" y="242" font-family="'Segoe UI',Arial,sans-serif" font-size="9" font-weight="700" fill="#94A3B8">USD / MYR</text>
+  <text x="1242" y="268" font-family="'Segoe UI',Arial,sans-serif" font-size="22" font-weight="800" fill="#0F172A">3.96</text>
+  <text x="1242" y="284" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#94A3B8">Rate</text>
+  <text x="1242" y="300" font-family="'Segoe UI',Arial,sans-serif" font-size="10" font-weight="600" fill="#22C55E">▲ +0.02 (0.46%)</text>
+
+  <!-- ── RECENT PRICE CHANGES ── -->
+  <!-- Label badge -->
+  <rect x="1255" y="368" width="210" height="20" rx="10" fill="#DCFCE7"/>
+  <text x="1360" y="381" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#15803D" font-weight="600">② from GH Actions → Changes tab</text>
+
+  <rect x="365" y="328" width="1064" height="176" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <!-- Table header -->
+  <rect x="365" y="328" width="1064" height="32" rx="8" fill="#F8FAFC"/>
+  <rect x="365" y="348" width="1064" height="12" fill="#F8FAFC"/>
+  <text x="385" y="349" font-family="'Segoe UI',Arial,sans-serif" font-size="10" font-weight="700" fill="#0F172A">Recent Price Changes</text>
+  <text x="1385" y="349" text-anchor="end" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#94A3B8">MYR / g</text>
+  <!-- Col headers -->
+  <line x1="365" y1="360" x2="1429" y2="360" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="385" y="375" font-family="'Segoe UI',Arial,sans-serif" font-size="9" font-weight="700" fill="#94A3B8">DATE / TIME (MYT)</text>
+  <text x="650" y="375" font-family="'Segoe UI',Arial,sans-serif" font-size="9" font-weight="700" fill="#94A3B8">GAP</text>
+  <text x="800" y="375" font-family="'Segoe UI',Arial,sans-serif" font-size="9" font-weight="700" fill="#94A3B8">Δ GAP</text>
+  <text x="950" y="375" font-family="'Segoe UI',Arial,sans-serif" font-size="9" font-weight="700" fill="#94A3B8">SAP</text>
+  <text x="1100" y="375" font-family="'Segoe UI',Arial,sans-serif" font-size="9" font-weight="700" fill="#94A3B8">Δ SAP</text>
+  <!-- Row 1 -->
+  <line x1="365" y1="383" x2="1429" y2="383" stroke="#F1F5F9" stroke-width="1"/>
+  <text x="385" y="396" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">10/03/2026 09:07</text>
+  <text x="650" y="396" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">711.00</text>
+  <text x="800" y="396" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#94A3B8">—</text>
+  <text x="950" y="396" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">14.05</text>
+  <text x="1100" y="396" font-family="'Segoe UI',Arial,sans-serif" font-size="10" font-weight="600" fill="#EF4444">▼ -0.08</text>
+  <!-- Row 2 -->
+  <line x1="365" y1="404" x2="1429" y2="404" stroke="#F1F5F9" stroke-width="1"/>
+  <text x="385" y="417" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">10/03/2026 04:01</text>
+  <text x="650" y="417" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">711.00</text>
+  <text x="800" y="417" font-family="'Segoe UI',Arial,sans-serif" font-size="10" font-weight="600" fill="#22C55E">▲ +5.00</text>
+  <text x="950" y="417" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">13.95</text>
+  <text x="1100" y="417" font-family="'Segoe UI',Arial,sans-serif" font-size="10" font-weight="600" fill="#22C55E">▲ +0.07</text>
+  <!-- Row 3 -->
+  <line x1="365" y1="425" x2="1429" y2="425" stroke="#F1F5F9" stroke-width="1"/>
+  <text x="385" y="438" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">10/03/2026 00:47</text>
+  <text x="650" y="438" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">706.00</text>
+  <text x="800" y="438" font-family="'Segoe UI',Arial,sans-serif" font-size="10" font-weight="600" fill="#22C55E">▲ +4.00</text>
+  <text x="950" y="438" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">13.65</text>
+  <text x="1100" y="438" font-family="'Segoe UI',Arial,sans-serif" font-size="10" font-weight="600" fill="#22C55E">▲ +0.01</text>
+  <!-- Row 4 -->
+  <line x1="365" y1="446" x2="1429" y2="446" stroke="#F1F5F9" stroke-width="1"/>
+  <text x="385" y="459" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">09/03/2026 23:51</text>
+  <text x="650" y="459" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">702.00</text>
+  <text x="800" y="459" font-family="'Segoe UI',Arial,sans-serif" font-size="10" font-weight="600" fill="#EF4444">▼ -5.00</text>
+  <text x="950" y="459" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">13.64</text>
+  <text x="1100" y="459" font-family="'Segoe UI',Arial,sans-serif" font-size="10" font-weight="600" fill="#EF4444">▼ -0.03</text>
+  <!-- Row 5 -->
+  <line x1="365" y1="467" x2="1429" y2="467" stroke="#F1F5F9" stroke-width="1"/>
+  <text x="385" y="480" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">09/03/2026 21:49</text>
+  <text x="650" y="480" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">707.00</text>
+  <text x="800" y="480" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#94A3B8">—</text>
+  <text x="950" y="480" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">13.67</text>
+  <text x="1100" y="480" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#94A3B8">—</text>
+  <!-- dots -->
+  <text x="900" y="497" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="11" fill="#CBD5E1">· · · up to 10 rows · · ·</text>
+
+  <!-- ── CHARTS 2×2 ── -->
+  <!-- Label badge -->
+  <rect x="1255" y="528" width="210" height="20" rx="10" fill="#FEF3C7"/>
+  <text x="1360" y="541" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#D97706" font-weight="600">③ from GH Actions → Daily tab</text>
+
+  <!-- Chart 1: GAP -->
+  <rect x="365" y="520" width="510" height="180" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="385" y="543" font-family="'Segoe UI',Arial,sans-serif" font-size="11" font-weight="700" fill="#0F172A">GAP — Gold Accumulation Price</text>
+  <text x="385" y="560" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#94A3B8">(MYR/g)</text>
+  <!-- Sketched chart line - GAP maroon -->
+  <polyline points="390,680 440,660 490,655 540,665 590,640 640,645 660,640 700,635 740,625 800,615 840,600 865,610" fill="none" stroke="#9B1C1C" stroke-width="2.5" stroke-linejoin="round"/>
+  <rect x="390" y="570" width="475" height="110" rx="4" fill="#FFF5F5" opacity="0.4"/>
+  <!-- Y axis labels -->
+  <text x="393" y="580" font-family="'Segoe UI',Arial,sans-serif" font-size="8" fill="#CBD5E1">714</text>
+  <text x="393" y="618" font-family="'Segoe UI',Arial,sans-serif" font-size="8" fill="#CBD5E1">710</text>
+  <text x="393" y="658" font-family="'Segoe UI',Arial,sans-serif" font-size="8" fill="#CBD5E1">706</text>
+  <text x="393" y="688" font-family="'Segoe UI',Arial,sans-serif" font-size="8" fill="#CBD5E1">702</text>
+  <!-- X axis labels -->
+  <text x="420" y="698" font-family="'Segoe UI',Arial,sans-serif" font-size="8" fill="#CBD5E1">09/02</text>
+  <text x="570" y="698" font-family="'Segoe UI',Arial,sans-serif" font-size="8" fill="#CBD5E1">24/02</text>
+  <text x="730" y="698" font-family="'Segoe UI',Arial,sans-serif" font-size="8" fill="#CBD5E1">09/03</text>
+
+  <!-- Chart 2: SAP -->
+  <rect x="891" y="520" width="538" height="180" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="911" y="543" font-family="'Segoe UI',Arial,sans-serif" font-size="11" font-weight="700" fill="#0F172A">SAP — Silver Accumulation Price</text>
+  <text x="911" y="560" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#94A3B8">(MYR/g)</text>
+  <!-- Sketched chart line - SAP silver -->
+  <polyline points="916,680 960,670 1010,665 1060,660 1110,650 1160,645 1210,648 1260,640 1310,632 1360,628 1400,620" fill="none" stroke="#94A3B8" stroke-width="2.5" stroke-linejoin="round"/>
+  <rect x="916" y="570" width="500" height="110" rx="4" fill="#F8FAFC" opacity="0.5"/>
+  <text x="920" y="580" font-family="'Segoe UI',Arial,sans-serif" font-size="8" fill="#CBD5E1">13.8</text>
+  <text x="920" y="630" font-family="'Segoe UI',Arial,sans-serif" font-size="8" fill="#CBD5E1">13.6</text>
+  <text x="920" y="680" font-family="'Segoe UI',Arial,sans-serif" font-size="8" fill="#CBD5E1">13.4</text>
+  <text x="940" y="698" font-family="'Segoe UI',Arial,sans-serif" font-size="8" fill="#CBD5E1">09/02</text>
+  <text x="1150" y="698" font-family="'Segoe UI',Arial,sans-serif" font-size="8" fill="#CBD5E1">24/02</text>
+  <text x="1360" y="698" font-family="'Segoe UI',Arial,sans-serif" font-size="8" fill="#CBD5E1">09/03</text>
+
+  <!-- Chart 3: Spot Gold -->
+  <rect x="365" y="716" width="510" height="110" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="385" y="736" font-family="'Segoe UI',Arial,sans-serif" font-size="11" font-weight="700" fill="#0F172A">Spot Gold</text>
+  <text x="385" y="752" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#94A3B8">(USD/oz)</text>
+  <polyline points="390,810 440,800 490,795 540,790 600,785 660,775 710,770 760,768 820,760 860,758" fill="none" stroke="#D97706" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- Chart 4: Spot Silver -->
+  <rect x="891" y="716" width="538" height="110" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="911" y="736" font-family="'Segoe UI',Arial,sans-serif" font-size="11" font-weight="700" fill="#0F172A">Spot Silver</text>
+  <text x="911" y="752" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#94A3B8">(USD/oz)</text>
+  <polyline points="916,810 970,805 1020,800 1070,790 1120,785 1170,775 1220,770 1270,768 1330,762 1390,758" fill="none" stroke="#64748B" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- ── FOOTER ── -->
+  <rect x="345" y="832" width="1140" height="18" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="915" y="844" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#94A3B8">Data via Public Gold Malaysia &amp; gold-api.com · Updated daily at 12:05 AM MYT</text>
+
+  <!-- ══════════════════════════════════════════════
+       DATA FLOW ARROWS (left panel → browser sections)
+  ══════════════════════════════════════════════ -->
+
+  <!-- ① Blue: Edge Function → Cards -->
+  <line x1="319" y1="240" x2="363" y2="255" stroke="#2563EB" stroke-width="2" marker-end="url(#a1)" stroke-dasharray="5,3"/>
+
+  <!-- ② Green: GH Actions Changes → History table -->
+  <line x1="319" y1="397" x2="363" y2="415" stroke="#16A34A" stroke-width="2" marker-end="url(#a2)" stroke-dasharray="5,3"/>
+
+  <!-- ③ Amber: GH Actions Daily → Charts -->
+  <line x1="319" y1="629" x2="363" y2="613" stroke="#D97706" stroke-width="2" marker-end="url(#a3)" stroke-dasharray="5,3"/>
+
+  <!-- ══════════════════════════════════════════════
+       LEGEND
+  ══════════════════════════════════════════════ -->
+  <rect x="14" y="710" width="305" height="130" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="166" y="732" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="11" font-weight="700" fill="#0F172A">Legend</text>
+
+  <rect x="30" y="742" width="10" height="10" rx="2" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="48" y="751" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">① Real-time · Vercel Edge Function · page load</text>
+
+  <rect x="30" y="762" width="10" height="10" rx="2" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="48" y="771" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">② Intraday · GH Actions every 20 min · Changes tab</text>
+
+  <rect x="30" y="782" width="10" height="10" rx="2" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <text x="48" y="791" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">③ Historical · GH Actions daily · Daily tab</text>
+
+  <line x1="30" y1="812" x2="70" y2="812" stroke="#64748B" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="78" y="816" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">Data flow arrow</text>
+
+  <rect x="30" y="826" width="10" height="10" rx="2" fill="#0F172A"/>
+  <text x="48" y="835" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">Card top-border color = chart line color</text>
+
+</svg>

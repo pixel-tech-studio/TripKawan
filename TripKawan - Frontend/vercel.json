@@ -1,18 +1,5 @@
 {
   "outputDirectory": "public",
-  "redirects": [
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "tripkawan.vercel.app"
-        }
-      ],
-      "destination": "https://tripkawan.my/:path*",
-      "permanent": true
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",

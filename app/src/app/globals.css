@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Typography */
+  --font-sans: var(--font-poppins);
+
+  /* Primary palette — Ocean Blue & Sunset Orange */
+  --color-teal-50: #f0f9ff;
+  --color-teal-100: #e0f2fe;
+  --color-teal-200: #bae6fd;
+  --color-teal-300: #7dd3fc;
+  --color-teal-400: #38bdf8;
+  --color-teal-500: #0ea5e9;
+  --color-teal-600: #0284c7;
+  --color-teal-700: #0369a1;
+  --color-teal-800: #075985;
+  --color-teal-900: #0c4a6e;
+
+  --color-coral-50: #fff7ed;
+  --color-coral-100: #ffedd5;
+  --color-coral-200: #fed7aa;
+  --color-coral-300: #fdba74;
+  --color-coral-400: #fb923c;
+  --color-coral-500: #f97316;
+  --color-coral-600: #ea580c;
+  --color-coral-700: #c2410c;
+  --color-coral-800: #9a3412;
+  --color-coral-900: #7c2d12;
+
+  /* Warm background — sand / off-white */
+  --color-sand-50: #fefdfb;
+  --color-sand-100: #fdf9f3;
+  --color-sand-200: #faf3e8;
+  --color-sand-300: #f5ead6;
+
+  /* Ledger colors — low anxiety */
+  --color-expense: #f97316;
+  --color-settled: #4ade80;
+
+  /* Shadows */
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.05);
+
+  /* Radius */
+  --radius-card: 16px;
+}
+
+:root {
+  --background: #fefdfb;
+  --foreground: #1a1a1a;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-poppins), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Bottom nav safe area for mobile */
+.pb-nav {
+  padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* Bottom sheet slide-up animation */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slideUp {
+  animation: slideUp 0.25s ease-out;
+}

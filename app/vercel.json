@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "https://tripkawan.vercel.app/" },
+    { "source": "/css/:path*", "destination": "https://tripkawan.vercel.app/css/:path*" },
+    { "source": "/js/:path*", "destination": "https://tripkawan.vercel.app/js/:path*" },
+    { "source": "/gold/:path*", "destination": "https://tripkawan.vercel.app/gold/:path*" },
+    { "source": "/manifest.json", "destination": "https://tripkawan.vercel.app/manifest.json" },
+    { "source": "/og-image.jpg", "destination": "https://tripkawan.vercel.app/og-image.jpg" },
+    { "source": "/robots.txt", "destination": "https://tripkawan.vercel.app/robots.txt" },
+    { "source": "/sitemap.xml", "destination": "https://tripkawan.vercel.app/sitemap.xml" }
+  ]
+}

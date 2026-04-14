@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1350" height="680" viewBox="0 0 1350 680">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#64748B"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1350" height="680" fill="#F8F9FA" rx="14"/>
+
+  <!-- Title -->
+  <text x="675" y="33" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="19" font-weight="700" fill="#0F172A">tripkawan.my/gold — System Architecture</text>
+  <text x="675" y="52" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="11" fill="#64748B">How live prices and historical data reach the browser</text>
+
+  <!-- Column Headers -->
+  <text x="135" y="67" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="9" font-weight="700" letter-spacing="1.2" fill="#94A3B8">DATA SOURCES</text>
+  <text x="435" y="67" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="9" font-weight="700" letter-spacing="1.2" fill="#94A3B8">INGESTION</text>
+  <text x="745" y="67" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="9" font-weight="700" letter-spacing="1.2" fill="#94A3B8">STORAGE</text>
+  <text x="1107" y="67" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="9" font-weight="700" letter-spacing="1.2" fill="#94A3B8">BROWSER (tripkawan.my/gold)</text>
+
+  <!-- ══════ SECTION 1: Real-time ══════ -->
+  <rect x="20" y="74" width="120" height="18" rx="9" fill="#DBEAFE"/>
+  <text x="80" y="86" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#1D4ED8" font-weight="600">⚡ Real-time</text>
+
+  <!-- publicgold.com.my [row 1] -->
+  <rect x="20" y="100" width="230" height="76" rx="8" fill="#EDE9FE" stroke="#7C3AED" stroke-width="1.5"/>
+  <text x="135" y="124" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="13" font-weight="700" fill="#4C1D95">publicgold.com.my</text>
+  <text x="135" y="143" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="11" fill="#6D28D9">GAP &amp; SAP sell prices</text>
+  <text x="135" y="161" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#7C3AED">server-side rendered HTML</text>
+
+  <!-- → Edge Function -->
+  <line x1="250" y1="138" x2="318" y2="138" stroke="#64748B" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Edge Function box -->
+  <rect x="320" y="96" width="230" height="84" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="435" y="119" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="12" font-weight="700" fill="#1E3A8A">Vercel Edge Function</text>
+  <text x="435" y="137" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="11" fill="#1D4ED8">/api/pg-prices.js</text>
+  <text x="435" y="154" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#2563EB">curl_cffi Chrome impersonation</text>
+  <text x="435" y="170" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#2563EB">Cache-Control: no-store</text>
+
+  <!-- Edge Function → Live Cards (dashed, skips storage) -->
+  <line x1="550" y1="138" x2="883" y2="138" stroke="#64748B" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arr)"/>
+  <text x="716" y="128" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#94A3B8">JSON · no cache</text>
+
+  <!-- Live Price Cards (Browser) -->
+  <rect x="885" y="92" width="445" height="92" rx="8" fill="#FEF9C3" stroke="#C9A227" stroke-width="2"/>
+  <text x="1107" y="115" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="12" font-weight="700" fill="#78350F">Live Price Cards (5 cards)</text>
+  <text x="1107" y="134" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#92400E">GAP · SAP · Spot Gold · Spot Silver · USD/MYR</text>
+  <text x="1107" y="152" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#92400E">Current value + day-over-day delta · MYR or USD · /g or /oz</text>
+  <text x="1107" y="170" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#C9A227">Fetched fresh on every page load</text>
+
+  <!-- ══════ DIVIDER ══════ -->
+  <line x1="20" y1="204" x2="1330" y2="204" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="5,5"/>
+
+  <!-- Scheduled label -->
+  <rect x="20" y="212" width="258" height="18" rx="9" fill="#DCFCE7"/>
+  <text x="149" y="224" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#15803D" font-weight="600">🕐 Scheduled — GitHub Actions (pg-tracker repo)</text>
+
+  <!-- ══════ DATA SOURCES [scheduled] ══════ -->
+
+  <!-- publicgold.com.my [row 2] -->
+  <rect x="20" y="240" width="230" height="76" rx="8" fill="#EDE9FE" stroke="#7C3AED" stroke-width="1.5"/>
+  <text x="135" y="263" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="13" font-weight="700" fill="#4C1D95">publicgold.com.my</text>
+  <text x="135" y="282" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="11" fill="#6D28D9">GAP &amp; SAP sell prices</text>
+  <text x="135" y="300" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#7C3AED">curl_cffi Chrome impersonation</text>
+
+  <!-- gold-api.com -->
+  <rect x="20" y="332" width="230" height="76" rx="8" fill="#EDE9FE" stroke="#7C3AED" stroke-width="1.5"/>
+  <text x="135" y="355" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="13" font-weight="700" fill="#4C1D95">gold-api.com</text>
+  <text x="135" y="374" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="11" fill="#6D28D9">XAU — Spot Gold (USD/oz)</text>
+  <text x="135" y="393" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="11" fill="#6D28D9">XAG — Spot Silver (USD/oz)</text>
+
+  <!-- Yahoo Finance -->
+  <rect x="20" y="424" width="230" height="76" rx="8" fill="#EDE9FE" stroke="#7C3AED" stroke-width="1.5"/>
+  <text x="135" y="447" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="13" font-weight="700" fill="#4C1D95">Yahoo Finance</text>
+  <text x="135" y="466" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="11" fill="#6D28D9">MYR=X ticker</text>
+  <text x="135" y="485" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="11" fill="#6D28D9">USD / MYR exchange rate</text>
+
+  <!-- Arrows sources → GH Actions -->
+  <line x1="250" y1="278" x2="318" y2="315" stroke="#64748B" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="250" y1="370" x2="318" y2="375" stroke="#64748B" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="250" y1="462" x2="318" y2="435" stroke="#64748B" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ══════ GITHUB ACTIONS ══════ -->
+  <rect x="320" y="240" width="230" height="282" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="435" y="265" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="13" font-weight="700" fill="#14532D">GitHub Actions</text>
+  <text x="435" y="282" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#166534">pg-tracker repository</text>
+  <line x1="335" y1="293" x2="535" y2="293" stroke="#86EFAC" stroke-width="1"/>
+
+  <text x="435" y="309" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="11" font-weight="700" fill="#15803D">⏰ Every 20 min  (*/20 * * * *)</text>
+  <text x="435" y="326" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#166534">hourly_scrape.py</text>
+  <text x="435" y="343" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#166534">scrape_pg_prices()</text>
+  <text x="435" y="360" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#166534">fetch_market_data()</text>
+  <text x="435" y="377" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#166534">→ Intraday tab</text>
+  <text x="435" y="393" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#166534">→ Changes tab (if price changed)</text>
+  <line x1="335" y1="404" x2="535" y2="404" stroke="#86EFAC" stroke-width="1"/>
+
+  <text x="435" y="420" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="11" font-weight="700" fill="#15803D">🌙 Daily 12:05 AM MYT</text>
+  <text x="435" y="437" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#166534">daily_sync.py</text>
+  <text x="435" y="454" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#166534">scrape_pg_prices()</text>
+  <text x="435" y="471" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#166534">fetch_market_data()</text>
+  <text x="435" y="488" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#166534">→ Daily tab</text>
+  <line x1="335" y1="499" x2="535" y2="499" stroke="#86EFAC" stroke-width="1"/>
+  <text x="435" y="514" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#166534">Writes via gspread (Service Account)</text>
+
+  <!-- GH Actions → Google Sheets -->
+  <line x1="550" y1="381" x2="618" y2="381" stroke="#64748B" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ══════ GOOGLE SHEETS ══════ -->
+  <rect x="620" y="240" width="240" height="282" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <text x="740" y="265" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="13" font-weight="700" fill="#78350F">Google Sheets</text>
+  <text x="740" y="281" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#92400E">Public read via gviz API</text>
+
+  <!-- Daily tab -->
+  <rect x="635" y="294" width="210" height="72" rx="6" fill="#FDE68A" stroke="#F59E0B" stroke-width="1.5"/>
+  <text x="740" y="314" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="11" font-weight="700" fill="#78350F">Daily tab</text>
+  <text x="740" y="332" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#92400E">Date · GAP · SAP · Spot Gold</text>
+  <text x="740" y="349" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#92400E">Spot Silver · USD/MYR</text>
+  <text x="740" y="361" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#D97706">written once/day · unlimited rows</text>
+
+  <!-- Intraday tab -->
+  <rect x="635" y="376" width="210" height="52" rx="6" fill="#FDE68A" stroke="#F59E0B" stroke-width="1.5"/>
+  <text x="740" y="396" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="11" font-weight="700" fill="#78350F">Intraday tab</text>
+  <text x="740" y="415" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#92400E">Archive only — not read by frontend</text>
+
+  <!-- Changes tab -->
+  <rect x="635" y="438" width="210" height="72" rx="6" fill="#FDE68A" stroke="#F59E0B" stroke-width="1.5"/>
+  <text x="740" y="458" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="11" font-weight="700" fill="#78350F">Changes tab</text>
+  <text x="740" y="476" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#92400E">Timestamp (MYT) · GAP · SAP</text>
+  <text x="740" y="493" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#D97706">max 10 rows · only on price change</text>
+  <text x="740" y="505" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#D97706">oldest row auto-deleted</text>
+
+  <!-- Google Sheets → Browser arrows -->
+  <line x1="860" y1="330" x2="883" y2="330" stroke="#64748B" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="860" y1="474" x2="883" y2="474" stroke="#64748B" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ══════ BROWSER OUTPUT ══════ -->
+
+  <!-- Charts -->
+  <rect x="885" y="240" width="445" height="176" rx="8" fill="#FEF9C3" stroke="#C9A227" stroke-width="2"/>
+  <text x="1107" y="264" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="12" font-weight="700" fill="#78350F">4 × Chart.js Line Charts</text>
+  <line x1="900" y1="275" x2="1315" y2="275" stroke="#FDE68A" stroke-width="1"/>
+  <text x="1107" y="293" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#92400E">GAP — Gold Accumulation Price (maroon line)</text>
+  <text x="1107" y="311" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#92400E">SAP — Silver Accumulation Price (silver-gray line)</text>
+  <text x="1107" y="329" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#92400E">Spot Gold — International price (amber line)</text>
+  <text x="1107" y="347" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#92400E">Spot Silver — International price (slate line)</text>
+  <line x1="900" y1="358" x2="1315" y2="358" stroke="#FDE68A" stroke-width="1"/>
+  <text x="1107" y="374" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#C9A227">Range: 1M / 3M / 6M / 1Y / All  ·  MYR or USD  ·  /g or /oz</text>
+  <text x="1107" y="392" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#C9A227">Loaded from Daily tab via gviz JSON API</text>
+  <text x="1107" y="408" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#A07D1C">All values: 2 decimal places</text>
+
+  <!-- Recent Price Changes table -->
+  <rect x="885" y="428" width="445" height="112" rx="8" fill="#FEF9C3" stroke="#C9A227" stroke-width="2"/>
+  <text x="1107" y="451" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="12" font-weight="700" fill="#78350F">Recent Price Changes Table</text>
+  <line x1="900" y1="462" x2="1315" y2="462" stroke="#FDE68A" stroke-width="1"/>
+  <text x="1107" y="480" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#92400E">Columns: Date/Time (MYT) · GAP · ΔGAP · SAP · ΔSAP</text>
+  <text x="1107" y="498" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#92400E">Max 10 rows · newest entry first</text>
+  <text x="1107" y="516" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#92400E">Only shows rows where a price change occurred</text>
+  <text x="1107" y="530" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="#C9A227">Loaded from Changes tab via gviz JSON API · parsed by parseChangesRows()</text>
+
+  <!-- ══════ LEGEND ══════ -->
+  <rect x="20" y="564" width="1310" height="100" rx="8" fill="#F1F5F9" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="40" y="585" font-family="'Segoe UI',Arial,sans-serif" font-size="10" font-weight="700" fill="#475569">LEGEND</text>
+
+  <rect x="100" y="575" width="12" height="12" rx="2" fill="#EDE9FE" stroke="#7C3AED" stroke-width="1.5"/>
+  <text x="120" y="586" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">External Data Source</text>
+
+  <rect x="270" y="575" width="12" height="12" rx="2" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="290" y="586" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">Vercel Edge Function</text>
+
+  <rect x="440" y="575" width="12" height="12" rx="2" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="460" y="586" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">GitHub Actions Scheduler</text>
+
+  <rect x="640" y="575" width="12" height="12" rx="2" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <text x="660" y="586" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">Google Sheets</text>
+
+  <rect x="790" y="575" width="12" height="12" rx="2" fill="#FEF9C3" stroke="#C9A227" stroke-width="2"/>
+  <text x="810" y="586" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">Browser / Frontend</text>
+
+  <line x1="100" y1="620" x2="155" y2="620" stroke="#64748B" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="165" y="624" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">Data request / write</text>
+
+  <line x1="330" y1="620" x2="385" y2="620" stroke="#64748B" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arr)"/>
+  <text x="395" y="624" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#0F172A">Direct response (bypasses storage)</text>
+
+  <text x="640" y="624" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#475569">⚡ Real-time: fresh fetch on every page load</text>
+  <text x="950" y="624" font-family="'Segoe UI',Arial,sans-serif" font-size="10" fill="#475569">🕐 Scheduled: fully automated, no visitors needed</text>
+
+</svg>

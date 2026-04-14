@@ -203,7 +203,11 @@ function setCard(id, val, prevVal, decimals) {
   const valEl = document.getElementById(`val-${id}`);
   const dltEl = document.getElementById(`dlt-${id}`);
 
-  valEl.textContent = val !== null ? val.toFixed(decimals) : '—';
+  if (val !== null) {
+    animateValue(valEl, parseFloat(valEl.textContent) || 0, val, 800, decimals);
+  } else {
+    valEl.textContent = '—';
+  }
 
   if (val !== null && prevVal !== null) {
     const diff = val - prevVal;
@@ -231,10 +235,12 @@ function renderCharts(rows) {
     return `${d}/${mo}/${y}`;
   });
 
-  buildOrUpdate('chart-gap', labels, rows.map(r => convertPG(r.gap, r.fx)),    `GAP ${unitLabel()}`,       '#9B1C1C');
-  buildOrUpdate('chart-sap', labels, rows.map(r => convertPG(r.sap, r.fx)),    `SAP ${unitLabel()}`,       '#94A3B8');
-  buildOrUpdate('chart-xau', labels, rows.map(r => convertSpot(r.xau, r.fx)),  `Spot Gold ${unitLabel()}`, '#D97706');
-  buildOrUpdate('chart-xag', labels, rows.map(r => convertSpot(r.xag, r.fx)),  `Spot Silver ${unitLabel()}`,'#64748B');
+  const cGold = '#C99A2E';
+  const cSilver = '#718096';
+  buildOrUpdate('chart-gap', labels, rows.map(r => convertPG(r.gap, r.fx)),    `GAP ${unitLabel()}`,       cGold);
+  buildOrUpdate('chart-sap', labels, rows.map(r => convertPG(r.sap, r.fx)),    `SAP ${unitLabel()}`,       cSilver);
+  buildOrUpdate('chart-xau', labels, rows.map(r => convertSpot(r.xau, r.fx)),  `Spot Gold ${unitLabel()}`, cGold);
+  buildOrUpdate('chart-xag', labels, rows.map(r => convertSpot(r.xag, r.fx)),  `Spot Silver ${unitLabel()}`,cSilver);
 }
 
 // Y-axis formatter: all ticks in a chart use the same decimal places
@@ -266,7 +272,15 @@ function buildOrUpdate(id, labels, data, label, color) {
         label,
         data,
         borderColor: color,
-        backgroundColor: hexToRgba(color, 0.07),
+        backgroundColor: (context) => {
+          const chart = context.chart;
+          const {ctx, chartArea} = chart;
+          if (!chartArea) return null;
+          const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+          gradient.addColorStop(0, hexToRgba(color, 0.25));
+          gradient.addColorStop(1, hexToRgba(color, 0.0));
+          return gradient;
+        },
         fill: true,
         tension: 0.3,
         pointRadius: 0,
@@ -293,13 +307,15 @@ function buildOrUpdate(id, labels, data, label, color) {
       },
       scales: {
         x: {
-          ticks: { maxTicksLimit: 8, font: { family: 'Poppins', size: 11 }, color: '#94A3B8' },
+          ticks: { maxTicksLimit: 8, font: { family: 'Inter', size: 11 }, color: '#94A3B8' },
           grid: { display: false },
+          border: { display: false }
         },
         y: {
           beginAtZero: false,
-          ticks: { font: { family: 'Poppins', size: 11 }, color: '#94A3B8', callback: yTickFmt },
-          grid: { color: '#F1F5F9' },
+          ticks: { font: { family: 'JetBrains Mono', size: 11 }, color: '#94A3B8', callback: yTickFmt },
+          grid: { color: 'rgba(0, 0, 0, 0.04)' },
+          border: { display: false }
         }
       },
       interaction: { mode: 'nearest', axis: 'x', intersect: false },
@@ -397,4 +413,25 @@ function showState(msg, isError) {
 
 function hideState() {
   document.getElementById('dash-state').style.display = 'none';
+}
+
+function animateValue(obj, start, end, duration, decimals) {
+  if (start === end || isNaN(start) || isNaN(end)) {
+    obj.textContent = end.toFixed(decimals);
+    return;
+  }
+  let startTimestamp = null;
+  const step = (timestamp) => {
+    if (!startTimestamp) startTimestamp = timestamp;
+    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+    const easeProgress = progress * (2 - progress); // Ease out quad
+    const current = start + (end - start) * easeProgress;
+    obj.textContent = current.toFixed(decimals);
+    if (progress < 1) {
+      window.requestAnimationFrame(step);
+    } else {
+      obj.textContent = end.toFixed(decimals); // guarantee final value
+    }
+  };
+  window.requestAnimationFrame(step);
 }
