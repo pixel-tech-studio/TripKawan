@@ -189,8 +189,24 @@ export default function FlipCountdown({ targetDate, endDate, tripName, tripId, m
       setDays(Math.max(0, Math.ceil((target.getTime() - now.getTime()) / 86400000)));
     };
     calc();
-    const id = setInterval(calc, 3600000);
-    return () => clearInterval(id);
+
+    // Schedule first recompute at next local midnight + 1s, then daily.
+    const msUntilMidnight = (() => {
+      const next = new Date();
+      next.setHours(24, 0, 1, 0);
+      return next.getTime() - Date.now();
+    })();
+
+    let intervalId: ReturnType<typeof setInterval> | undefined;
+    const timeoutId = setTimeout(() => {
+      calc();
+      intervalId = setInterval(calc, 86400000);
+    }, msUntilMidnight);
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (intervalId) clearInterval(intervalId);
+    };
   }, [targetDate]);
 
   if (days === null) return null;

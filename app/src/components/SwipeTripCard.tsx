@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -38,6 +38,12 @@ export default function SwipeTripCard({
   const [isDeleting, setIsDeleting] = useState(false);
   const [isRemoved, setIsRemoved] = useState(false);
   const [isSnapping, setIsSnapping] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+
+  // Reset confirm state whenever the card snaps closed
+  useEffect(() => {
+    if (!isRevealed) setConfirming(false);
+  }, [isRevealed]);
 
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
@@ -88,7 +94,6 @@ export default function SwipeTripCard({
   };
 
   const handleDelete = async () => {
-    if (!confirm(`Delete "${trip.name}"? This cannot be undone.`)) return;
     setIsDeleting(true);
     const supabase = createClient();
     await supabase.from("trips").delete().eq("id", trip.id);
@@ -106,15 +111,27 @@ export default function SwipeTripCard({
 
   return (
     <div className="relative rounded-2xl overflow-hidden shadow-card">
-      {/* Delete panel */}
-      <div className="absolute inset-y-0 right-0 w-20 bg-red-500 flex flex-col items-center justify-center gap-1 rounded-r-2xl">
+      {/* Delete panel — two-state (Delete → Confirm?) */}
+      <div
+        className={`absolute inset-y-0 right-0 w-20 flex flex-col items-center justify-center gap-1 rounded-r-2xl transition-colors ${
+          confirming ? "bg-red-600" : "bg-red-500"
+        }`}
+      >
         <button
-          onClick={handleDelete}
+          onClick={() => (confirming ? handleDelete() : setConfirming(true))}
           disabled={isDeleting}
           className="flex flex-col items-center gap-1 text-white px-2"
         >
           {isDeleting ? (
             <span className="text-xs">...</span>
+          ) : confirming ? (
+            <>
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 9v4M12 17h.01" />
+                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+              </svg>
+              <span className="text-[11px] font-bold">Confirm?</span>
+            </>
           ) : (
             <>
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

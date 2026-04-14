@@ -9,6 +9,11 @@ yarn-error.log*
 .env.local
 .env.*.local
 
+# OAuth / service-account credentials — NEVER commit
+client_secret_*.json
+*-credentials.json
+service-account*.json
+
 # Build output
 dist/
 build/
