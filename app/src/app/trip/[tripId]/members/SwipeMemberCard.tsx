@@ -8,13 +8,13 @@ import type { Profile } from "@/lib/types";
 interface Member {
   id: string;
   user_id: string;
-  role: string;
   profiles: Profile;
 }
 
 interface SwipeMemberCardProps {
   member: Member;
   tripId: string;
+  adminUserId: string | null;
   isCurrentUser: boolean;
   isViewerAdmin: boolean;
   adminCount: number;
@@ -26,13 +26,14 @@ const SWIPE_THRESHOLD = 40;
 export default function SwipeMemberCard({
   member,
   tripId,
+  adminUserId,
   isCurrentUser,
   isViewerAdmin,
   adminCount,
 }: SwipeMemberCardProps) {
   const router = useRouter();
   const profile = member.profiles;
-  const isAdminMember = member.role === "admin";
+  const isAdminMember = member.user_id === adminUserId;
   const isLastAdmin = isAdminMember && adminCount <= 1;
 
   const [translateX, setTranslateX] = useState(0);

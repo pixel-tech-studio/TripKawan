@@ -60,16 +60,15 @@ export default async function TripsPage() {
   // Get trips the user is a member of
   const { data: memberships } = await supabase
     .from("trip_members")
-    .select("trip_id, role")
-    .eq("user_id", user.id);
+    .select("trip_id")
+    .eq("user_id", user.id)
+    .eq("status", "approved");
 
   const tripIds = memberships?.map((m) => m.trip_id) || [];
-  const adminTripIds = new Set(
-    memberships?.filter((m) => m.role === "admin").map((m) => m.trip_id) || []
-  );
 
   let trips: Trip[] = [];
   let memberCountMap: Record<string, number> = {};
+  let adminTripIds = new Set<string>();
 
   if (tripIds.length > 0) {
     const { data } = await supabase
@@ -78,6 +77,9 @@ export default async function TripsPage() {
       .in("id", tripIds)
       .returns<Trip[]>();
     trips = data || [];
+    adminTripIds = new Set(
+      trips.filter((t) => t.admin_user_id === user.id).map((t) => t.id)
+    );
 
     const { data: allMembers } = await supabase
       .from("trip_members")

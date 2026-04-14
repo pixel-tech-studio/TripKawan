@@ -15,15 +15,13 @@ export default async function ExpensesPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: membership } = await supabase
-    .from("trip_members")
-    .select("role")
-    .eq("trip_id", tripId)
-    .eq("user_id", user?.id ?? "")
-    .eq("status", "approved")
+  const { data: trip } = await supabase
+    .from("trips")
+    .select("admin_user_id")
+    .eq("id", tripId)
     .single();
 
-  const isAdmin = membership?.role === "admin";
+  const isAdmin = !!user && trip?.admin_user_id === user.id;
 
   const { data: expenses } = await supabase
     .from("expenses")
