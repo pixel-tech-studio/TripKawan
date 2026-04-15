@@ -223,13 +223,11 @@ export default function FlipCountdown({ targetDate, endDate, tripName, tripId, m
           {days === 0 ? "🎉 Today!" : days === 1 ? "✈️ Tomorrow!" : "Next trip in"}
         </p>
 
-        {days > 1 && (
-          <div className="flex gap-2 w-full mb-5">
-            {digits.map((d, i) => (
-              <FlipTile key={i} digit={d} mountDelay={i * 100} />
-            ))}
-          </div>
-        )}
+        <div className="flex gap-2 w-full mb-5">
+          {digits.map((d, i) => (
+            <FlipTile key={i} digit={d} mountDelay={i * 100} />
+          ))}
+        </div>
 
         {/* Trip name */}
         <p className="text-base font-bold text-white leading-snug mb-1">{tripName}</p>

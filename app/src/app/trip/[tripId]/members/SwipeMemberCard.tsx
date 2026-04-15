@@ -158,6 +158,7 @@ export default function SwipeMemberCard({
   return (
     <div
       className="relative rounded-2xl overflow-hidden"
+      style={{ touchAction: canSwipe ? "pan-y" : undefined }}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
