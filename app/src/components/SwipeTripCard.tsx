@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import DatePicker from "@/components/DatePicker";
 import type { Trip } from "@/lib/types";
 
 interface SwipeTripCardProps {
@@ -40,10 +41,53 @@ export default function SwipeTripCard({
   const [isSnapping, setIsSnapping] = useState(false);
   const [confirming, setConfirming] = useState(false);
 
+  // Inline edit state
+  const [editing, setEditing] = useState(false);
+  const [editName, setEditName] = useState(trip.name);
+  const [editDestination, setEditDestination] = useState(trip.destination ?? "");
+  const [editPax, setEditPax] = useState(trip.expected_pax);
+  const [editStart, setEditStart] = useState(trip.start_date ?? "");
+  const [editEnd, setEditEnd] = useState(trip.end_date ?? "");
+  const [saving, setSaving] = useState(false);
+
   // Reset confirm state whenever the card snaps closed
   useEffect(() => {
     if (side !== "right") setConfirming(false);
   }, [side]);
+
+  const openEdit = () => {
+    setEditName(trip.name);
+    setEditDestination(trip.destination ?? "");
+    setEditPax(trip.expected_pax);
+    setEditStart(trip.start_date ?? "");
+    setEditEnd(trip.end_date ?? "");
+    snapTo(0, null);
+    setEditing(true);
+  };
+
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editName.trim() || !editDestination.trim()) return;
+    setSaving(true);
+    const supabase = createClient();
+    const { error } = await supabase
+      .from("trips")
+      .update({
+        name: editName.trim(),
+        destination: editDestination.trim(),
+        expected_pax: editPax,
+        start_date: editStart || null,
+        end_date: editEnd || null,
+      })
+      .eq("id", trip.id);
+    setSaving(false);
+    if (error) {
+      alert(`Error: ${error.message}`);
+      return;
+    }
+    setEditing(false);
+    router.refresh();
+  };
 
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
@@ -118,6 +162,104 @@ export default function SwipeTripCard({
 
   if (isRemoved) return null;
 
+  if (editing) {
+    return (
+      <div className="rounded-2xl bg-white p-4 shadow-card space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+            Edit trip
+          </span>
+          <button
+            type="button"
+            onClick={() => setEditing(false)}
+            className="w-6 h-6 rounded-full hover:bg-gray-100 flex items-center justify-center"
+            aria-label="Cancel edit"
+          >
+            <svg className="w-3.5 h-3.5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <form onSubmit={handleSaveEdit} className="space-y-2.5">
+          <input
+            type="text"
+            value={editName}
+            onChange={(e) => setEditName(e.target.value)}
+            placeholder="Trip name"
+            required
+            autoFocus
+            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
+          />
+          <input
+            type="text"
+            value={editDestination}
+            onChange={(e) => setEditDestination(e.target.value)}
+            placeholder="Destination"
+            required
+            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
+          />
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-gray-500">Pax</span>
+            <button
+              type="button"
+              onClick={() => setEditPax((p) => Math.max(1, p - 1))}
+              className="w-8 h-8 rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50"
+            >
+              −
+            </button>
+            <span className="w-6 text-center text-sm font-semibold">{editPax}</span>
+            <button
+              type="button"
+              onClick={() => setEditPax((p) => p + 1)}
+              className="w-8 h-8 rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50"
+            >
+              +
+            </button>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="block text-[11px] font-medium text-gray-500 mb-1">Start date</label>
+              <DatePicker
+                value={editStart}
+                onChange={(v) => {
+                  setEditStart(v);
+                  if (editEnd && editEnd < v) setEditEnd("");
+                }}
+                placeholder="Start"
+              />
+            </div>
+            <div>
+              <label className="block text-[11px] font-medium text-gray-500 mb-1">End date</label>
+              <DatePicker
+                value={editEnd}
+                onChange={setEditEnd}
+                min={editStart}
+                placeholder="End"
+              />
+            </div>
+          </div>
+          <div className="flex gap-2 pt-0.5">
+            <button
+              type="submit"
+              disabled={saving || !editName.trim() || !editDestination.trim()}
+              className="flex-1 rounded-lg bg-teal-500 px-3 py-2 text-sm font-semibold text-white hover:bg-teal-600 disabled:opacity-50"
+            >
+              {saving ? "Saving..." : "Save"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setEditing(false)}
+              className="rounded-lg px-3 py-2 text-sm text-gray-500 hover:text-gray-700"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    );
+  }
+
   const dateRange = trip.start_date && trip.end_date
     ? `${formatDate(trip.start_date)} – ${formatDate(trip.end_date)}`
     : trip.start_date
@@ -127,19 +269,17 @@ export default function SwipeTripCard({
   return (
     <div className="relative rounded-2xl overflow-hidden shadow-card">
       {/* Edit panel — revealed on right swipe */}
-      <Link
-        href={`/trip/${trip.id}/edit`}
+      <button
+        type="button"
+        onClick={openEdit}
         className="absolute inset-y-0 left-0 w-20 flex flex-col items-center justify-center gap-1 rounded-l-2xl bg-teal-500 text-white"
-        onClick={(e) => {
-          if (side !== "left") e.preventDefault();
-        }}
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
           <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
         </svg>
         <span className="text-[11px] font-semibold">Edit</span>
-      </Link>
+      </button>
 
       {/* Delete panel — two-state (Delete → Confirm?) */}
       <div

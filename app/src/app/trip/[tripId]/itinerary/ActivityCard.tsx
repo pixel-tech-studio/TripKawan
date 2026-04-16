@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { ItineraryItemWithProfile } from "@/lib/types";
-import EditActivityModal from "./EditActivityModal";
 
 interface ActivityCardProps {
   item: ItineraryItemWithProfile;
@@ -33,10 +32,23 @@ export default function ActivityCard({
   const [removed, setRemoved] = useState(false);
   const [editing, setEditing] = useState(false);
 
+  // Inline edit state
+  const [editTitle, setEditTitle] = useState(item.title);
+  const [editUrl, setEditUrl] = useState(item.url ?? "");
+  const [editImageFile, setEditImageFile] = useState<File | null>(null);
+  const [editImagePreview, setEditImagePreview] = useState<string | null>(item.image_url);
+  const [editRemoveImage, setEditRemoveImage] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const titleInputRef = useRef<HTMLInputElement | null>(null);
+
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
   const didSwipe = useRef(false);
   const axisLocked = useRef<"h" | "v" | null>(null);
+
+  useEffect(() => {
+    if (editing) titleInputRef.current?.focus();
+  }, [editing]);
 
   // Drag handle gets the dnd-kit listeners — NOT the full card
   const { listeners, setNodeRef, transform, isDragging } = useDraggable({
@@ -116,7 +128,69 @@ export default function ActivityCard({
 
   const handleEdit = () => {
     close();
+    setEditTitle(item.title);
+    setEditUrl(item.url ?? "");
+    setEditImageFile(null);
+    setEditImagePreview(item.image_url);
+    setEditRemoveImage(false);
     setEditing(true);
+  };
+
+  const cancelEdit = () => {
+    setEditing(false);
+  };
+
+  const handleEditImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setEditImageFile(file);
+    setEditRemoveImage(false);
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => setEditImagePreview(ev.target?.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editTitle.trim()) return;
+
+    setSaving(true);
+    const supabase = createClient();
+    let imageUrl: string | null = item.image_url;
+
+    if (editImageFile) {
+      const fileExt = editImageFile.name.split(".").pop();
+      const dayKey = item.day_date ?? "kiv";
+      const filePath = `${tripId}/${dayKey}/${Date.now()}.${fileExt}`;
+      const { error: uploadError } = await supabase.storage
+        .from("activities")
+        .upload(filePath, editImageFile);
+      if (!uploadError) {
+        const { data: { publicUrl } } = supabase.storage.from("activities").getPublicUrl(filePath);
+        imageUrl = publicUrl;
+      }
+    } else if (editRemoveImage) {
+      imageUrl = null;
+    }
+
+    const { error } = await supabase
+      .from("itinerary_items")
+      .update({
+        title: editTitle.trim(),
+        url: editUrl.trim() || null,
+        image_url: imageUrl,
+      })
+      .eq("id", item.id)
+      .eq("trip_id", tripId);
+
+    setSaving(false);
+    if (error) {
+      alert(`Error: ${error.message}`);
+      return;
+    }
+    setEditing(false);
+    router.refresh();
   };
 
   if (removed) return null;
@@ -147,11 +221,89 @@ export default function ActivityCard({
     );
   }
 
+  if (editing) {
+    return (
+      <li className={`${cardBase} overflow-hidden`}>
+        <form onSubmit={handleSave} className="p-3 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+              Edit activity
+            </span>
+            <button
+              type="button"
+              onClick={cancelEdit}
+              className="w-6 h-6 rounded-full hover:bg-gray-100 flex items-center justify-center"
+              aria-label="Cancel edit"
+            >
+              <svg className="w-3.5 h-3.5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+          <input
+            ref={titleInputRef}
+            type="text"
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+            placeholder="Title"
+            className="w-full rounded-lg border border-gray-200 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
+          />
+          <input
+            type="url"
+            value={editUrl}
+            onChange={(e) => setEditUrl(e.target.value)}
+            placeholder="Link (optional)"
+            className="w-full rounded-lg border border-gray-200 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
+          />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleEditImageChange}
+            className="w-full text-xs text-gray-500 file:mr-2 file:rounded-full file:border-0 file:bg-teal-50 file:px-2.5 file:py-1 file:text-xs file:font-medium file:text-teal-600 hover:file:bg-teal-100"
+          />
+          {editImagePreview && !editRemoveImage && (
+            <div className="relative">
+              <img src={editImagePreview} alt="Preview" className="h-20 w-full rounded-lg object-cover" />
+              <button
+                type="button"
+                onClick={() => {
+                  setEditImagePreview(null);
+                  setEditImageFile(null);
+                  setEditRemoveImage(true);
+                }}
+                className="absolute top-1 right-1 rounded-full bg-white/90 text-gray-600 w-5 h-5 flex items-center justify-center text-xs shadow"
+                aria-label="Remove image"
+              >
+                ×
+              </button>
+            </div>
+          )}
+          <div className="flex gap-2 pt-0.5">
+            <button
+              type="submit"
+              disabled={saving || !editTitle.trim()}
+              className="flex-1 rounded-lg bg-teal-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-teal-600 disabled:opacity-50"
+            >
+              {saving ? "Saving..." : "Save"}
+            </button>
+            <button
+              type="button"
+              onClick={cancelEdit}
+              className="rounded-lg px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </li>
+    );
+  }
+
   return (
-    <>
-      <li
-        className={`relative rounded-2xl ${swipeX !== 0 || side || snapping ? "overflow-hidden" : ""}`}
-      >
+    <li
+      className={`relative rounded-2xl ${swipeX !== 0 || side || snapping ? "overflow-hidden" : ""}`}
+    >
         {/* Edit panel — revealed on right swipe */}
         {isAdmin && (
           <button
@@ -248,15 +400,6 @@ export default function ActivityCard({
             </div>
           </div>
         </div>
-      </li>
-
-      {editing && (
-        <EditActivityModal
-          item={item}
-          tripId={tripId}
-          onClose={() => setEditing(false)}
-        />
-      )}
-    </>
+    </li>
   );
 }
