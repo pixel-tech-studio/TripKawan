@@ -8,6 +8,8 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const next = searchParams.get("next");
   const error = searchParams.get("error");
+  const cookiesSeen = searchParams.get("cookies");
+  const hostSeen = searchParams.get("host");
 
   const handleGoogleLogin = async () => {
     const supabase = createClient();
@@ -30,8 +32,17 @@ function LoginForm() {
         </p>
 
         {error && (
-          <div className="mb-6 text-xs text-red-500 bg-red-50 rounded-lg p-3 break-all">
-            Login failed: {decodeURIComponent(error)}
+          <div className="mb-6 text-xs text-red-500 bg-red-50 rounded-lg p-3 break-all text-left space-y-2">
+            <div><b>Login failed:</b> {decodeURIComponent(error)}</div>
+            {hostSeen && <div><b>Callback host:</b> {decodeURIComponent(hostSeen)}</div>}
+            {cookiesSeen !== null && (
+              <div>
+                <b>Cookies at callback:</b>{" "}
+                {cookiesSeen
+                  ? decodeURIComponent(cookiesSeen).split(",").join(" | ")
+                  : "(none)"}
+              </div>
+            )}
           </div>
         )}
 
