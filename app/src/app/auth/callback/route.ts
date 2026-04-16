@@ -46,11 +46,8 @@ export async function GET(request: Request) {
   const { error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
-    // Include cookie diagnostic in the error redirect so we can see exactly
-    // what arrived at the callback (temporary while diagnosing PKCE issue).
-    const cookieNames = cookieStore.getAll().map((c) => c.name).join(",");
     return NextResponse.redirect(
-      `${origin}/app/login?error=${encodeURIComponent(error.message)}&cookies=${encodeURIComponent(cookieNames)}&host=${encodeURIComponent(new URL(request.url).host)}`
+      `${origin}/app/login?error=${encodeURIComponent(error.message)}`
     );
   }
 
