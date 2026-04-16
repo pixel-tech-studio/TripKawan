@@ -134,6 +134,7 @@ export default function SwipeMemberCard({
       .eq("id", member.id)
       .eq("trip_id", tripId);
     close();
+    setLoading(false);
     router.refresh();
   };
 
@@ -148,6 +149,7 @@ export default function SwipeMemberCard({
       .eq("id", member.id)
       .eq("trip_id", tripId);
     close();
+    setLoading(false);
     router.refresh();
   };
 
