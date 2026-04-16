@@ -252,18 +252,18 @@ export default function SwipeMemberCard({
           )}
         </div>
 
-        {isAdminMember && (
-          <span className="shrink-0 text-xs bg-coral-50 text-coral-600 px-2 py-0.5 rounded-full font-medium">
-            Admin
-          </span>
-        )}
-
         {canSwipe && !side && (
           <svg className="w-4 h-4 text-gray-200 shrink-0" viewBox="0 0 24 24" fill="currentColor">
             <circle cx="12" cy="5" r="1.5" />
             <circle cx="12" cy="12" r="1.5" />
             <circle cx="12" cy="19" r="1.5" />
           </svg>
+        )}
+
+        {isAdminMember && (
+          <span className="shrink-0 text-xs bg-coral-50 text-coral-600 px-2 py-0.5 rounded-full font-medium">
+            Admin
+          </span>
         )}
       </div>
     </div>
