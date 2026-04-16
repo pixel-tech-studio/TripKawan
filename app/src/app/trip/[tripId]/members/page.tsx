@@ -16,25 +16,18 @@ export default async function MembersPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: trip } = await supabase
-    .from("trips")
-    .select("admin_user_id")
-    .eq("id", tripId)
-    .single();
-
   const { data: members } = await supabase
     .from("trip_members")
-    .select("id, user_id, status, joined_at, profiles(id, display_name, avatar_url, email)")
+    .select("id, user_id, status, role, joined_at, profiles(id, display_name, avatar_url, email)")
     .eq("trip_id", tripId)
     .order("joined_at", { ascending: true });
 
   const approved = members?.filter((m) => m.status === "approved") || [];
   const pending = members?.filter((m) => m.status === "pending") || [];
 
-  const adminUserId = trip?.admin_user_id ?? null;
-  const isAdmin = !!user && adminUserId === user.id;
-  // single-admin model; there is always exactly one admin (the trip.admin_user_id)
-  const adminCount = 1;
+  const viewerMembership = approved.find((m) => m.user_id === user?.id);
+  const isAdmin = viewerMembership?.role === "admin";
+  const adminCount = approved.filter((m) => m.role === "admin").length;
 
   return (
     <div className="px-4 py-4">
@@ -102,10 +95,10 @@ export default async function MembersPage({
                 member={{
                   id: member.id,
                   user_id: member.user_id,
+                  role: (member.role as "admin" | "member") ?? "member",
                   profiles: profile,
                 }}
                 tripId={tripId}
-                adminUserId={adminUserId}
                 isCurrentUser={member.user_id === user?.id}
                 isViewerAdmin={isAdmin}
                 adminCount={adminCount}

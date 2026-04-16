@@ -15,11 +15,21 @@ export default async function PhotosPage({
 
   const { data: trip } = await supabase
     .from("trips")
-    .select("admin_user_id, photo_album_url")
+    .select("photo_album_url")
     .eq("id", tripId)
     .single();
 
-  const isAdmin = user?.id === trip?.admin_user_id;
+  const { data: membership } = user
+    ? await supabase
+        .from("trip_members")
+        .select("role")
+        .eq("trip_id", tripId)
+        .eq("user_id", user.id)
+        .eq("status", "approved")
+        .single()
+    : { data: null };
+
+  const isAdmin = membership?.role === "admin";
   const albumUrl = trip?.photo_album_url;
 
   return (

@@ -20,7 +20,17 @@ export default async function ItineraryPage({
     .eq("id", tripId)
     .single<Trip>();
 
-  const isAdmin = !!user && trip?.admin_user_id === user.id;
+  const { data: membership } = user
+    ? await supabase
+        .from("trip_members")
+        .select("role")
+        .eq("trip_id", tripId)
+        .eq("user_id", user.id)
+        .eq("status", "approved")
+        .single()
+    : { data: null };
+
+  const isAdmin = membership?.role === "admin";
 
   const { data: allItems } = await supabase
     .from("itinerary_items")

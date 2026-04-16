@@ -8,13 +8,13 @@ import type { Profile } from "@/lib/types";
 interface Member {
   id: string;
   user_id: string;
+  role: "admin" | "member";
   profiles: Profile;
 }
 
 interface SwipeMemberCardProps {
   member: Member;
   tripId: string;
-  adminUserId: string | null;
   isCurrentUser: boolean;
   isViewerAdmin: boolean;
   adminCount: number;
@@ -26,18 +26,17 @@ const SWIPE_THRESHOLD = 40;
 export default function SwipeMemberCard({
   member,
   tripId,
-  adminUserId,
   isCurrentUser,
   isViewerAdmin,
   adminCount,
 }: SwipeMemberCardProps) {
   const router = useRouter();
   const profile = member.profiles;
-  const isAdminMember = member.user_id === adminUserId;
+  const isAdminMember = member.role === "admin";
   const isLastAdmin = isAdminMember && adminCount <= 1;
 
   const [translateX, setTranslateX] = useState(0);
-  const [side, setSide] = useState<"left" | "right" | null>(null); // which panel is revealed
+  const [side, setSide] = useState<"left" | "right" | null>(null);
   const [snapping, setSnapping] = useState(false);
   const [loading, setLoading] = useState(false);
   const [removed, setRemoved] = useState(false);
@@ -49,12 +48,11 @@ export default function SwipeMemberCard({
 
   // Admins can swipe non-self members. Current user can't swipe themselves.
   const canSwipe = isViewerAdmin && !isCurrentUser;
-  // Can promote: member is not yet admin
+  // Promote a member to admin; demote an existing admin (unless they're the last one).
   const canPromote = canSwipe && !isAdminMember;
-  // Can demote: member is admin, but not the last one
   const canDemote = canSwipe && isAdminMember && !isLastAdmin;
-  // Can remove: any non-self member
-  const canRemove = canSwipe;
+  const canActLeft = canPromote || canDemote;
+  const canRemove = canSwipe && !isLastAdmin;
 
   const snapTo = (x: number, revealedSide: "left" | "right" | null) => {
     setSnapping(true);
@@ -86,16 +84,13 @@ export default function SwipeMemberCard({
     didSwipe.current = true;
 
     if (side === "right") {
-      // Currently showing remove panel (right) — allow swipe back right
       setTranslateX(Math.min(0, -SWIPE_REVEAL + dx));
     } else if (side === "left") {
-      // Currently showing promote/demote panel (left) — allow swipe back left
       setTranslateX(Math.max(0, SWIPE_REVEAL + dx));
     } else {
-      // Nothing revealed
       if (dx < 0 && canRemove) {
         setTranslateX(Math.max(-SWIPE_REVEAL, dx));
-      } else if (dx > 0 && (canPromote || canDemote)) {
+      } else if (dx > 0 && canActLeft) {
         setTranslateX(Math.min(SWIPE_REVEAL, dx));
       }
     }
@@ -111,7 +106,7 @@ export default function SwipeMemberCard({
     } else {
       if (translateX < -SWIPE_THRESHOLD && canRemove) {
         snapTo(-SWIPE_REVEAL, "right");
-      } else if (translateX > SWIPE_THRESHOLD && (canPromote || canDemote)) {
+      } else if (translateX > SWIPE_THRESHOLD && canActLeft) {
         snapTo(SWIPE_REVEAL, "left");
       } else {
         snapTo(0, null);
@@ -129,6 +124,8 @@ export default function SwipeMemberCard({
   };
 
   const handlePromote = async () => {
+    if (!confirm(`Make ${profile?.display_name || "this member"} an admin of this trip?`))
+      return;
     setLoading(true);
     const supabase = createClient();
     await supabase
@@ -141,7 +138,8 @@ export default function SwipeMemberCard({
   };
 
   const handleDemote = async () => {
-    if (!confirm(`Demote ${profile?.display_name || "this member"} to regular member?`)) return;
+    if (!confirm(`Remove admin rights from ${profile?.display_name || "this member"}?`))
+      return;
     setLoading(true);
     const supabase = createClient();
     await supabase
@@ -163,35 +161,34 @@ export default function SwipeMemberCard({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Left panel — Promote / Demote */}
-      {(canPromote || canDemote) && (
+      {/* Left panel — Promote (member → admin) or Demote (admin → member) */}
+      {canActLeft && (
         <div
           className={`absolute inset-y-0 left-0 w-20 flex flex-col items-center justify-center gap-1 ${
-            canDemote ? "bg-amber-400" : "bg-teal-500"
+            canPromote ? "bg-teal-500" : "bg-amber-500"
           }`}
         >
           <button
-            onClick={canDemote ? handleDemote : handlePromote}
+            onClick={canPromote ? handlePromote : handleDemote}
             disabled={loading}
             className="flex flex-col items-center gap-1 text-white px-2"
           >
-            {canDemote ? (
-              <>
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="17 13 12 18 7 13" />
-                  <line x1="12" y1="18" x2="12" y2="6" />
-                </svg>
-                <span className="text-[11px] font-semibold">Demote</span>
-              </>
-            ) : (
-              <>
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              {canPromote ? (
+                <>
                   <polyline points="17 11 12 6 7 11" />
                   <line x1="12" y1="6" x2="12" y2="18" />
-                </svg>
-                <span className="text-[11px] font-semibold">Promote</span>
-              </>
-            )}
+                </>
+              ) : (
+                <>
+                  <polyline points="7 13 12 18 17 13" />
+                  <line x1="12" y1="6" x2="12" y2="18" />
+                </>
+              )}
+            </svg>
+            <span className="text-[11px] font-semibold">
+              {canPromote ? "Promote" : "Demote"}
+            </span>
           </button>
         </div>
       )}
@@ -259,7 +256,7 @@ export default function SwipeMemberCard({
           </span>
         )}
 
-        {canSwipe && !isAdminMember && !side && (
+        {canSwipe && !side && (
           <svg className="w-4 h-4 text-gray-200 shrink-0" viewBox="0 0 24 24" fill="currentColor">
             <circle cx="12" cy="5" r="1.5" />
             <circle cx="12" cy="12" r="1.5" />

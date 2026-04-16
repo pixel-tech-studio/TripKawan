@@ -35,7 +35,6 @@ export default function NewTripPage() {
         expected_pax: expectedPax,
         start_date: startDate || null,
         end_date: endDate || null,
-        admin_user_id: user.id,
       })
       .select()
       .single();
@@ -47,10 +46,11 @@ export default function NewTripPage() {
       return;
     }
 
-    // Add creator as a member
+    // Add creator as an admin member (status defaults to 'approved')
     await supabase.from("trip_members").insert({
       trip_id: trip.id,
       user_id: user.id,
+      role: "admin",
     });
 
     // Go to questionnaire setup instead of straight to itinerary

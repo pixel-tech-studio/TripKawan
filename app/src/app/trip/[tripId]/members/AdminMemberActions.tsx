@@ -22,18 +22,14 @@ export default function AdminMemberActions({
   const [loading, setLoading] = useState(false);
 
   const handlePromote = async () => {
-    if (
-      !confirm(
-        `Make ${memberName} the admin of this trip? You will become a regular member.`
-      )
-    )
-      return;
+    if (!confirm(`Make ${memberName} an admin of this trip?`)) return;
     setLoading(true);
     const supabase = createClient();
     await supabase
-      .from("trips")
-      .update({ admin_user_id: memberUserId })
-      .eq("id", tripId);
+      .from("trip_members")
+      .update({ role: "admin" })
+      .eq("trip_id", tripId)
+      .eq("user_id", memberUserId);
     setOpen(false);
     router.refresh();
   };

@@ -15,7 +15,6 @@ export interface Trip {
   expected_pax: number;
   start_date: string | null;
   end_date: string | null;
-  admin_user_id: string;
   photo_album_url: string | null;
   created_at: string;
 }
@@ -32,11 +31,14 @@ export interface TripPreferences {
   created_at: string;
 }
 
+export type TripMemberRole = "admin" | "member";
+
 export interface TripMember {
   id: string;
   trip_id: string;
   user_id: string;
   joined_at: string;
+  role: TripMemberRole;
 }
 
 export type ItineraryStatus = "suggested" | "confirmed";

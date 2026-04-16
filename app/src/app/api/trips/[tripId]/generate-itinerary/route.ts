@@ -40,7 +40,15 @@ export async function POST(
     return NextResponse.json({ error: "Trip not found" }, { status: 404 });
   }
 
-  if (trip.admin_user_id !== user.id) {
+  const { data: membership } = await supabase
+    .from("trip_members")
+    .select("role")
+    .eq("trip_id", tripId)
+    .eq("user_id", user.id)
+    .eq("status", "approved")
+    .single();
+
+  if (membership?.role !== "admin") {
     return NextResponse.json({ error: "Admin only" }, { status: 403 });
   }
 
