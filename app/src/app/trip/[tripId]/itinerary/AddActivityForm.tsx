@@ -63,6 +63,18 @@ export default function AddActivityForm({
       }
     }
 
+    // Get current max sort_order for this day to append at end
+    const { data: maxRow } = await supabase
+      .from("itinerary_items")
+      .select("sort_order")
+      .eq("trip_id", tripId)
+      .eq("day_date", dayDate)
+      .order("sort_order", { ascending: false })
+      .limit(1)
+      .single();
+
+    const nextOrder = (maxRow?.sort_order ?? -1) + 1;
+
     const { error } = await supabase.from("itinerary_items").insert({
       trip_id: tripId,
       day_date: dayDate,
@@ -70,6 +82,7 @@ export default function AddActivityForm({
       url: url.trim() || null,
       image_url: imageUrl,
       suggested_by: user.id,
+      sort_order: nextOrder,
     });
 
     if (error) {

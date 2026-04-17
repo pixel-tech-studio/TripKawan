@@ -36,6 +36,7 @@ export default async function ItineraryPage({
     .from("itinerary_items")
     .select("*, profiles(display_name)")
     .eq("trip_id", tripId)
+    .order("sort_order", { ascending: true })
     .order("created_at", { ascending: true })
     .returns<ItineraryItemWithProfile[]>();
 

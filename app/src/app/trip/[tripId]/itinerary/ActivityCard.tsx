@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useDraggable } from "@dnd-kit/core";
+import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -50,8 +50,7 @@ export default function ActivityCard({
     if (editing) titleInputRef.current?.focus();
   }, [editing]);
 
-  // Drag handle gets the dnd-kit listeners — NOT the full card
-  const { listeners, setNodeRef, transform, isDragging } = useDraggable({
+  const { listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: item.id,
     data: { item },
     disabled: !isAdmin,
@@ -195,10 +194,10 @@ export default function ActivityCard({
 
   if (removed) return null;
 
-  const dndTransform = transform ? CSS.Transform.toString(transform) : undefined;
+  const dndTransform = transform ? CSS.Translate.toString(transform) : undefined;
   const cardStyle: React.CSSProperties = {
     transform: [dndTransform, swipeX !== 0 ? `translateX(${swipeX}px)` : ""].filter(Boolean).join(" ") || undefined,
-    transition: snapping && !isDragging ? "transform 200ms ease" : undefined,
+    transition: snapping && !isDragging ? "transform 200ms ease" : (transition || undefined),
     touchAction: isAdmin ? "pan-y" : undefined,
   };
 

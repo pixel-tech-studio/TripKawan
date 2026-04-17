@@ -182,6 +182,15 @@ Day dates to use: ${days.join(", ")}`;
       source: "ai",
     }));
 
+  // Assign sort_order per day
+  const dayCounts: Record<string, number> = {};
+  for (const item of itemsToInsert) {
+    const day = item.day_date;
+    dayCounts[day] = (dayCounts[day] || 0);
+    (item as Record<string, unknown>).sort_order = dayCounts[day];
+    dayCounts[day]++;
+  }
+
   if (itemsToInsert.length > 0) {
     const { error: insertError } = await supabase
       .from("itinerary_items")

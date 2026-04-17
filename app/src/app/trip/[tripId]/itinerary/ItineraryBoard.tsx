@@ -8,9 +8,12 @@ import {
   TouchSensor,
   useSensor,
   useSensors,
+  closestCenter,
   type DragStartEvent,
   type DragEndEvent,
+  type DragOverEvent,
 } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { ItineraryItemWithProfile } from "@/lib/types";
@@ -120,9 +123,69 @@ export default function ItineraryBoard({
     [itemsByDay, kivItems]
   );
 
+  const findContainer = useCallback(
+    (itemId: string): string | null => {
+      for (const [day, items] of Object.entries(itemsByDay)) {
+        if (items.some((i) => i.id === itemId)) return day;
+      }
+      if (kivItems.some((i) => i.id === itemId)) return "kiv";
+      return null;
+    },
+    [itemsByDay, kivItems]
+  );
+
   const handleDragStart = (event: DragStartEvent) => {
     const item = findItem(event.active.id as string);
     setActiveItem(item);
+  };
+
+  const handleDragOver = (event: DragOverEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+
+    const activeId = active.id as string;
+    const overId = over.id as string;
+
+    const activeContainer = findContainer(activeId);
+    let overContainer: string | null;
+
+    if (overId.startsWith("day:")) {
+      overContainer = overId.replace("day:", "");
+    } else if (overId === "kiv") {
+      overContainer = "kiv";
+    } else {
+      overContainer = findContainer(overId);
+    }
+
+    if (!activeContainer || !overContainer || activeContainer === overContainer) return;
+
+    const item = findItem(activeId);
+    if (!item) return;
+
+    const newDayDate = overContainer === "kiv" ? null : overContainer;
+    const updatedItem = { ...item, day_date: newDayDate };
+
+    if (activeContainer === "kiv") {
+      setKivItems((prev) => prev.filter((i) => i.id !== activeId));
+    } else {
+      setItemsByDay((prev) => ({
+        ...prev,
+        [activeContainer]: prev[activeContainer].filter((i) => i.id !== activeId),
+      }));
+    }
+
+    if (overContainer === "kiv") {
+      setKivItems((prev) => [...prev, updatedItem]);
+    } else {
+      setItemsByDay((prev) => {
+        const target = prev[overContainer!] || [];
+        const overIndex = target.findIndex((i) => i.id === overId);
+        const insertAt = overIndex >= 0 ? overIndex : target.length;
+        const next = [...target];
+        next.splice(insertAt, 0, updatedItem);
+        return { ...prev, [overContainer!]: next };
+      });
+    }
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -131,57 +194,71 @@ export default function ItineraryBoard({
     const { active, over } = event;
     if (!over) return;
 
-    const item = findItem(active.id as string);
-    if (!item) return;
-
+    const activeId = active.id as string;
     const overId = over.id as string;
-    const newDayDate = overId === "kiv" ? null : overId.replace("day:", "");
 
-    // Same container — no-op
-    if (newDayDate === item.day_date) return;
+    const activeContainer = findContainer(activeId);
+    if (!activeContainer) return;
+
+    let overContainer: string | null;
+    if (overId.startsWith("day:")) {
+      overContainer = overId.replace("day:", "");
+    } else if (overId === "kiv") {
+      overContainer = "kiv";
+    } else {
+      overContainer = findContainer(overId);
+    }
+
+    if (!overContainer) return;
 
     // Snapshot for rollback
-    const prevItemsByDay = { ...itemsByDay };
+    const prevItemsByDay = Object.fromEntries(
+      Object.entries(itemsByDay).map(([k, v]) => [k, [...v]])
+    );
     const prevKivItems = [...kivItems];
 
-    // Optimistic update
-    const updatedItem = { ...item, day_date: newDayDate };
+    // Compute the final ordered list for the target container
+    let finalItems: ItineraryItemWithProfile[];
 
-    // Remove from source
-    if (item.day_date) {
-      setItemsByDay((prev) => ({
-        ...prev,
-        [item.day_date!]: prev[item.day_date!].filter(
-          (i) => i.id !== item.id
-        ),
-      }));
+    if (activeContainer === overContainer && activeId !== overId) {
+      // Within-container reorder
+      const source = overContainer === "kiv" ? [...kivItems] : [...(itemsByDay[overContainer] || [])];
+      const oldIdx = source.findIndex((i) => i.id === activeId);
+      const newIdx = source.findIndex((i) => i.id === overId);
+      if (oldIdx < 0 || newIdx < 0) return;
+      finalItems = arrayMove(source, oldIdx, newIdx);
+
+      if (overContainer === "kiv") {
+        setKivItems(finalItems);
+      } else {
+        setItemsByDay((prev) => ({ ...prev, [overContainer!]: finalItems }));
+      }
+    } else if (activeContainer !== overContainer) {
+      // Cross-container move (already handled by handleDragOver — just read current state)
+      finalItems = overContainer === "kiv" ? [...kivItems] : [...(itemsByDay[overContainer] || [])];
     } else {
-      setKivItems((prev) => prev.filter((i) => i.id !== item.id));
+      return;
     }
 
-    // Add to target
-    if (newDayDate) {
-      setItemsByDay((prev) => ({
-        ...prev,
-        [newDayDate]: [...(prev[newDayDate] || []), updatedItem],
-      }));
-    } else {
-      setKivItems((prev) => [...prev, updatedItem]);
-    }
-
-    // Persist to DB
+    // Persist sort_order for all items in the target container
     const supabase = createClient();
-    const { error } = await supabase
-      .from("itinerary_items")
-      .update({ day_date: newDayDate })
-      .eq("id", item.id)
-      .eq("trip_id", tripId);
+    const dayDate = overContainer === "kiv" ? null : overContainer;
 
-    if (error) {
-      // Revert on failure
+    const updates = finalItems.map((item, idx) =>
+      supabase
+        .from("itinerary_items")
+        .update({ day_date: dayDate, sort_order: idx })
+        .eq("id", item.id)
+        .eq("trip_id", tripId)
+    );
+
+    const results = await Promise.all(updates);
+    const failed = results.find((r) => r.error);
+
+    if (failed?.error) {
       setItemsByDay(prevItemsByDay);
       setKivItems(prevKivItems);
-      alert(`Failed to move: ${error.message}`);
+      alert(`Failed to reorder: ${failed.error.message}`);
     } else {
       router.refresh();
     }
@@ -211,7 +288,9 @@ export default function ItineraryBoard({
   return (
     <DndContext
       sensors={sensors}
+      collisionDetection={closestCenter}
       onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
@@ -272,7 +351,7 @@ export default function ItineraryBoard({
           const dayItems = itemsByDay[day] || [];
 
           return (
-            <DayDropZone key={day} dayDate={day} isAdmin={isAdmin}>
+            <DayDropZone key={day} dayDate={day} isAdmin={isAdmin} itemIds={dayItems.map((i) => i.id)}>
               <section id={`day-${day}`} className="scroll-mt-[8.75rem]">
                 <div className="flex items-baseline gap-2 mb-3">
                   <span className="text-2xl font-bold text-teal-600">
@@ -309,7 +388,7 @@ export default function ItineraryBoard({
 
         {/* KIV Section — always visible for admin so items can be dropped here */}
         {showKiv && (
-          <DayDropZone dayDate={null} isAdmin={isAdmin}>
+          <DayDropZone dayDate={null} isAdmin={isAdmin} itemIds={kivItems.map((i) => i.id)}>
             <section
               id="kiv-section"
               className="scroll-mt-[8.75rem] pt-4 border-t border-gray-200"
