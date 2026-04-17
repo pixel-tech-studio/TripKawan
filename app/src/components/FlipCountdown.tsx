@@ -453,7 +453,7 @@ export default function FlipCountdown({ trip, memberCount, isAdmin }: FlipCountd
           <button
             type="button"
             onClick={openEdit}
-            className="absolute inset-y-0 left-0 w-20 flex flex-col items-center justify-center gap-1 bg-teal-500 text-white"
+            className="absolute inset-y-0 left-0 w-20 flex flex-col items-center justify-center gap-1 rounded-l-3xl bg-teal-500 text-white"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
