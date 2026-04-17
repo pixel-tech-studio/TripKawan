@@ -56,6 +56,11 @@ export interface ItineraryItem {
   created_at: string;
 }
 
+export interface Attachment {
+  url: string;
+  name: string;
+}
+
 export interface Expense {
   id: string;
   trip_id: string;
@@ -63,6 +68,7 @@ export interface Expense {
   item_name: string;
   amount: number;
   receipt_url: string | null;
+  attachments: Attachment[];
   created_at: string;
 }
 

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import type { ExpenseWithProfile } from "@/lib/types";
+import type { ExpenseWithProfile, Attachment } from "@/lib/types";
 
 interface SwipeExpenseCardProps {
   expense: ExpenseWithProfile;
@@ -42,7 +42,10 @@ export default function SwipeExpenseCard({
   const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState(expense.item_name);
   const [editAmount, setEditAmount] = useState(String(expense.amount));
+  const [editAttachments, setEditAttachments] = useState<Attachment[]>(expense.attachments || []);
+  const [newFiles, setNewFiles] = useState<File[]>([]);
   const [saving, setSaving] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
@@ -103,7 +106,9 @@ export default function SwipeExpenseCard({
     }
   };
 
-  if (side !== "right" && confirming) setConfirming(false);
+  useEffect(() => {
+    if (side !== "right") setConfirming(false);
+  }, [side]);
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -116,8 +121,24 @@ export default function SwipeExpenseCard({
   const openEdit = () => {
     setEditName(expense.item_name);
     setEditAmount(String(expense.amount));
+    setEditAttachments(expense.attachments || []);
+    setNewFiles([]);
     snapTo(0, null);
     setEditing(true);
+  };
+
+  const addFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = Array.from(e.target.files || []);
+    setNewFiles((prev) => [...prev, ...selected]);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const removeExisting = (index: number) => {
+    setEditAttachments((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removeNew = (index: number) => {
+    setNewFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSaveEdit = async (e: React.FormEvent) => {
@@ -125,13 +146,34 @@ export default function SwipeExpenseCard({
     if (!editName.trim() || !editAmount) return;
     setSaving(true);
     const supabase = createClient();
+
+    const uploaded: Attachment[] = [];
+    for (const file of newFiles) {
+      const fileExt = file.name.split(".").pop();
+      const filePath = `${tripId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("receipts")
+        .upload(filePath, file);
+
+      if (!uploadError) {
+        const { data: { publicUrl } } = supabase.storage.from("receipts").getPublicUrl(filePath);
+        uploaded.push({ url: publicUrl, name: file.name });
+      }
+    }
+
+    const allAttachments = [...editAttachments, ...uploaded];
+
     const { error } = await supabase
       .from("expenses")
       .update({
         item_name: editName.trim(),
         amount: parseFloat(editAmount),
+        attachments: allAttachments,
+        receipt_url: allAttachments[0]?.url ?? null,
       })
       .eq("id", expense.id);
+
     setSaving(false);
     if (error) {
       alert(`Error: ${error.message}`);
@@ -142,6 +184,8 @@ export default function SwipeExpenseCard({
   };
 
   if (isRemoved) return null;
+
+  const attachments: Attachment[] = expense.attachments || [];
 
   if (editing) {
     return (
@@ -182,6 +226,45 @@ export default function SwipeExpenseCard({
             required
             className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
           />
+
+          {/* Existing attachments */}
+          {editAttachments.length > 0 && (
+            <ul className="space-y-1">
+              {editAttachments.map((att, i) => (
+                <li key={i} className="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-1.5 text-xs">
+                  <a href={att.url} target="_blank" rel="noopener noreferrer" className="truncate text-teal-600 mr-2">
+                    {att.name}
+                  </a>
+                  <button type="button" onClick={() => removeExisting(i)} className="text-gray-400 hover:text-red-500 shrink-0">
+                    ✕
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {/* New files to add */}
+          {newFiles.length > 0 && (
+            <ul className="space-y-1">
+              {newFiles.map((file, i) => (
+                <li key={i} className="flex items-center justify-between rounded-lg bg-teal-50 px-3 py-1.5 text-xs">
+                  <span className="truncate mr-2">{file.name}</span>
+                  <button type="button" onClick={() => removeNew(i)} className="text-gray-400 hover:text-red-500 shrink-0">
+                    ✕
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            onChange={addFiles}
+            className="w-full text-xs text-gray-500 file:mr-2 file:rounded-full file:border-0 file:bg-teal-50 file:px-2.5 file:py-1 file:text-xs file:font-medium file:text-teal-600 hover:file:bg-teal-100"
+          />
+
           <div className="flex gap-2 pt-0.5">
             <button
               type="submit"
@@ -300,7 +383,26 @@ export default function SwipeExpenseCard({
             {formatAmount(Number(expense.amount))}
           </span>
         </div>
-        {expense.receipt_url && (
+        {attachments.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mt-2">
+            {attachments.map((att, i) => (
+              <a
+                key={i}
+                href={att.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1 text-xs text-teal-500 hover:text-teal-600 font-medium bg-teal-50 px-2 py-0.5 rounded-full"
+              >
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" />
+                </svg>
+                {att.name}
+              </a>
+            ))}
+          </div>
+        )}
+        {!attachments.length && expense.receipt_url && (
           <a
             href={expense.receipt_url}
             target="_blank"

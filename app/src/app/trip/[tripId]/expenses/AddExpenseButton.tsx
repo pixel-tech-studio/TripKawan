@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import type { Attachment } from "@/lib/types";
 
 interface AddExpenseButtonProps {
   tripId: string;
@@ -15,10 +16,20 @@ export default function AddExpenseButton({ tripId }: AddExpenseButtonProps) {
   const [expenseDate, setExpenseDate] = useState(
     new Date().toISOString().split("T")[0]
   );
-  const [receiptFile, setReceiptFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+
+  const addFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = Array.from(e.target.files || []);
+    setFiles((prev) => [...prev, ...selected]);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const removeFile = (index: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,22 +43,21 @@ export default function AddExpenseButton({ tripId }: AddExpenseButtonProps) {
 
     if (!user) return;
 
-    let receiptUrl: string | null = null;
+    const attachments: Attachment[] = [];
 
-    // Upload receipt if provided
-    if (receiptFile) {
-      const fileExt = receiptFile.name.split(".").pop();
-      const filePath = `${tripId}/${user.id}/${Date.now()}.${fileExt}`;
+    for (const file of files) {
+      const fileExt = file.name.split(".").pop();
+      const filePath = `${tripId}/${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
         .from("receipts")
-        .upload(filePath, receiptFile);
+        .upload(filePath, file);
 
       if (!uploadError) {
         const {
           data: { publicUrl },
         } = supabase.storage.from("receipts").getPublicUrl(filePath);
-        receiptUrl = publicUrl;
+        attachments.push({ url: publicUrl, name: file.name });
       }
     }
 
@@ -56,15 +66,15 @@ export default function AddExpenseButton({ tripId }: AddExpenseButtonProps) {
       paid_by: user.id,
       item_name: itemName.trim(),
       amount: parseFloat(amount),
-      receipt_url: receiptUrl,
+      receipt_url: attachments[0]?.url ?? null,
+      attachments,
       created_at: new Date(`${expenseDate}T${new Date().toTimeString().slice(0, 8)}`).toISOString(),
     });
 
-    // Reset form
     setItemName("");
     setAmount("");
     setExpenseDate(new Date().toISOString().split("T")[0]);
-    setReceiptFile(null);
+    setFiles([]);
     setIsOpen(false);
     setLoading(false);
     router.refresh();
@@ -79,18 +89,14 @@ export default function AddExpenseButton({ tripId }: AddExpenseButtonProps) {
         + Add Expense
       </button>
 
-      {/* Bottom sheet overlay */}
       {isOpen && (
         <div className="fixed inset-0 z-[60] flex items-end justify-center">
-          {/* Backdrop */}
           <div
             className="absolute inset-0 bg-black/30"
             onClick={() => setIsOpen(false)}
           />
 
-          {/* Sheet */}
           <div className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-t-3xl bg-white px-5 pb-10 pt-4 animate-slideUp">
-            {/* Handle */}
             <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-gray-300" />
 
             <h3 className="text-lg font-semibold mb-4">Add Expense</h3>
@@ -143,18 +149,31 @@ export default function AddExpenseButton({ tripId }: AddExpenseButtonProps) {
 
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">
-                  Receipt photo (optional)
+                  Attachments (optional)
                 </label>
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept="image/*"
-                  capture="environment"
-                  onChange={(e) =>
-                    setReceiptFile(e.target.files?.[0] || null)
-                  }
+                  multiple
+                  onChange={addFiles}
                   className="w-full text-sm text-gray-500 file:mr-3 file:rounded-full file:border-0 file:bg-teal-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-teal-600 hover:file:bg-teal-100"
                 />
+                {files.length > 0 && (
+                  <ul className="mt-2 space-y-1">
+                    {files.map((file, i) => (
+                      <li key={i} className="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-1.5 text-xs">
+                        <span className="truncate mr-2">{file.name}</span>
+                        <button
+                          type="button"
+                          onClick={() => removeFile(i)}
+                          className="text-gray-400 hover:text-red-500 shrink-0"
+                        >
+                          ✕
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
               <div className="flex gap-3 pt-2">
