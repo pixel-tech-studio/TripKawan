@@ -27,6 +27,7 @@ interface ItineraryBoardProps {
   initialKivItems: ItineraryItemWithProfile[];
   isAdmin: boolean;
   tripId: string;
+  userId: string;
 }
 
 export default function ItineraryBoard({
@@ -35,6 +36,7 @@ export default function ItineraryBoard({
   initialKivItems,
   isAdmin,
   tripId,
+  userId,
 }: ItineraryBoardProps) {
   const router = useRouter();
   const [itemsByDay, setItemsByDay] = useState(initialItemsByDay);
@@ -375,6 +377,7 @@ export default function ItineraryBoard({
                         item={item}
                         isAdmin={isAdmin}
                         tripId={tripId}
+                        userId={userId}
                       />
                     ))}
                   </ul>
@@ -414,6 +417,7 @@ export default function ItineraryBoard({
                       item={item}
                       isAdmin={isAdmin}
                       tripId={tripId}
+                      userId={userId}
                     />
                   ))}
                 </ul>
@@ -429,6 +433,7 @@ export default function ItineraryBoard({
             item={activeItem}
             isAdmin={isAdmin}
             tripId={tripId}
+            userId={userId}
             isOverlay
           />
         ) : null}

@@ -11,6 +11,7 @@ interface ActivityCardProps {
   item: ItineraryItemWithProfile;
   isAdmin: boolean;
   tripId: string;
+  userId: string;
   isOverlay?: boolean;
 }
 
@@ -21,10 +22,12 @@ export default function ActivityCard({
   item,
   isAdmin,
   tripId,
+  userId,
   isOverlay,
 }: ActivityCardProps) {
   const router = useRouter();
   const isKiv = item.day_date === null;
+  const canEdit = isAdmin || item.suggested_by === userId;
 
   const [swipeX, setSwipeX] = useState(0);
   const [side, setSide] = useState<"left" | "right" | null>(null);
@@ -204,7 +207,7 @@ export default function ActivityCard({
   const cardStyle: React.CSSProperties = {
     transform: [dndTransform, swipeX !== 0 ? `translateX(${swipeX}px)` : ""].filter(Boolean).join(" ") || undefined,
     transition: snapping && !isDragging ? "transform 200ms ease" : (transition || undefined),
-    touchAction: isAdmin ? "pan-y" : undefined,
+    touchAction: canEdit ? "pan-y" : undefined,
   };
 
   const cardBase = isKiv
@@ -312,7 +315,7 @@ export default function ActivityCard({
       }`}
     >
         {/* Edit panel — only rendered when actively swiped */}
-        {isAdmin && (swipeX !== 0 || side) && (
+        {canEdit && (swipeX !== 0 || side) && (
           <button
             onClick={handleEdit}
             className="absolute inset-y-0 left-0 w-20 bg-teal-500 flex flex-col items-center justify-center gap-1 rounded-l-2xl text-white"
@@ -326,7 +329,7 @@ export default function ActivityCard({
         )}
 
         {/* Delete panel — two-state: Delete → Confirm? */}
-        {isAdmin && (swipeX !== 0 || side) && (
+        {canEdit && (swipeX !== 0 || side) && (
           <div className={`absolute inset-y-0 right-0 w-20 flex flex-col items-center justify-center gap-1 rounded-r-2xl transition-colors ${
             confirming ? "bg-red-600" : "bg-red-500"
           }`}>
@@ -365,9 +368,9 @@ export default function ActivityCard({
           ref={setNodeRef}
           style={cardStyle}
           className={`${cardBase} ${draggingClass} overflow-hidden transition-opacity duration-200 relative z-10`}
-          onTouchStart={isAdmin ? handleTouchStart : undefined}
-          onTouchMove={isAdmin ? handleTouchMove : undefined}
-          onTouchEnd={isAdmin ? handleTouchEnd : undefined}
+          onTouchStart={canEdit ? handleTouchStart : undefined}
+          onTouchMove={canEdit ? handleTouchMove : undefined}
+          onTouchEnd={canEdit ? handleTouchEnd : undefined}
           onClick={() => { if (side) close(); }}
         >
           {item.image_url && (

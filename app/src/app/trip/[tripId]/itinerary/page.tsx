@@ -86,6 +86,7 @@ export default async function ItineraryPage({
           initialKivItems={kivItems}
           isAdmin={isAdmin}
           tripId={tripId}
+          userId={user?.id ?? ""}
         />
       )}
     </div>
