@@ -150,11 +150,9 @@ export default async function TripsPage() {
         {/* Top flip countdown — next upcoming trip */}
         {nextTrip && (
           <FlipCountdown
-            targetDate={nextTrip.start_date!}
-            endDate={nextTrip.end_date}
-            tripName={nextTrip.name}
-            tripId={nextTrip.id}
+            trip={nextTrip}
             memberCount={memberCountMap[nextTrip.id] || 0}
+            isAdmin={adminTripIds.has(nextTrip.id)}
           />
         )}
 
