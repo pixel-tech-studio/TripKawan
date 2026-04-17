@@ -191,6 +191,9 @@ export default function FlipCountdown({ trip, memberCount, isAdmin }: FlipCountd
   const [translateX, setTranslateX] = useState(0);
   const [side, setSide] = useState<"left" | "right" | null>(null);
   const [isSnapping, setIsSnapping] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isRemoved, setIsRemoved] = useState(false);
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
   const didSwipe = useRef(false);
@@ -259,24 +262,46 @@ export default function FlipCountdown({ trip, memberCount, isAdmin }: FlipCountd
     if (isScrolling.current) return;
     didSwipe.current = true;
 
-    if (side === "left") {
+    if (side === "right") {
+      setTranslateX(Math.min(0, -SWIPE_REVEAL + dx));
+    } else if (side === "left") {
       setTranslateX(Math.max(0, SWIPE_REVEAL + dx));
     } else {
-      if (dx > 0) setTranslateX(Math.min(SWIPE_REVEAL, dx));
+      if (dx < 0) {
+        setTranslateX(Math.max(-SWIPE_REVEAL, dx));
+      } else {
+        setTranslateX(Math.min(SWIPE_REVEAL, dx));
+      }
     }
   };
 
   const handleTouchEnd = () => {
     if (isScrolling.current) return;
-    if (side === "left") {
+    if (side === "right") {
+      translateX > -SWIPE_REVEAL + SWIPE_THRESHOLD ? snapTo(0, null) : snapTo(-SWIPE_REVEAL, "right");
+    } else if (side === "left") {
       translateX < SWIPE_REVEAL - SWIPE_THRESHOLD ? snapTo(0, null) : snapTo(SWIPE_REVEAL, "left");
     } else {
-      if (translateX > SWIPE_THRESHOLD) {
+      if (translateX < -SWIPE_THRESHOLD) {
+        snapTo(-SWIPE_REVEAL, "right");
+      } else if (translateX > SWIPE_THRESHOLD) {
         snapTo(SWIPE_REVEAL, "left");
       } else {
         snapTo(0, null);
       }
     }
+  };
+
+  useEffect(() => {
+    if (side !== "right") setConfirming(false);
+  }, [side]);
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    const supabase = createClient();
+    await supabase.from("trips").delete().eq("id", trip.id);
+    setIsRemoved(true);
+    router.refresh();
   };
 
   const openEdit = () => {
@@ -313,7 +338,7 @@ export default function FlipCountdown({ trip, memberCount, isAdmin }: FlipCountd
     router.refresh();
   };
 
-  if (days === null) return null;
+  if (days === null || isRemoved) return null;
 
   const digits = String(Math.min(days, 999)).padStart(3, "0").split("");
   const dateLabel = endDate
@@ -428,7 +453,7 @@ export default function FlipCountdown({ trip, memberCount, isAdmin }: FlipCountd
           <button
             type="button"
             onClick={openEdit}
-            className="absolute inset-y-0 left-0 w-20 flex flex-col items-center justify-center gap-1 rounded-l-3xl bg-teal-500 text-white"
+            className="absolute inset-y-0 left-0 w-20 flex flex-col items-center justify-center gap-1 bg-teal-500 text-white"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
@@ -436,6 +461,43 @@ export default function FlipCountdown({ trip, memberCount, isAdmin }: FlipCountd
             </svg>
             <span className="text-[11px] font-semibold">Edit</span>
           </button>
+        )}
+
+        {/* Delete panel — revealed on left swipe (two-state: Delete → Confirm?) */}
+        {isAdmin && (translateX !== 0 || side) && (
+          <div
+            className={`absolute inset-y-0 right-0 w-20 flex flex-col items-center justify-center gap-1 transition-colors ${
+              confirming ? "bg-red-600" : "bg-red-500"
+            }`}
+          >
+            <button
+              onClick={() => (confirming ? handleDelete() : setConfirming(true))}
+              disabled={isDeleting}
+              className="flex flex-col items-center gap-1 text-white px-2"
+            >
+              {isDeleting ? (
+                <span className="text-xs">...</span>
+              ) : confirming ? (
+                <>
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 9v4M12 17h.01" />
+                    <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                  </svg>
+                  <span className="text-[11px] font-bold">Confirm?</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6l-1 14H6L5 6" />
+                    <path d="M10 11v6M14 11v6" />
+                    <path d="M9 6V4h6v2" />
+                  </svg>
+                  <span className="text-[11px] font-semibold">Delete</span>
+                </>
+              )}
+            </button>
+          </div>
         )}
 
         <Link
