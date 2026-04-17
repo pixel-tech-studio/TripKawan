@@ -157,7 +157,9 @@ export default function SwipeMemberCard({
 
   return (
     <div
-      className="relative rounded-2xl overflow-hidden"
+      className={`relative rounded-2xl overflow-hidden ${
+        translateX > 0 ? (canPromote ? "bg-teal-500" : "bg-amber-500") : translateX < 0 ? "bg-red-500" : ""
+      }`}
       style={{ touchAction: canSwipe ? "pan-y" : undefined }}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}

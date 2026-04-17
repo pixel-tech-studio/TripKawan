@@ -447,7 +447,9 @@ export default function FlipCountdown({ trip, memberCount, isAdmin }: FlipCountd
 
   return (
     <div className="px-4 mb-6">
-      <div className="relative rounded-3xl overflow-hidden">
+      <div className={`relative rounded-3xl overflow-hidden ${
+          translateX > 0 ? "bg-teal-500" : translateX < 0 ? (confirming ? "bg-red-600" : "bg-red-500") : ""
+        }`}>
         {/* Edit panel — revealed on right swipe */}
         {isAdmin && (translateX !== 0 || side) && (
           <button

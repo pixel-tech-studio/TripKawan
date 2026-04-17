@@ -267,7 +267,9 @@ export default function SwipeTripCard({
     : null;
 
   return (
-    <div className="relative rounded-2xl overflow-hidden shadow-card">
+    <div className={`relative rounded-2xl overflow-hidden shadow-card ${
+        translateX > 0 ? "bg-teal-500" : translateX < 0 ? (confirming ? "bg-red-600" : "bg-red-500") : ""
+      }`}>
       {/* Edit panel — revealed on right swipe */}
       <button
         type="button"

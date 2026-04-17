@@ -301,7 +301,9 @@ export default function ActivityCard({
 
   return (
     <li
-      className={`relative rounded-2xl ${swipeX !== 0 || side || snapping ? "overflow-hidden" : ""}`}
+      className={`relative rounded-2xl ${swipeX !== 0 || side || snapping ? "overflow-hidden" : ""} ${
+        swipeX > 0 ? "bg-teal-500" : swipeX < 0 ? "bg-red-500" : ""
+      }`}
     >
         {/* Edit panel — only rendered when actively swiped */}
         {isAdmin && (swipeX !== 0 || side) && (
