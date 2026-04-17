@@ -30,6 +30,8 @@ export default function ActivityCard({
   const [side, setSide] = useState<"left" | "right" | null>(null);
   const [snapping, setSnapping] = useState(false);
   const [removed, setRemoved] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [editing, setEditing] = useState(false);
 
   // Inline edit state
@@ -113,8 +115,12 @@ export default function ActivityCard({
     }
   };
 
+  useEffect(() => {
+    if (side !== "right") setConfirming(false);
+  }, [side]);
+
   const handleDelete = async () => {
-    if (!confirm("Delete this activity permanently?")) return;
+    setIsDeleting(true);
     const supabase = createClient();
     await supabase
       .from("itinerary_items")
@@ -302,7 +308,7 @@ export default function ActivityCard({
   return (
     <li
       className={`relative rounded-2xl ${swipeX !== 0 || side || snapping ? "overflow-hidden" : ""} ${
-        swipeX > 0 ? "bg-teal-500" : swipeX < 0 ? "bg-red-500" : ""
+        swipeX > 0 ? "bg-teal-500" : swipeX < 0 ? (confirming ? "bg-red-600" : "bg-red-500") : ""
       }`}
     >
         {/* Edit panel — only rendered when actively swiped */}
@@ -319,20 +325,37 @@ export default function ActivityCard({
           </button>
         )}
 
-        {/* Delete panel — only rendered when actively swiped */}
+        {/* Delete panel — two-state: Delete → Confirm? */}
         {isAdmin && (swipeX !== 0 || side) && (
-          <div className="absolute inset-y-0 right-0 w-20 bg-red-500 flex flex-col items-center justify-center gap-1 rounded-r-2xl">
+          <div className={`absolute inset-y-0 right-0 w-20 flex flex-col items-center justify-center gap-1 rounded-r-2xl transition-colors ${
+            confirming ? "bg-red-600" : "bg-red-500"
+          }`}>
             <button
-              onClick={handleDelete}
+              onClick={() => (confirming ? handleDelete() : setConfirming(true))}
+              disabled={isDeleting}
               className="flex flex-col items-center gap-1 text-white px-2"
             >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6l-1 14H6L5 6" />
-                <path d="M10 11v6M14 11v6" />
-                <path d="M9 6V4h6v2" />
-              </svg>
-              <span className="text-[11px] font-semibold">Delete</span>
+              {isDeleting ? (
+                <span className="text-xs">...</span>
+              ) : confirming ? (
+                <>
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 9v4M12 17h.01" />
+                    <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                  </svg>
+                  <span className="text-[11px] font-bold">Confirm?</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6l-1 14H6L5 6" />
+                    <path d="M10 11v6M14 11v6" />
+                    <path d="M9 6V4h6v2" />
+                  </svg>
+                  <span className="text-[11px] font-semibold">Delete</span>
+                </>
+              )}
             </button>
           </div>
         )}

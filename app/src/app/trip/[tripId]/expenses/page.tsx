@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { ExpenseWithProfile } from "@/lib/types";
 import AddExpenseButton from "./AddExpenseButton";
-import DeleteExpenseButton from "./DeleteExpenseButton";
+import SwipeExpenseCard from "./SwipeExpenseCard";
 
 export default async function ExpensesPage({
   params,
@@ -80,60 +80,16 @@ export default async function ExpensesPage({
         </div>
       ) : (
         <ul className="space-y-3 mt-4">
-          {expenses.map((expense) => {
-            const canDelete = isAdmin || expense.paid_by === user?.id;
-
-            return (
-              <li
-                key={expense.id}
-                className="rounded-2xl bg-white p-4 shadow-card"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-3 min-w-0">
-                    {expense.profiles?.avatar_url ? (
-                      <img
-                        src={expense.profiles.avatar_url}
-                        alt=""
-                        className="h-8 w-8 rounded-full mt-0.5 shrink-0"
-                        referrerPolicy="no-referrer"
-                      />
-                    ) : (
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-teal-100 text-teal-600 font-semibold text-xs mt-0.5 shrink-0">
-                        {expense.profiles?.display_name?.charAt(0) || "?"}
-                      </div>
-                    )}
-                    <div className="min-w-0">
-                      <p className="font-medium text-sm truncate">
-                        {expense.item_name}
-                      </p>
-                      <p className="text-xs text-gray-400 mt-0.5">
-                        {expense.profiles?.display_name} &middot;{" "}
-                        {formatTime(expense.created_at)}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-2 ml-3">
-                    <span className="text-sm font-semibold text-expense whitespace-nowrap">
-                      {formatAmount(Number(expense.amount))}
-                    </span>
-                    {canDelete && (
-                      <DeleteExpenseButton expenseId={expense.id} />
-                    )}
-                  </div>
-                </div>
-                {expense.receipt_url && (
-                  <a
-                    href={expense.receipt_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block mt-2 text-xs text-teal-500 hover:text-teal-600 font-medium"
-                  >
-                    View receipt →
-                  </a>
-                )}
-              </li>
-            );
-          })}
+          {expenses.map((expense) => (
+            <SwipeExpenseCard
+              key={expense.id}
+              expense={expense}
+              canDelete={isAdmin || expense.paid_by === user?.id}
+              tripId={tripId}
+              formatAmount={formatAmount}
+              formatTime={formatTime}
+            />
+          ))}
         </ul>
       )}
     </div>

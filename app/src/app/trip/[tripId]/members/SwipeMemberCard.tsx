@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { Profile } from "@/lib/types";
@@ -40,6 +40,7 @@ export default function SwipeMemberCard({
   const [snapping, setSnapping] = useState(false);
   const [loading, setLoading] = useState(false);
   const [removed, setRemoved] = useState(false);
+  const [confirming, setConfirming] = useState(false);
 
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
@@ -114,8 +115,11 @@ export default function SwipeMemberCard({
     }
   };
 
+  useEffect(() => {
+    if (side !== "right") setConfirming(false);
+  }, [side]);
+
   const handleRemove = async () => {
-    if (!confirm(`Remove ${profile?.display_name || "this member"} from the trip?`)) return;
     setLoading(true);
     const supabase = createClient();
     await supabase.from("trip_members").delete().eq("id", member.id).eq("trip_id", tripId);
@@ -158,7 +162,7 @@ export default function SwipeMemberCard({
   return (
     <div
       className={`relative rounded-2xl overflow-hidden ${
-        translateX > 0 ? (canPromote ? "bg-teal-500" : "bg-amber-500") : translateX < 0 ? "bg-red-500" : ""
+        translateX > 0 ? (canPromote ? "bg-teal-500" : "bg-amber-500") : translateX < 0 ? (confirming ? "bg-red-600" : "bg-red-500") : ""
       }`}
       style={{ touchAction: canSwipe ? "pan-y" : undefined }}
       onTouchStart={handleTouchStart}
@@ -197,20 +201,36 @@ export default function SwipeMemberCard({
         </div>
       )}
 
-      {/* Right panel — Remove */}
+      {/* Right panel — Remove (two-state: Remove → Confirm?) */}
       {canRemove && (
-        <div className="absolute inset-y-0 right-0 w-20 bg-red-500 flex flex-col items-center justify-center gap-1">
+        <div className={`absolute inset-y-0 right-0 w-20 flex flex-col items-center justify-center gap-1 transition-colors ${
+          confirming ? "bg-red-600" : "bg-red-500"
+        }`}>
           <button
-            onClick={handleRemove}
+            onClick={() => (confirming ? handleRemove() : setConfirming(true))}
             disabled={loading}
             className="flex flex-col items-center gap-1 text-white px-2"
           >
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <line x1="23" y1="11" x2="17" y2="11" />
-            </svg>
-            <span className="text-[11px] font-semibold">Remove</span>
+            {loading ? (
+              <span className="text-xs">...</span>
+            ) : confirming ? (
+              <>
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 9v4M12 17h.01" />
+                  <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                </svg>
+                <span className="text-[11px] font-bold">Confirm?</span>
+              </>
+            ) : (
+              <>
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <line x1="23" y1="11" x2="17" y2="11" />
+                </svg>
+                <span className="text-[11px] font-semibold">Remove</span>
+              </>
+            )}
           </button>
         </div>
       )}
