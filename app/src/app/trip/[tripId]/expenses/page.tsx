@@ -47,32 +47,35 @@ export default async function ExpensesPage({
     }).format(amount);
 
   return (
-    <div className="px-4 py-4">
-      {/* Totals */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <div className="rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 p-4 text-white shadow-card">
-          <p className="text-[10px] font-medium opacity-80 uppercase tracking-wide">
-            Shared
-          </p>
-          <p className="text-xl font-bold mt-1">{formatAmount(sharedTotal)}</p>
-          <p className="text-[10px] opacity-70 mt-0.5">
-            {shared.length} expense{shared.length !== 1 ? "s" : ""}
-          </p>
+    <div className="py-4">
+      {/* Sticky header: totals + add button */}
+      <div className="sticky top-[57px] z-30 bg-sand-50 px-4 pb-3">
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 p-4 text-white shadow-card">
+            <p className="text-[10px] font-medium opacity-80 uppercase tracking-wide">
+              Shared
+            </p>
+            <p className="text-xl font-bold mt-1">{formatAmount(sharedTotal)}</p>
+            <p className="text-[10px] opacity-70 mt-0.5">
+              {shared.length} expense{shared.length !== 1 ? "s" : ""}
+            </p>
+          </div>
+          <div className="rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 p-4 text-white shadow-card">
+            <p className="text-[10px] font-medium opacity-80 uppercase tracking-wide">
+              Yours
+            </p>
+            <p className="text-xl font-bold mt-1">{formatAmount(personalTotal)}</p>
+            <p className="text-[10px] opacity-70 mt-0.5">
+              {personal.length} expense{personal.length !== 1 ? "s" : ""} &middot; Private
+            </p>
+          </div>
         </div>
-        <div className="rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 p-4 text-white shadow-card">
-          <p className="text-[10px] font-medium opacity-80 uppercase tracking-wide">
-            Yours
-          </p>
-          <p className="text-xl font-bold mt-1">{formatAmount(personalTotal)}</p>
-          <p className="text-[10px] opacity-70 mt-0.5">
-            {personal.length} expense{personal.length !== 1 ? "s" : ""} &middot; Private
-          </p>
-        </div>
+
+        <AddExpenseButton tripId={tripId} />
       </div>
 
-      <AddExpenseButton tripId={tripId} />
-
       {/* Combined list sorted by latest */}
+      <div className="px-4">
       {!expenses || expenses.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <span className="text-5xl mb-4">🧾</span>
@@ -94,6 +97,7 @@ export default async function ExpensesPage({
           ))}
         </ul>
       )}
+      </div>
     </div>
   );
 }
