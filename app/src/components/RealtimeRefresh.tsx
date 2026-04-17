@@ -11,33 +11,36 @@ export default function RealtimeRefresh() {
 
   useEffect(() => {
     const supabase = createClient();
+    let channel: ReturnType<typeof supabase.channel> | null = null;
 
-    const channel = supabase
-      .channel("realtime-refresh")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: TABLES[0] },
-        () => router.refresh()
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: TABLES[1] },
-        () => router.refresh()
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: TABLES[2] },
-        () => router.refresh()
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: TABLES[3] },
-        () => router.refresh()
-      )
-      .subscribe();
+    const setup = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      channel = supabase.channel("realtime-refresh");
+      for (const table of TABLES) {
+        channel = channel.on(
+          "postgres_changes",
+          { event: "*", schema: "public", table },
+          () => router.refresh()
+        );
+      }
+      channel.subscribe();
+    };
+
+    setup();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN") setup();
+      if (event === "SIGNED_OUT" && channel) {
+        supabase.removeChannel(channel);
+        channel = null;
+      }
+    });
 
     return () => {
-      supabase.removeChannel(channel);
+      subscription.unsubscribe();
+      if (channel) supabase.removeChannel(channel);
     };
   }, [router]);
 
