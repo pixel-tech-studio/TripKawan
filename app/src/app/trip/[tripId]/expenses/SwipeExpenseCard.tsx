@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import type { ExpenseWithProfile, Attachment } from "@/lib/types";
+import type { ExpenseWithProfile, Attachment, ExpenseCategory } from "@/lib/types";
 
 interface SwipeExpenseCardProps {
   expense: ExpenseWithProfile;
@@ -42,6 +42,7 @@ export default function SwipeExpenseCard({
   const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState(expense.item_name);
   const [editAmount, setEditAmount] = useState(String(expense.amount));
+  const [editCategory, setEditCategory] = useState<ExpenseCategory>(expense.category);
   const [editAttachments, setEditAttachments] = useState<Attachment[]>(expense.attachments || []);
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const [saving, setSaving] = useState(false);
@@ -121,6 +122,7 @@ export default function SwipeExpenseCard({
   const openEdit = () => {
     setEditName(expense.item_name);
     setEditAmount(String(expense.amount));
+    setEditCategory(expense.category);
     setEditAttachments(expense.attachments || []);
     setNewFiles([]);
     snapTo(0, null);
@@ -169,6 +171,7 @@ export default function SwipeExpenseCard({
       .update({
         item_name: editName.trim(),
         amount: parseFloat(editAmount),
+        category: editCategory,
         attachments: allAttachments,
         receipt_url: allAttachments[0]?.url ?? null,
       })
@@ -226,6 +229,26 @@ export default function SwipeExpenseCard({
             required
             className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
           />
+          <div className="flex rounded-lg border border-gray-200 overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setEditCategory("personal")}
+              className={`flex-1 py-1.5 text-xs font-medium transition-colors ${
+                editCategory === "personal" ? "bg-teal-500 text-white" : "text-gray-500 hover:bg-gray-50"
+              }`}
+            >
+              Personal
+            </button>
+            <button
+              type="button"
+              onClick={() => setEditCategory("shared")}
+              className={`flex-1 py-1.5 text-xs font-medium transition-colors ${
+                editCategory === "shared" ? "bg-teal-500 text-white" : "text-gray-500 hover:bg-gray-50"
+              }`}
+            >
+              Shared
+            </button>
+          </div>
 
           {/* Existing attachments */}
           {editAttachments.length > 0 && (

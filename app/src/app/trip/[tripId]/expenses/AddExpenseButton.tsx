@@ -3,16 +3,18 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import type { Attachment } from "@/lib/types";
+import type { Attachment, ExpenseCategory } from "@/lib/types";
 
 interface AddExpenseButtonProps {
   tripId: string;
+  defaultCategory?: ExpenseCategory;
 }
 
-export default function AddExpenseButton({ tripId }: AddExpenseButtonProps) {
+export default function AddExpenseButton({ tripId, defaultCategory = "shared" }: AddExpenseButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [itemName, setItemName] = useState("");
   const [amount, setAmount] = useState("");
+  const [category, setCategory] = useState<ExpenseCategory>(defaultCategory);
   const [expenseDate, setExpenseDate] = useState(
     new Date().toISOString().split("T")[0]
   );
@@ -66,6 +68,7 @@ export default function AddExpenseButton({ tripId }: AddExpenseButtonProps) {
       paid_by: user.id,
       item_name: itemName.trim(),
       amount: parseFloat(amount),
+      category,
       receipt_url: attachments[0]?.url ?? null,
       attachments,
       created_at: new Date(`${expenseDate}T${new Date().toTimeString().slice(0, 8)}`).toISOString(),
@@ -73,6 +76,7 @@ export default function AddExpenseButton({ tripId }: AddExpenseButtonProps) {
 
     setItemName("");
     setAmount("");
+    setCategory(defaultCategory);
     setExpenseDate(new Date().toISOString().split("T")[0]);
     setFiles([]);
     setIsOpen(false);
@@ -115,6 +119,36 @@ export default function AddExpenseButton({ tripId }: AddExpenseButtonProps) {
                   autoFocus
                   className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                  Type
+                </label>
+                <div className="flex rounded-2xl border border-gray-200 overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setCategory("personal")}
+                    className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
+                      category === "personal"
+                        ? "bg-teal-500 text-white"
+                        : "text-gray-500 hover:bg-gray-50"
+                    }`}
+                  >
+                    Personal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCategory("shared")}
+                    className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
+                      category === "shared"
+                        ? "bg-teal-500 text-white"
+                        : "text-gray-500 hover:bg-gray-50"
+                    }`}
+                  >
+                    Shared
+                  </button>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">

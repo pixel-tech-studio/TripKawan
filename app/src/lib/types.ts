@@ -61,12 +61,15 @@ export interface Attachment {
   name: string;
 }
 
+export type ExpenseCategory = "personal" | "shared";
+
 export interface Expense {
   id: string;
   trip_id: string;
   paid_by: string;
   item_name: string;
   amount: number;
+  category: ExpenseCategory;
   receipt_url: string | null;
   attachments: Attachment[];
   created_at: string;
