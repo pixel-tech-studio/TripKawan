@@ -86,8 +86,6 @@ export default async function ExpensesPage({
               expense={expense}
               canDelete={isAdmin || expense.paid_by === user?.id}
               tripId={tripId}
-              formatAmount={formatAmount}
-              formatTime={formatTime}
             />
           ))}
         </ul>

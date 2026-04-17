@@ -9,9 +9,18 @@ interface SwipeExpenseCardProps {
   expense: ExpenseWithProfile;
   canDelete: boolean;
   tripId: string;
-  formatAmount: (n: number) => string;
-  formatTime: (s: string) => string;
 }
+
+const formatAmount = (amount: number) =>
+  new Intl.NumberFormat("en-MY", { style: "currency", currency: "MYR" }).format(amount);
+
+const formatTime = (dateStr: string) =>
+  new Date(dateStr).toLocaleDateString("en-MY", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
 const SWIPE_REVEAL = 80;
 const SWIPE_THRESHOLD = 40;
@@ -20,8 +29,6 @@ export default function SwipeExpenseCard({
   expense,
   canDelete,
   tripId,
-  formatAmount,
-  formatTime,
 }: SwipeExpenseCardProps) {
   const router = useRouter();
 
