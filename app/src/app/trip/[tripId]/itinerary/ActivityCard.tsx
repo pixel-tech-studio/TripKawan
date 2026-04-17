@@ -303,8 +303,8 @@ export default function ActivityCard({
     <li
       className={`relative rounded-2xl ${swipeX !== 0 || side || snapping ? "overflow-hidden" : ""}`}
     >
-        {/* Edit panel — revealed on right swipe, hidden during drag */}
-        {isAdmin && !isDragging && (
+        {/* Edit panel — only rendered when actively swiped */}
+        {isAdmin && (swipeX !== 0 || side) && (
           <button
             onClick={handleEdit}
             className="absolute inset-y-0 left-0 w-20 bg-teal-500 flex flex-col items-center justify-center gap-1 rounded-l-2xl text-white"
@@ -317,8 +317,8 @@ export default function ActivityCard({
           </button>
         )}
 
-        {/* Delete panel — revealed on left swipe, hidden during drag */}
-        {isAdmin && !isDragging && (
+        {/* Delete panel — only rendered when actively swiped */}
+        {isAdmin && (swipeX !== 0 || side) && (
           <div className="absolute inset-y-0 right-0 w-20 bg-red-500 flex flex-col items-center justify-center gap-1 rounded-r-2xl">
             <button
               onClick={handleDelete}
