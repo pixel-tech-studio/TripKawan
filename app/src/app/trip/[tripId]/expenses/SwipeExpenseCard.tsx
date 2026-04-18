@@ -46,6 +46,7 @@ export default function SwipeExpenseCard({
   const [editAttachments, setEditAttachments] = useState<Attachment[]>(expense.attachments || []);
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const [saving, setSaving] = useState(false);
+  const photoInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const touchStartX = useRef(0);
@@ -132,6 +133,7 @@ export default function SwipeExpenseCard({
   const addFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = Array.from(e.target.files || []);
     setNewFiles((prev) => [...prev, ...selected]);
+    if (photoInputRef.current) photoInputRef.current.value = "";
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -280,13 +282,33 @@ export default function SwipeExpenseCard({
             </ul>
           )}
 
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            onChange={addFiles}
-            className="w-full text-xs text-gray-500 file:mr-2 file:rounded-full file:border-0 file:bg-teal-50 file:px-2.5 file:py-1 file:text-xs file:font-medium file:text-teal-600 hover:file:bg-teal-100"
-          />
+          <input ref={photoInputRef} type="file" accept="image/*" multiple onChange={addFiles} className="hidden" />
+          <input ref={fileInputRef} type="file" multiple onChange={addFiles} className="hidden" />
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => photoInputRef.current?.click()}
+              className="flex-1 flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
+            >
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <polyline points="21 15 16 10 5 21" />
+              </svg>
+              Photo
+            </button>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="flex-1 flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
+            >
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
+              File
+            </button>
+          </div>
 
           <div className="flex gap-2 pt-0.5">
             <button
