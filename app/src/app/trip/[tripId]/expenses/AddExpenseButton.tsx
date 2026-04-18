@@ -102,7 +102,7 @@ export default function AddExpenseButton({ tripId, defaultCategory = "shared" }:
             onClick={() => setIsOpen(false)}
           />
 
-          <div className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-t-3xl bg-white px-5 pb-10 pt-4 animate-slideUp">
+          <div className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-t-3xl bg-white px-5 pb-24 pt-4 animate-slideUp">
             <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-gray-300" />
 
             <h3 className="text-lg font-semibold mb-4">Add Expense</h3>
