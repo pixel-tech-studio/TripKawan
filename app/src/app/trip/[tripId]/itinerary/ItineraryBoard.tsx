@@ -297,7 +297,7 @@ export default function ItineraryBoard({
               onClick={() => scrollToSection(`day-${day}`)}
               className={`shrink-0 w-14 py-1.5 rounded-xl text-center transition-colors ${
                 isActive
-                  ? "bg-teal-700 text-white"
+                  ? "bg-teal-500 text-white"
                   : "bg-gray-100 text-gray-500 hover:bg-gray-200"
               }`}
             >
