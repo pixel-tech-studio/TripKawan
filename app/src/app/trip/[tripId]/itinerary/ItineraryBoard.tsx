@@ -314,13 +314,16 @@ export default function ItineraryBoard({
           <button
             data-day="kiv"
             onClick={() => scrollToSection("kiv-section")}
-            className={`shrink-0 self-center px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+            className={`shrink-0 w-14 py-1.5 rounded-xl text-center transition-colors ${
               activeDay === "kiv"
                 ? "bg-amber-500 text-white"
                 : "bg-amber-50 text-amber-600 hover:bg-amber-100"
             }`}
           >
-            📌 KIV
+            <div className="text-sm leading-none">📌</div>
+            <div className="text-sm font-bold leading-tight mt-1 tracking-wider">
+              KIV
+            </div>
           </button>
         )}
       </div>
@@ -335,14 +338,12 @@ export default function ItineraryBoard({
             <DayDropZone key={day} dayDate={day} isAdmin={isAdmin} itemIds={dayItems.map((i) => i.id)}>
               <section id={`day-${day}`} className="scroll-mt-[9.5rem]">
                 <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold text-teal-600">
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-2xl font-bold text-teal-600 leading-none">
                       {dayNum}
                     </span>
-                    <div className="text-xs text-gray-400">
-                      <div className="font-medium text-gray-600">{dayName}</div>
-                      <div>{month}</div>
-                    </div>
+                    <span className="text-sm font-medium text-gray-600">{dayName},</span>
+                    <span className="text-sm text-gray-400">{month}</span>
                   </div>
                   <button
                     type="button"
