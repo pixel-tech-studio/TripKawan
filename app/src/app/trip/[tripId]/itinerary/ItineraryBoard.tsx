@@ -337,13 +337,13 @@ export default function ItineraryBoard({
           return (
             <DayDropZone key={day} dayDate={day} isAdmin={isAdmin} itemIds={dayItems.map((i) => i.id)}>
               <section id={`day-${day}`} className="scroll-mt-[9.5rem]">
-                <div className="flex items-center justify-between mb-3">
+                <div className="sticky top-[9.5rem] z-20 -mx-4 px-4 py-1.5 bg-white flex items-center justify-between mb-2">
                   <div className="flex items-baseline gap-1.5">
-                    <span className="text-2xl font-bold text-teal-600 leading-none">
+                    <span className="text-lg font-bold text-teal-600 leading-none">
                       {dayNum}
                     </span>
-                    <span className="text-sm font-medium text-gray-600">{dayName},</span>
-                    <span className="text-sm text-gray-400">{month}</span>
+                    <span className="text-xs font-medium text-gray-600">{dayName},</span>
+                    <span className="text-xs text-gray-400">{month}</span>
                   </div>
                   <button
                     type="button"
@@ -351,9 +351,9 @@ export default function ItineraryBoard({
                     onClick={() =>
                       setOpenAddDay((curr) => (curr === day ? null : day))
                     }
-                    className="w-8 h-8 rounded-full bg-teal-50 hover:bg-teal-100 active:bg-teal-100 text-teal-600 flex items-center justify-center transition-colors"
+                    className="w-7 h-7 rounded-full bg-teal-50 hover:bg-teal-100 active:bg-teal-100 text-teal-600 flex items-center justify-center transition-colors"
                   >
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 5v14M5 12h14" />
                     </svg>
                   </button>
