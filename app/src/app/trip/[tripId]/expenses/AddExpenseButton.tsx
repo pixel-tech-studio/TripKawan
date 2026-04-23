@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { Attachment, ExpenseCategory } from "@/lib/types";
 import DatePicker from "@/components/DatePicker";
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 interface AddExpenseButtonProps {
   tripId: string;
@@ -16,20 +18,22 @@ export default function AddExpenseButton({ tripId, defaultCategory = "shared" }:
   const [itemName, setItemName] = useState("");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState<ExpenseCategory>(defaultCategory);
-  const [expenseDate, setExpenseDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
+  const [expenseDate, setExpenseDate] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
-  const photoInputRef = useRef<HTMLInputElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   const addFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = Array.from(e.target.files || []);
-    setFiles((prev) => [...prev, ...selected]);
-    if (photoInputRef.current) photoInputRef.current.value = "";
-    if (fileInputRef.current) fileInputRef.current.value = "";
+    const oversize = selected.filter((f) => f.size > MAX_FILE_SIZE);
+    const accepted = selected.filter((f) => f.size <= MAX_FILE_SIZE);
+    if (oversize.length) {
+      alert(
+        `Skipped (max 10MB per file):\n${oversize.map((f) => f.name).join("\n")}`
+      );
+    }
+    if (accepted.length) setFiles((prev) => [...prev, ...accepted]);
+    e.target.value = "";
   };
 
   const removeFile = (index: number) => {
@@ -66,6 +70,8 @@ export default function AddExpenseButton({ tripId, defaultCategory = "shared" }:
       }
     }
 
+    const dateForRecord = expenseDate || new Date().toISOString().split("T")[0];
+
     await supabase.from("expenses").insert({
       trip_id: tripId,
       paid_by: user.id,
@@ -74,13 +80,13 @@ export default function AddExpenseButton({ tripId, defaultCategory = "shared" }:
       category,
       receipt_url: attachments[0]?.url ?? null,
       attachments,
-      created_at: new Date(`${expenseDate}T${new Date().toTimeString().slice(0, 8)}`).toISOString(),
+      created_at: new Date(`${dateForRecord}T${new Date().toTimeString().slice(0, 8)}`).toISOString(),
     });
 
     setItemName("");
     setAmount("");
     setCategory(defaultCategory);
-    setExpenseDate(new Date().toISOString().split("T")[0]);
+    setExpenseDate("");
     setFiles([]);
     setIsOpen(false);
     setLoading(false);
@@ -186,45 +192,11 @@ export default function AddExpenseButton({ tripId, defaultCategory = "shared" }:
                   Attachments (optional)
                 </label>
                 <input
-                  ref={photoInputRef}
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={addFiles}
-                  className="hidden"
-                />
-                <input
-                  ref={fileInputRef}
                   type="file"
                   multiple
                   onChange={addFiles}
-                  className="hidden"
+                  className="w-full text-xs text-gray-500 file:mr-2 file:rounded-full file:border-0 file:bg-teal-50 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-teal-600 hover:file:bg-teal-100"
                 />
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => photoInputRef.current?.click()}
-                    className="flex-1 flex items-center justify-center gap-2 rounded-2xl border border-gray-200 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50"
-                  >
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                      <circle cx="8.5" cy="8.5" r="1.5" />
-                      <polyline points="21 15 16 10 5 21" />
-                    </svg>
-                    Photo
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="flex-1 flex items-center justify-center gap-2 rounded-2xl border border-gray-200 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50"
-                  >
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                      <polyline points="14 2 14 8 20 8" />
-                    </svg>
-                    File
-                  </button>
-                </div>
                 {files.length > 0 && (
                   <ul className="mt-2 space-y-1">
                     {files.map((file, i) => (
