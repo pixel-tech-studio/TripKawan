@@ -45,6 +45,7 @@ export default function ItineraryBoard({
     null
   );
   const [activeDay, setActiveDay] = useState(days[0] || "");
+  const [openAddDay, setOpenAddDay] = useState<string | null>(null);
   const [showFab, setShowFab] = useState(false);
   const fabTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tabBarRef = useRef<HTMLDivElement>(null);
@@ -355,14 +356,28 @@ export default function ItineraryBoard({
           return (
             <DayDropZone key={day} dayDate={day} isAdmin={isAdmin} itemIds={dayItems.map((i) => i.id)}>
               <section id={`day-${day}`} className="scroll-mt-[8.75rem]">
-                <div className="flex items-baseline gap-2 mb-3">
-                  <span className="text-2xl font-bold text-teal-600">
-                    {dayNum}
-                  </span>
-                  <div className="text-xs text-gray-400">
-                    <div className="font-medium text-gray-600">{dayName}</div>
-                    <div>{month}</div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-bold text-teal-600">
+                      {dayNum}
+                    </span>
+                    <div className="text-xs text-gray-400">
+                      <div className="font-medium text-gray-600">{dayName}</div>
+                      <div>{month}</div>
+                    </div>
                   </div>
+                  <button
+                    type="button"
+                    aria-label="Add activity"
+                    onClick={() =>
+                      setOpenAddDay((curr) => (curr === day ? null : day))
+                    }
+                    className="w-8 h-8 rounded-full bg-teal-50 hover:bg-teal-100 active:bg-teal-100 text-teal-600 flex items-center justify-center transition-colors"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 5v14M5 12h14" />
+                    </svg>
+                  </button>
                 </div>
 
                 {dayItems.length === 0 ? (
@@ -383,7 +398,12 @@ export default function ItineraryBoard({
                   </ul>
                 )}
 
-                <AddActivityForm tripId={tripId} dayDate={day} />
+                <AddActivityForm
+                  tripId={tripId}
+                  dayDate={day}
+                  isOpen={openAddDay === day}
+                  onClose={() => setOpenAddDay(null)}
+                />
               </section>
             </DayDropZone>
           );

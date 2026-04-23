@@ -7,13 +7,16 @@ import { createClient } from "@/lib/supabase/client";
 interface AddActivityFormProps {
   tripId: string;
   dayDate: string;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export default function AddActivityForm({
   tripId,
   dayDate,
+  isOpen,
+  onClose,
 }: AddActivityFormProps) {
-  const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -96,21 +99,12 @@ export default function AddActivityForm({
     setUrl("");
     setImageFile(null);
     setImagePreview(null);
-    setIsOpen(false);
+    onClose();
     setLoading(false);
     router.refresh();
   };
 
-  if (!isOpen) {
-    return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="mt-2 text-xs text-teal-500 hover:text-teal-600 font-medium"
-      >
-        + Add activity
-      </button>
-    );
-  }
+  if (!isOpen) return null;
 
   return (
     <form onSubmit={handleSubmit} className="mt-3 rounded-2xl bg-white p-3 shadow-card space-y-2">
@@ -155,9 +149,9 @@ export default function AddActivityForm({
         <button
           type="button"
           onClick={() => {
-            setIsOpen(false);
             setImagePreview(null);
             setImageFile(null);
+            onClose();
           }}
           className="rounded-xl px-3 py-2 text-sm text-gray-400 hover:text-gray-600"
         >
