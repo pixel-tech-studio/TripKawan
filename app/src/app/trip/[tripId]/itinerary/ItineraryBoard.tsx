@@ -410,14 +410,10 @@ export default function ItineraryBoard({
               id="kiv-section"
               className="scroll-mt-[9.5rem] pt-4 border-t border-gray-200"
             >
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-lg">📌</span>
-                <div>
-                  <p className="font-semibold text-sm text-amber-600">
-                    KIV ({kivItems.length})
-                  </p>
-                  <p className="text-xs text-gray-400">Keep In View</p>
-                </div>
+              <div className="sticky top-[9.5rem] z-20 -mx-4 px-4 py-1.5 bg-white flex items-center gap-1.5 mb-2">
+                <span className="text-sm leading-none">📌</span>
+                <span className="text-sm font-semibold text-amber-600">KIV</span>
+                <span className="text-xs text-gray-400">({kivItems.length})</span>
               </div>
               {kivItems.length === 0 ? (
                 <p className="text-xs text-gray-300 italic ml-1">
