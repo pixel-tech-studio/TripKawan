@@ -136,10 +136,10 @@ function DrumPicker({ value, min, onCommit, onClear }: DrumPickerProps) {
   const [month, setMonth] = useState<number>(seed.getMonth());
   const [year, setYear] = useState<number>(seed.getFullYear());
 
-  // Year list: current year through current+5. If the seed value is outside
-  // that window (e.g. an existing record from a prior year), include it too.
+  // Year list: current-2 through current+2. If the seed value is outside that
+  // window (e.g. an older record), include it too so it stays reachable.
   const currentYear = new Date().getFullYear();
-  const baseYears = Array.from({ length: 6 }, (_, i) => currentYear + i);
+  const baseYears = Array.from({ length: 5 }, (_, i) => currentYear - 2 + i);
   const yearList = baseYears.includes(seed.getFullYear())
     ? baseYears
     : [...new Set([seed.getFullYear(), ...baseYears])].sort((a, b) => a - b);
@@ -373,11 +373,12 @@ export default function DatePicker({ value, onChange, min, placeholder = "Select
             onClick={() => setOpen(false)}
           />
 
-          {/* Sheet — bottom sheet on mobile (drum), centered card on desktop (calendar) */}
+          {/* Sheet — bottom sheet on mobile (drum), centered card on desktop (calendar).
+              Mobile bottom padding clears the BottomNav (h ~64px) on trip subpages. */}
           <div className="
             relative bg-white shadow-2xl
-            rounded-t-3xl px-5 pt-4 pb-[env(safe-area-inset-bottom,20px)] w-full
-            md:rounded-2xl md:w-auto md:min-w-[320px] md:max-w-sm md:px-6 md:py-6
+            rounded-t-3xl px-5 pt-4 pb-[calc(env(safe-area-inset-bottom,0px)+5rem)] w-full
+            md:rounded-2xl md:w-auto md:min-w-[320px] md:max-w-sm md:px-6 md:py-6 md:pb-6
           ">
             {/* Handle — mobile only */}
             <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5 md:hidden" />
