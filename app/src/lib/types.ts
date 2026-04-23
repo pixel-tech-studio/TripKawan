@@ -81,7 +81,7 @@ export interface ExpenseWithProfile extends Expense {
 }
 
 export interface ItineraryItemWithProfile extends ItineraryItem {
-  profiles: Pick<Profile, "display_name">;
+  profiles: Pick<Profile, "display_name" | "avatar_url">;
 }
 
 export interface TripWithMemberCount extends Trip {

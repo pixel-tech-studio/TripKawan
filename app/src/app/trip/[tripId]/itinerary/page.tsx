@@ -34,7 +34,7 @@ export default async function ItineraryPage({
 
   const { data: allItems } = await supabase
     .from("itinerary_items")
-    .select("*, profiles(display_name)")
+    .select("*, profiles(display_name, avatar_url)")
     .eq("trip_id", tripId)
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: true })

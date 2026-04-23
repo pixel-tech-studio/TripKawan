@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import Link from "next/link";
 import {
   DndContext,
   DragOverlay,
@@ -46,8 +47,6 @@ export default function ItineraryBoard({
   );
   const [activeDay, setActiveDay] = useState(days[0] || "");
   const [openAddDay, setOpenAddDay] = useState<string | null>(null);
-  const [showFab, setShowFab] = useState(false);
-  const fabTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tabBarRef = useRef<HTMLDivElement>(null);
 
   // Sync local state when server data changes (e.g. AddActivityForm submit)
@@ -80,20 +79,6 @@ export default function ItineraryBoard({
 
     return () => observers.forEach((obs) => obs.disconnect());
   }, [days]);
-
-  // Show FAB on scroll, hide after 2s of inactivity
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowFab(true);
-      if (fabTimerRef.current) clearTimeout(fabTimerRef.current);
-      fabTimerRef.current = setTimeout(() => setShowFab(false), 2000);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (fabTimerRef.current) clearTimeout(fabTimerRef.current);
-    };
-  }, []);
 
   // Scroll active tab pill into view within the tab bar
   useEffect(() => {
@@ -300,16 +285,8 @@ export default function ItineraryBoard({
       {/* Sticky day tab bar */}
       <div
         ref={tabBarRef}
-        className="sticky top-[5.8rem] z-30 -mx-4 px-4 py-2 bg-white/95 backdrop-blur-sm border-b border-gray-100 flex gap-2 overflow-x-auto"
+        className="sticky top-[7.5rem] z-30 -mx-4 px-4 py-2 bg-white/95 backdrop-blur-sm border-b border-gray-100 flex gap-2 overflow-x-auto"
       >
-        {isAdmin && (
-          <button
-            onClick={() => router.push(`/trip/${tripId}/setup`)}
-            className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 transition-colors"
-          >
-            ✨ Re-plan
-          </button>
-        )}
         {days.map((day) => {
           const { dayName, dayNum } = formatDay(day);
           const isActive = activeDay === day;
@@ -351,7 +328,7 @@ export default function ItineraryBoard({
 
           return (
             <DayDropZone key={day} dayDate={day} isAdmin={isAdmin} itemIds={dayItems.map((i) => i.id)}>
-              <section id={`day-${day}`} className="scroll-mt-[8.75rem]">
+              <section id={`day-${day}`} className="scroll-mt-[10.5rem]">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl font-bold text-teal-600">
@@ -381,17 +358,32 @@ export default function ItineraryBoard({
                     No activities yet
                   </p>
                 ) : (
-                  <ul className="space-y-2">
-                    {dayItems.map((item) => (
-                      <ActivityCard
-                        key={item.id}
-                        item={item}
-                        isAdmin={isAdmin}
-                        tripId={tripId}
-                        userId={userId}
-                      />
-                    ))}
-                  </ul>
+                  <div className="relative pl-8">
+                    {/* Timeline vertical line */}
+                    <div
+                      className="absolute w-0.5 bg-gray-200"
+                      style={{ left: 11, top: 16, bottom: 16 }}
+                      aria-hidden="true"
+                    />
+                    <div className="space-y-3">
+                      {dayItems.map((item) => (
+                        <div key={item.id} className="relative">
+                          {/* Timeline dot */}
+                          <div
+                            className="absolute w-2.5 h-2.5 rounded-full border-2 border-teal-400 bg-white z-10"
+                            style={{ left: -25, top: "50%", transform: "translateY(-50%)" }}
+                            aria-hidden="true"
+                          />
+                          <ActivityCard
+                            item={item}
+                            isAdmin={isAdmin}
+                            tripId={tripId}
+                            userId={userId}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
 
                 <AddActivityForm
@@ -410,7 +402,7 @@ export default function ItineraryBoard({
           <DayDropZone dayDate={null} isAdmin={isAdmin} itemIds={kivItems.map((i) => i.id)}>
             <section
               id="kiv-section"
-              className="scroll-mt-[8.75rem] pt-4 border-t border-gray-200"
+              className="scroll-mt-[10.5rem] pt-4 border-t border-gray-200"
             >
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-lg">📌</span>
@@ -426,7 +418,7 @@ export default function ItineraryBoard({
                   Drag activities here to park them
                 </p>
               ) : (
-                <ul className="space-y-2">
+                <div className="space-y-2">
                   {kivItems.map((item) => (
                     <ActivityCard
                       key={item.id}
@@ -436,7 +428,7 @@ export default function ItineraryBoard({
                       userId={userId}
                     />
                   ))}
-                </ul>
+                </div>
               )}
             </section>
           </DayDropZone>
@@ -455,18 +447,18 @@ export default function ItineraryBoard({
         ) : null}
       </DragOverlay>
 
-      {/* Floating back-to-top button — visible only during/after scroll */}
-      <button
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        aria-label="Back to top"
-        className={`fixed bottom-[calc(env(safe-area-inset-bottom)+5rem)] right-4 z-40 w-11 h-11 rounded-full bg-white/70 hover:bg-white backdrop-blur-sm shadow-md border border-gray-100 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 ${
-          showFab ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
-      >
-        <svg className="w-5 h-5 text-teal-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 19V5M5 12l7-7 7 7" />
-        </svg>
-      </button>
+      {/* Re-plan FAB — admin only */}
+      {isAdmin && (
+        <Link
+          href={`/trip/${tripId}/setup`}
+          className="fixed bottom-[calc(env(safe-area-inset-bottom)+5rem)] right-4 z-40 flex items-center gap-1.5 pl-3 pr-4 py-2.5 rounded-full bg-teal-500 hover:bg-teal-600 active:bg-teal-600 text-white text-sm font-semibold shadow-lg transition-colors"
+        >
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2l1.8 4.8L18.6 8.6l-4.8 1.8L12 15.2l-1.8-4.8L5.4 8.6l4.8-1.8zM19 14l1.2 3.2L23.4 18.4l-3.2 1.2L19 22.8l-1.2-3.2L14.6 18.4l3.2-1.2z" />
+          </svg>
+          Re-plan
+        </Link>
+      )}
     </DndContext>
   );
 }

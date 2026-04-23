@@ -216,22 +216,27 @@ export default function ActivityCard({
 
   const draggingClass = isDragging && !isOverlay ? "opacity-30" : "";
 
+  const isAi = item.source === "ai";
+  const displayTitle = isAi ? `${item.title} ✨` : item.title;
+  const avatarLetter =
+    item.profiles.display_name?.trim().charAt(0).toUpperCase() || "?";
+
   if (isOverlay) {
     return (
-      <li className={`${cardBase} overflow-hidden shadow-xl rotate-1 scale-[1.02]`}>
+      <div className={`${cardBase} overflow-hidden shadow-xl rotate-1 scale-[1.02]`}>
         {item.image_url && (
-          <img src={item.image_url} alt={item.title} className="w-full h-32 object-cover" />
+          <img src={item.image_url} alt={item.title} className="w-full h-40 object-cover" />
         )}
         <div className="p-3">
-          <p className="font-medium text-sm">{item.title}</p>
+          <p className="font-medium text-sm">{displayTitle}</p>
         </div>
-      </li>
+      </div>
     );
   }
 
   if (editing) {
     return (
-      <li className={`${cardBase} overflow-hidden`}>
+      <div className={`${cardBase} overflow-hidden`}>
         <form onSubmit={handleSave} className="p-3 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
@@ -304,12 +309,12 @@ export default function ActivityCard({
             </button>
           </div>
         </form>
-      </li>
+      </div>
     );
   }
 
   return (
-    <li
+    <div
       className={`relative rounded-2xl ${swipeX !== 0 || side || snapping ? "overflow-hidden" : ""} ${
         swipeX > 0 ? "bg-teal-500" : swipeX < 0 ? (confirming ? "bg-red-600" : "bg-red-500") : ""
       }`}
@@ -377,17 +382,17 @@ export default function ActivityCard({
             <img
               src={item.image_url}
               alt={item.title}
-              className="w-full h-32 object-cover"
+              className="w-full h-40 object-cover"
             />
           )}
           <div className="p-3">
-            <div className="flex items-start gap-2">
+            <div className="flex items-center gap-3">
               {/* Drag handle — touch-none so browser doesn't scroll on it */}
               {isAdmin && (
                 <span
                   {...listeners}
-                  className="touch-none cursor-grab active:cursor-grabbing text-gray-200 shrink-0 mt-0.5 select-none"
-                  style={{ fontSize: 18, lineHeight: 1 }}
+                  className="touch-none cursor-grab active:cursor-grabbing text-gray-200 shrink-0 select-none"
+                  style={{ fontSize: 16, lineHeight: 1 }}
                 >
                   ⠿
                 </span>
@@ -400,33 +405,38 @@ export default function ActivityCard({
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className={`font-medium text-sm underline break-words ${
+                    className={`font-semibold text-sm break-words ${
                       isKiv
-                        ? "text-amber-700 hover:text-amber-800 decoration-amber-300"
-                        : "text-teal-600 hover:text-teal-700 decoration-teal-300"
+                        ? "text-amber-700 hover:text-amber-800"
+                        : "text-gray-900 hover:text-teal-700"
                     }`}
                   >
-                    {item.title}
+                    {displayTitle}
                   </a>
                 ) : (
-                  <p className={`font-medium text-sm ${isKiv ? "text-amber-800" : ""}`}>
-                    {item.title}
+                  <p className={`font-semibold text-sm break-words ${isKiv ? "text-amber-800" : "text-gray-900"}`}>
+                    {displayTitle}
                   </p>
                 )}
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <p className="text-xs text-gray-400">
-                    by {item.profiles.display_name}
-                  </p>
-                  {item.source === "ai" && (
-                    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-purple-50 text-purple-400 border border-purple-100">
-                      ✨ AI
-                    </span>
-                  )}
-                </div>
+              </div>
+
+              {/* Suggester avatar */}
+              <div className="shrink-0">
+                {item.profiles.avatar_url ? (
+                  <img
+                    src={item.profiles.avatar_url}
+                    alt={item.profiles.display_name}
+                    className="w-8 h-8 rounded-full object-cover border border-gray-100"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 text-xs font-semibold flex items-center justify-center">
+                    {avatarLetter}
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
-    </li>
+    </div>
   );
 }
