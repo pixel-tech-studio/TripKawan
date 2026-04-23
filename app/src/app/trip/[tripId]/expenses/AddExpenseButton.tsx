@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { Attachment, ExpenseCategory } from "@/lib/types";
+import DatePicker from "@/components/DatePicker";
 
 interface AddExpenseButtonProps {
   tripId: string;
@@ -173,12 +174,9 @@ export default function AddExpenseButton({ tripId, defaultCategory = "shared" }:
                   <label className="block text-sm font-medium text-gray-600 mb-1">
                     Date
                   </label>
-                  <input
-                    type="date"
+                  <DatePicker
                     value={expenseDate}
-                    onChange={(e) => setExpenseDate(e.target.value)}
-                    required
-                    className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
+                    onChange={setExpenseDate}
                   />
                 </div>
               </div>
