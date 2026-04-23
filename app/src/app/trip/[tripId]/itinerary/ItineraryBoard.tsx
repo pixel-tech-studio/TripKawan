@@ -285,23 +285,28 @@ export default function ItineraryBoard({
       {/* Sticky day tab bar */}
       <div
         ref={tabBarRef}
-        className="sticky top-[7.5rem] z-30 -mx-4 px-4 py-2 bg-white/95 backdrop-blur-sm border-b border-gray-100 flex gap-2 overflow-x-auto"
+        className="sticky top-[5.9rem] z-30 -mx-4 px-4 py-2 bg-white border-b border-gray-100 flex gap-2 overflow-x-auto"
       >
-        {days.map((day) => {
-          const { dayName, dayNum } = formatDay(day);
+        {days.map((day, idx) => {
           const isActive = activeDay === day;
+          const dayNumber = String(idx + 1).padStart(2, "0");
           return (
             <button
               key={day}
               data-day={day}
               onClick={() => scrollToSection(`day-${day}`)}
-              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+              className={`shrink-0 w-14 py-1.5 rounded-xl text-center transition-colors ${
                 isActive
-                  ? "bg-teal-500 text-white"
+                  ? "bg-teal-700 text-white"
                   : "bg-gray-100 text-gray-500 hover:bg-gray-200"
               }`}
             >
-              {dayNum} {dayName}
+              <div className={`text-[10px] font-semibold uppercase tracking-wider ${isActive ? "opacity-80" : "opacity-70"}`}>
+                Day
+              </div>
+              <div className="text-base font-bold leading-tight">
+                {dayNumber}
+              </div>
             </button>
           );
         })}
@@ -309,7 +314,7 @@ export default function ItineraryBoard({
           <button
             data-day="kiv"
             onClick={() => scrollToSection("kiv-section")}
-            className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+            className={`shrink-0 self-center px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
               activeDay === "kiv"
                 ? "bg-amber-500 text-white"
                 : "bg-amber-50 text-amber-600 hover:bg-amber-100"
@@ -328,7 +333,7 @@ export default function ItineraryBoard({
 
           return (
             <DayDropZone key={day} dayDate={day} isAdmin={isAdmin} itemIds={dayItems.map((i) => i.id)}>
-              <section id={`day-${day}`} className="scroll-mt-[10.5rem]">
+              <section id={`day-${day}`} className="scroll-mt-[9.5rem]">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl font-bold text-teal-600">
@@ -402,7 +407,7 @@ export default function ItineraryBoard({
           <DayDropZone dayDate={null} isAdmin={isAdmin} itemIds={kivItems.map((i) => i.id)}>
             <section
               id="kiv-section"
-              className="scroll-mt-[10.5rem] pt-4 border-t border-gray-200"
+              className="scroll-mt-[9.5rem] pt-4 border-t border-gray-200"
             >
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-lg">📌</span>

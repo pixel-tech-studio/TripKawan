@@ -20,7 +20,7 @@ export default function TripHeader({ trip }: TripHeaderProps) {
       : "";
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 pt-3 pb-3">
+    <header className="sticky top-0 z-40 bg-white border-b border-gray-100 px-4 pt-3 pb-3">
       <Link
         href="/"
         className="inline-flex items-center gap-0.5 text-teal-600 hover:text-teal-700 text-sm font-medium mb-1"
