@@ -106,58 +106,87 @@ export default function AddActivityForm({
 
   if (!isOpen) return null;
 
+  const handleCancel = () => {
+    setImagePreview(null);
+    setImageFile(null);
+    onClose();
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="mt-3 rounded-2xl bg-white p-3 shadow-card space-y-2">
-      <input
-        type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="e.g. Snorkeling at Marine Park"
-        className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
-        autoFocus
-      />
-      <input
-        type="url"
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
-        placeholder="Link (optional) e.g. https://booking.com/..."
-        className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
-      />
-      <div>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-          className="w-full text-xs text-gray-500 file:mr-2 file:rounded-full file:border-0 file:bg-teal-50 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-teal-600 hover:file:bg-teal-100"
-        />
-        {imagePreview && (
-          <img
-            src={imagePreview}
-            alt="Preview"
-            className="mt-2 h-24 w-full rounded-xl object-cover"
-          />
-        )}
+    <div className="fixed inset-0 z-[60] flex items-end justify-center">
+      <div className="absolute inset-0 bg-black/30" onClick={handleCancel} />
+
+      <div className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-t-3xl bg-white px-5 pb-24 pt-4 animate-slideUp">
+        <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-gray-300" />
+
+        <h3 className="text-lg font-semibold mb-4">Add Activity</h3>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Title
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="e.g. Snorkeling at Marine Park"
+              required
+              autoFocus
+              className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Link (optional)
+            </label>
+            <input
+              type="url"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder="https://booking.com/..."
+              className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Image (optional)
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="w-full text-xs text-gray-500 file:mr-2 file:rounded-full file:border-0 file:bg-teal-50 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-teal-600 hover:file:bg-teal-100"
+            />
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="mt-2 h-32 w-full rounded-xl object-cover"
+              />
+            )}
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="flex-1 rounded-2xl border border-gray-200 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading || !title.trim()}
+              className="flex-1 rounded-2xl bg-teal-500 py-3 text-sm font-semibold text-white hover:bg-teal-600 disabled:opacity-50"
+            >
+              {loading ? "Adding..." : "Add Activity"}
+            </button>
+          </div>
+        </form>
       </div>
-      <div className="flex gap-2">
-        <button
-          type="submit"
-          disabled={loading || !title.trim()}
-          className="rounded-xl bg-teal-500 px-4 py-2 text-sm font-medium text-white hover:bg-teal-600 disabled:opacity-50"
-        >
-          {loading ? "Adding..." : "Add"}
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            setImagePreview(null);
-            setImageFile(null);
-            onClose();
-          }}
-          className="rounded-xl px-3 py-2 text-sm text-gray-400 hover:text-gray-600"
-        >
-          Cancel
-        </button>
-      </div>
-    </form>
+    </div>
   );
 }

@@ -297,23 +297,19 @@ export default function ItineraryBoard({
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
-      {/* Re-plan button — admin only */}
-      {isAdmin && (
-        <div className="flex justify-end mb-2">
-          <button
-            onClick={() => router.push(`/trip/${tripId}/setup`)}
-            className="flex items-center gap-1.5 text-xs font-medium text-purple-500 hover:text-purple-700 transition-colors px-3 py-1.5 rounded-full border border-purple-100 hover:border-purple-200 bg-purple-50"
-          >
-            ✨ Re-plan trip
-          </button>
-        </div>
-      )}
-
       {/* Sticky day tab bar */}
       <div
         ref={tabBarRef}
         className="sticky top-[5.8rem] z-30 -mx-4 px-4 py-2 bg-white/95 backdrop-blur-sm border-b border-gray-100 flex gap-2 overflow-x-auto"
       >
+        {isAdmin && (
+          <button
+            onClick={() => router.push(`/trip/${tripId}/setup`)}
+            className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 transition-colors"
+          >
+            ✨ Re-plan
+          </button>
+        )}
         {days.map((day) => {
           const { dayName, dayNum } = formatDay(day);
           const isActive = activeDay === day;
