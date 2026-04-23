@@ -70,7 +70,7 @@ export default function ItineraryBoard({
             setActiveDay(id === "kiv-section" ? "kiv" : id.replace("day-", ""));
           }
         },
-        { rootMargin: "-95px 0px -60% 0px", threshold: 0 }
+        { rootMargin: "-140px 0px -60% 0px", threshold: 0 }
       );
 
       observer.observe(el);
@@ -282,10 +282,10 @@ export default function ItineraryBoard({
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
-      {/* Day tab bar — scrolls with content so itinerary matches other pages */}
+      {/* Sticky day tab bar */}
       <div
         ref={tabBarRef}
-        className="-mx-4 px-4 py-2 bg-white border-b border-gray-100 flex gap-2 overflow-x-auto"
+        className="sticky top-[5.9rem] z-30 -mx-4 px-4 py-2 bg-white border-b border-gray-100 flex gap-2 overflow-x-auto"
       >
         {days.map((day, idx) => {
           const isActive = activeDay === day;
@@ -333,7 +333,7 @@ export default function ItineraryBoard({
 
           return (
             <DayDropZone key={day} dayDate={day} isAdmin={isAdmin} itemIds={dayItems.map((i) => i.id)}>
-              <section id={`day-${day}`} className="scroll-mt-[5.9rem]">
+              <section id={`day-${day}`} className="scroll-mt-[9.5rem]">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl font-bold text-teal-600">
@@ -407,7 +407,7 @@ export default function ItineraryBoard({
           <DayDropZone dayDate={null} isAdmin={isAdmin} itemIds={kivItems.map((i) => i.id)}>
             <section
               id="kiv-section"
-              className="scroll-mt-[5.9rem] pt-4 border-t border-gray-200"
+              className="scroll-mt-[9.5rem] pt-4 border-t border-gray-200"
             >
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-lg">📌</span>
