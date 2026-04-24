@@ -234,25 +234,39 @@ export default function ItineraryBoard({
       return;
     }
 
-    // Persist sort_order for all items in the target container
+    // Persist the new order
     const supabase = createClient();
     const dayDate = overContainer === "kiv" ? null : overContainer;
 
-    const updates = finalItems.map((item, idx) =>
-      supabase
-        .from("itinerary_items")
-        .update({ day_date: dayDate, sort_order: idx })
-        .eq("id", item.id)
-        .eq("trip_id", tripId)
-    );
+    let errorMsg: string | null = null;
 
-    const results = await Promise.all(updates);
-    const failed = results.find((r) => r.error);
+    if (activeContainer === overContainer) {
+      // Same-container reorder — use the RPC so members can trigger the
+      // sort_order cascade across siblings they don't own.
+      const { error } = await supabase.rpc("reorder_itinerary_items", {
+        p_trip_id: tripId,
+        p_day_date: dayDate,
+        p_item_ids: finalItems.map((i) => i.id),
+      });
+      if (error) errorMsg = error.message;
+    } else {
+      // Cross-container move — direct UPDATE. Admin-only; non-admins bail
+      // earlier in handleDragOver / handleDragEnd.
+      const updates = finalItems.map((item, idx) =>
+        supabase
+          .from("itinerary_items")
+          .update({ day_date: dayDate, sort_order: idx })
+          .eq("id", item.id)
+          .eq("trip_id", tripId)
+      );
+      const results = await Promise.all(updates);
+      errorMsg = results.find((r) => r.error)?.error?.message ?? null;
+    }
 
-    if (failed?.error) {
+    if (errorMsg) {
       setItemsByDay(prevItemsByDay);
       setKivItems(prevKivItems);
-      alert(`Failed to reorder: ${failed.error.message}`);
+      alert(`Failed to reorder: ${errorMsg}`);
     } else {
       router.refresh();
     }
