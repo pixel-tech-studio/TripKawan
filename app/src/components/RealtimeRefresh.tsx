@@ -17,15 +17,22 @@ export default function RealtimeRefresh() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
+      console.log("[realtime] subscribing as", session.user.id);
+
       channel = supabase.channel("realtime-refresh");
       for (const table of TABLES) {
         channel = channel.on(
           "postgres_changes",
           { event: "*", schema: "public", table },
-          () => router.refresh()
+          (payload) => {
+            console.log("[realtime]", payload.table, payload.eventType, payload);
+            router.refresh();
+          }
         );
       }
-      channel.subscribe();
+      channel.subscribe((status, err) => {
+        console.log("[realtime] status:", status, err ?? "");
+      });
     };
 
     setup();
