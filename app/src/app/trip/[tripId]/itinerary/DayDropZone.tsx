@@ -23,15 +23,13 @@ export default function DayDropZone({
 
   const { setNodeRef, isOver } = useDroppable({
     id: droppableId,
-    disabled: !isAdmin,
   });
 
-  const highlightClass =
-    isAdmin && isOver
-      ? dayDate
-        ? "ring-2 ring-teal-400/50 bg-teal-50/20"
-        : "ring-2 ring-amber-400/50 bg-amber-50/30"
-      : "";
+  const highlightClass = isOver
+    ? dayDate
+      ? "ring-2 ring-teal-400/50 bg-teal-50/20"
+      : "ring-2 ring-amber-400/50 bg-amber-50/30"
+    : "";
 
   return (
     <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>

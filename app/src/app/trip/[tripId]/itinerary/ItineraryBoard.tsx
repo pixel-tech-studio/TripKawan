@@ -147,6 +147,9 @@ export default function ItineraryBoard({
 
     if (!activeContainer || !overContainer || activeContainer === overContainer) return;
 
+    // Option 2: non-admins can reorder within a container but can't move cross-container
+    if (!isAdmin) return;
+
     const item = findItem(activeId);
     if (!item) return;
 
@@ -198,6 +201,9 @@ export default function ItineraryBoard({
     }
 
     if (!overContainer) return;
+
+    // Option 2: non-admins can reorder within a container but can't move cross-container
+    if (!isAdmin && activeContainer !== overContainer) return;
 
     // Snapshot for rollback
     const prevItemsByDay = Object.fromEntries(

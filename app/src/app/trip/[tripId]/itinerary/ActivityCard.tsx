@@ -58,7 +58,7 @@ export default function ActivityCard({
   const { listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: item.id,
     data: { item },
-    disabled: !isAdmin,
+    disabled: !canEdit,
   });
 
   const snapTo = (x: number, rev: "left" | "right" | null) => {
@@ -388,7 +388,7 @@ export default function ActivityCard({
           <div className="p-3">
             <div className="flex items-center gap-3">
               {/* Drag handle — touch-none so browser doesn't scroll on it */}
-              {isAdmin && (
+              {canEdit && (
                 <span
                   {...listeners}
                   className="touch-none cursor-grab active:cursor-grabbing text-gray-200 shrink-0 select-none"
