@@ -68,7 +68,7 @@ export default async function ItineraryPage({
   const itemsKey = allItems?.map((i) => i.id).sort().join(",") ?? "";
 
   return (
-    <div className="px-4 py-4">
+    <div className="px-4 pb-4">
       {days.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <span className="text-5xl mb-4">🧳</span>

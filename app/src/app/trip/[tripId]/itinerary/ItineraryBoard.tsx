@@ -70,7 +70,7 @@ export default function ItineraryBoard({
             setActiveDay(id === "kiv-section" ? "kiv" : id.replace("day-", ""));
           }
         },
-        { rootMargin: "-140px 0px -60% 0px", threshold: 0 }
+        { rootMargin: "-155px 0px -60% 0px", threshold: 0 }
       );
 
       observer.observe(el);
@@ -285,7 +285,7 @@ export default function ItineraryBoard({
       {/* Sticky day tab bar */}
       <div
         ref={tabBarRef}
-        className="sticky top-[5.9rem] z-30 -mx-4 px-4 py-2 bg-white border-b border-gray-100 flex gap-2 overflow-x-auto"
+        className="sticky top-[6rem] z-30 -mx-4 px-4 py-2 bg-white border-b border-gray-100 flex gap-2 overflow-x-auto"
       >
         {days.map((day, idx) => {
           const isActive = activeDay === day;
@@ -329,15 +329,15 @@ export default function ItineraryBoard({
       </div>
 
       {/* Day sections */}
-      <div className="space-y-6 mt-4">
+      <div className="space-y-6">
         {days.map((day) => {
           const { dayName, dayNum, month } = formatDay(day);
           const dayItems = itemsByDay[day] || [];
 
           return (
             <DayDropZone key={day} dayDate={day} isAdmin={isAdmin} itemIds={dayItems.map((i) => i.id)}>
-              <section id={`day-${day}`} className="scroll-mt-[9.5rem]">
-                <div className="sticky top-[9.5rem] z-20 -mx-4 px-4 py-2 bg-white flex items-center justify-between mb-3">
+              <section id={`day-${day}`} className="scroll-mt-[9.7rem]">
+                <div className="sticky top-[9.7rem] z-20 -mx-4 px-4 py-2 bg-white flex items-center justify-between mb-3">
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl font-bold text-teal-600">
                       {dayNum}
@@ -410,9 +410,9 @@ export default function ItineraryBoard({
           <DayDropZone dayDate={null} isAdmin={isAdmin} itemIds={kivItems.map((i) => i.id)}>
             <section
               id="kiv-section"
-              className="scroll-mt-[9.5rem] pt-4 border-t border-gray-200"
+              className="scroll-mt-[9.7rem] pt-4 border-t border-gray-200"
             >
-              <div className="sticky top-[9.5rem] z-20 -mx-4 px-4 py-2 bg-white flex items-center gap-2 mb-3">
+              <div className="sticky top-[9.7rem] z-20 -mx-4 px-4 py-2 bg-white flex items-center gap-2 mb-3">
                 <span className="text-lg">📌</span>
                 <div>
                   <p className="font-semibold text-sm text-amber-600">
