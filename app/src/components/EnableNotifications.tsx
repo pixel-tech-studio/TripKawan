@@ -157,14 +157,30 @@ export default function EnableNotifications() {
 
   if (state === "on") {
     return (
-      <div className="flex items-center justify-between rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm">
+      <div className="flex items-center justify-between rounded-xl bg-emerald-50 border border-emerald-200 pl-4 pr-2 py-2 text-sm">
         <span className="text-emerald-800">Notifications on for this device</span>
         <button
           onClick={disable}
           disabled={busy}
-          className="text-emerald-700 underline disabled:opacity-50"
+          aria-label="Disable notifications"
+          title="Disable notifications"
+          className="p-2 rounded-full text-emerald-700 hover:bg-emerald-100 disabled:opacity-50 transition-colors"
         >
-          Disable
+          <svg
+            className="w-5 h-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            <path d="M18.63 13A17.89 17.89 0 0 1 18 8" />
+            <path d="M6.26 6.26A5.86 5.86 0 0 0 6 8c0 7-3 9-3 9h14" />
+            <path d="M18 8a6 6 0 0 0-9.33-5" />
+            <line x1="1" y1="1" x2="23" y2="23" />
+          </svg>
         </button>
       </div>
     );
