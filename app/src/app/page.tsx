@@ -5,6 +5,7 @@ import type { Trip } from "@/lib/types";
 import LogoutButton from "@/components/LogoutButton";
 import SwipeTripCard from "@/components/SwipeTripCard";
 import FlipCountdown from "@/components/FlipCountdown";
+import EnableNotifications from "@/components/EnableNotifications";
 
 // ── Status badge helper ───────────────────────────────────────────────────────
 function getTripStatus(trip: Trip) {
@@ -147,6 +148,10 @@ export default async function TripsPage() {
       </header>
 
       <main className="flex-1 pb-8">
+        <div className="px-4 mb-4">
+          <EnableNotifications />
+        </div>
+
         {/* Top flip countdown — next upcoming trip */}
         {nextTrip && (
           <FlipCountdown

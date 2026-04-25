@@ -87,3 +87,13 @@ export interface ItineraryItemWithProfile extends ItineraryItem {
 export interface TripWithMemberCount extends Trip {
   member_count: number;
 }
+
+export interface PushSubscriptionRow {
+  id: string;
+  user_id: string;
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+  user_agent: string | null;
+  created_at: string;
+}

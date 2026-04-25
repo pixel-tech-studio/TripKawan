@@ -1,0 +1,159 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+type State =
+  | "loading"
+  | "unsupported"
+  | "needs-install"
+  | "denied"
+  | "off"
+  | "on";
+
+// Web Push uses a base64url-encoded public key, but PushManager.subscribe
+// wants a raw Uint8Array. Convert here.
+function urlBase64ToUint8Array(base64: string) {
+  const padding = "=".repeat((4 - (base64.length % 4)) % 4);
+  const normalized = (base64 + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const raw = atob(normalized);
+  const arr = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+  return arr;
+}
+
+function isStandalone(): boolean {
+  if (window.matchMedia("(display-mode: standalone)").matches) return true;
+  // iOS Safari exposes navigator.standalone instead of display-mode.
+  const navAny = navigator as Navigator & { standalone?: boolean };
+  return navAny.standalone === true;
+}
+
+export default function EnableNotifications() {
+  const [state, setState] = useState<State>("loading");
+  const [busy, setBusy] = useState(false);
+
+  // On mount, figure out what state we're in.
+  useEffect(() => {
+    (async () => {
+      const supported =
+        "serviceWorker" in navigator &&
+        "PushManager" in window &&
+        "Notification" in window;
+      if (!supported) return setState("unsupported");
+
+      const ua = navigator.userAgent;
+      const isIOS = /iPhone|iPad|iPod/.test(ua);
+      if (isIOS && !isStandalone()) return setState("needs-install");
+
+      if (Notification.permission === "denied") return setState("denied");
+
+      const reg = await navigator.serviceWorker.ready;
+      const existing = await reg.pushManager.getSubscription();
+      setState(existing ? "on" : "off");
+    })();
+  }, []);
+
+  const enable = async () => {
+    setBusy(true);
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") {
+        setState(permission === "denied" ? "denied" : "off");
+        return;
+      }
+
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(
+          process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
+        ),
+      });
+
+      const json = sub.toJSON();
+      const res = await fetch("/app/api/push/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...json, userAgent: navigator.userAgent }),
+      });
+      if (!res.ok) {
+        // Roll back the browser-side subscription if the server failed to
+        // store it — otherwise the user's device is "subscribed" with no
+        // record on our side and will never receive pushes.
+        await sub.unsubscribe();
+        throw new Error("server rejected subscription");
+      }
+      setState("on");
+    } catch (err) {
+      console.error("[push] enable failed", err);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const disable = async () => {
+    setBusy(true);
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.getSubscription();
+      if (sub) {
+        await fetch("/app/api/push/subscribe", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ endpoint: sub.endpoint }),
+        });
+        await sub.unsubscribe();
+      }
+      setState("off");
+    } catch (err) {
+      console.error("[push] disable failed", err);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (state === "loading" || state === "unsupported") return null;
+
+  if (state === "needs-install") {
+    return (
+      <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
+        To get instant updates on iPhone, tap the share icon in Safari, then{" "}
+        <strong>Add to Home Screen</strong> and open from there.
+      </div>
+    );
+  }
+
+  if (state === "denied") {
+    return (
+      <div className="rounded-xl bg-gray-50 border border-gray-200 px-4 py-3 text-sm text-gray-600">
+        Notifications are blocked. Enable them in your browser/system settings
+        to get instant updates.
+      </div>
+    );
+  }
+
+  if (state === "on") {
+    return (
+      <div className="flex items-center justify-between rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm">
+        <span className="text-emerald-800">Notifications on for this device</span>
+        <button
+          onClick={disable}
+          disabled={busy}
+          className="text-emerald-700 underline disabled:opacity-50"
+        >
+          Disable
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      onClick={enable}
+      disabled={busy}
+      className="w-full rounded-xl bg-teal-500 hover:bg-teal-600 disabled:opacity-50 px-4 py-3 text-sm font-medium text-white transition-colors"
+    >
+      {busy ? "Enabling…" : "Enable instant notifications"}
+    </button>
+  );
+}
