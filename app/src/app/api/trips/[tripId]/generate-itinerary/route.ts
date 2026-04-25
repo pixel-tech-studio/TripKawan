@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Groq from "groq-sdk";
 import { createClient } from "@/lib/supabase/server";
+import { notifyTripMembers } from "@/lib/push";
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
@@ -204,6 +205,14 @@ Day dates to use: ${days.join(", ")}`;
       );
     }
   }
+
+  // Fire-and-forget push to other trip members. Failures here shouldn't
+  // fail the request — itinerary already saved successfully.
+  notifyTripMembers(tripId, user.id, {
+    title: trip.name ?? "Trip update",
+    body: `New AI itinerary with ${itemsToInsert.length} items`,
+    url: `/app/trip/${tripId}/itinerary`,
+  }).catch((err) => console.error("[push] notify failed", err));
 
   return NextResponse.json({ count: itemsToInsert.length });
 }

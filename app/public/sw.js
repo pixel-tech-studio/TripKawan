@@ -17,12 +17,38 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(self.clients.claim());
 });
 
-// Push notification handler. Step 5 will fill this in to:
-//   - parse the JSON payload (trip_id, type, title, body)
-//   - postMessage to any open clients so they can router.refresh() silently
-//   - show a notification if no client is open
+// Push notification handler.
+//
+// Server payload shape: { title, body, url? }. We:
+//   1. postMessage every open client so they can router.refresh() and pick
+//      up the new data immediately — no waiting on realtime / polling.
+//   2. Show a system notification regardless. The user may or may not have
+//      a tab open; this guarantees they see something.
 self.addEventListener("push", (event) => {
-  console.log("[sw] push received", event.data ? event.data.text() : "(no data)");
+  let payload = { title: "TripKawan", body: "", url: "/app" };
+  try {
+    if (event.data) payload = { ...payload, ...event.data.json() };
+  } catch {
+    if (event.data) payload.body = event.data.text();
+  }
+
+  event.waitUntil(
+    (async () => {
+      const clients = await self.clients.matchAll({
+        type: "window",
+        includeUncontrolled: true,
+      });
+      for (const client of clients) {
+        client.postMessage({ type: "push-refresh" });
+      }
+      await self.registration.showNotification(payload.title, {
+        body: payload.body,
+        data: { url: payload.url },
+        icon: "/app/api/pwa-icon/192",
+        badge: "/app/api/pwa-icon/192",
+      });
+    })()
+  );
 });
 
 // When the user taps a notification, focus the existing app window if any,
