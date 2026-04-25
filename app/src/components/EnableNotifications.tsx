@@ -57,9 +57,15 @@ export default function EnableNotifications() {
         console.log("[push] permission:", Notification.permission);
         if (Notification.permission === "denied") return setState("denied");
 
-        console.log("[push] awaiting serviceWorker.ready");
-        const reg = await navigator.serviceWorker.ready;
-        console.log("[push] SW ready, pushManager:", !!reg.pushManager);
+        // Don't use serviceWorker.ready — it waits for the current page
+        // to be controlled by an active SW, but our basePath /app means
+        // the home page URL (/app) is outside scope /app/, so it never
+        // becomes controlled and ready hangs forever. register() returns
+        // the registration object directly; push subscriptions live on
+        // that and work regardless of which pages are controlled.
+        console.log("[push] registering SW");
+        const reg = await navigator.serviceWorker.register("/app/sw.js");
+        console.log("[push] SW registered, pushManager:", !!reg.pushManager);
 
         const existing = await reg.pushManager.getSubscription();
         console.log("[push] existing subscription:", existing?.endpoint ?? null);
@@ -79,7 +85,7 @@ export default function EnableNotifications() {
         return;
       }
 
-      const reg = await navigator.serviceWorker.ready;
+      const reg = await navigator.serviceWorker.register("/app/sw.js");
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(
@@ -111,7 +117,7 @@ export default function EnableNotifications() {
   const disable = async () => {
     setBusy(true);
     try {
-      const reg = await navigator.serviceWorker.ready;
+      const reg = await navigator.serviceWorker.register("/app/sw.js");
       const sub = await reg.pushManager.getSubscription();
       if (sub) {
         await fetch("/app/api/push/subscribe", {
