@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import RealtimeRefresh from "@/components/RealtimeRefresh";
+import MobileRefreshPoller from "@/components/MobileRefreshPoller";
+import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -37,6 +39,8 @@ export default function RootLayout({
     <html lang="en" className={`${poppins.variable} h-full`}>
       <body className="min-h-full flex flex-col bg-sand-50 text-foreground font-sans antialiased">
         <RealtimeRefresh />
+        <MobileRefreshPoller />
+        <ServiceWorkerRegistration />
         {children}
       </body>
     </html>
