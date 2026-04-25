@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import {
   DndContext,
@@ -48,6 +49,14 @@ export default function ItineraryBoard({
   const [activeDay, setActiveDay] = useState(days[0] || "");
   const [openAddDay, setOpenAddDay] = useState<string | null>(null);
   const tabBarRef = useRef<HTMLDivElement>(null);
+  const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
+
+  // The sticky chrome lives in the trip layout. Wait for it to mount, then
+  // portal our DAY tab bar + active-day label into it so everything sits
+  // inside one sticky element with no sub-pixel gaps.
+  useEffect(() => {
+    setPortalTarget(document.getElementById("trip-extra-sticky"));
+  }, []);
 
   // Sync local state when server data changes (e.g. AddActivityForm submit)
   useEffect(() => {
@@ -70,7 +79,7 @@ export default function ItineraryBoard({
             setActiveDay(id === "kiv-section" ? "kiv" : id.replace("day-", ""));
           }
         },
-        { rootMargin: "-155px 0px -60% 0px", threshold: 0 }
+        { rootMargin: "-220px 0px -60% 0px", threshold: 0 }
       );
 
       observer.observe(el);
@@ -293,6 +302,102 @@ export default function ItineraryBoard({
 
   const showKiv = isAdmin || kivItems.length > 0;
 
+  // The DAY tab bar + active-day label live INSIDE the layout's
+  // TripStickyChrome via a portal, so the whole sticky region is one
+  // contiguous element. Bigger back button, no sub-pixel sticky gaps.
+  const dayTabBar = (
+    <div
+      ref={tabBarRef}
+      className="px-4 py-2 bg-white flex gap-2 overflow-x-auto border-t border-gray-100"
+    >
+      {days.map((day, idx) => {
+        const isActive = activeDay === day;
+        const dayNumber = String(idx + 1).padStart(2, "0");
+        return (
+          <button
+            key={day}
+            data-day={day}
+            onClick={() => scrollToSection(`day-${day}`)}
+            className={`shrink-0 w-14 py-1.5 rounded-xl text-center transition-colors ${
+              isActive
+                ? "bg-teal-500 text-white"
+                : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+            }`}
+          >
+            <div className={`text-[10px] font-semibold uppercase tracking-wider ${isActive ? "opacity-80" : "opacity-70"}`}>
+              Day
+            </div>
+            <div className="text-base font-bold leading-tight">
+              {dayNumber}
+            </div>
+          </button>
+        );
+      })}
+      {showKiv && (
+        <button
+          data-day="kiv"
+          onClick={() => scrollToSection("kiv-section")}
+          className={`shrink-0 w-14 py-1.5 rounded-xl text-center transition-colors ${
+            activeDay === "kiv"
+              ? "bg-amber-500 text-white"
+              : "bg-amber-50 text-amber-600 hover:bg-amber-100"
+          }`}
+        >
+          <div className="text-sm leading-none">📌</div>
+          <div className="text-sm font-bold leading-tight mt-1 tracking-wider">
+            KIV
+          </div>
+        </button>
+      )}
+    </div>
+  );
+
+  // Active-day row: the date label for whichever day is currently in view,
+  // plus the + button that adds an activity to that day. Replaces the
+  // previous per-day sticky headers — they were the source of the
+  // sub-pixel sticky-on-sticky shift the user kept noticing.
+  let activeDayRow: React.ReactNode = null;
+  if (activeDay === "kiv") {
+    activeDayRow = (
+      <div className="px-4 py-2 bg-white flex items-center gap-2 border-t border-gray-100">
+        <span className="text-lg">📌</span>
+        <div>
+          <p className="font-semibold text-sm text-amber-600">
+            KIV ({kivItems.length})
+          </p>
+          <p className="text-xs text-gray-400">Keep In View</p>
+        </div>
+      </div>
+    );
+  } else if (activeDay) {
+    const { dayName, dayNum, month } = formatDay(activeDay);
+    activeDayRow = (
+      <div className="px-4 py-2 bg-white flex items-center justify-between border-t border-gray-100">
+        <div className="flex items-baseline gap-2">
+          <span className="text-2xl font-bold text-teal-600">{dayNum}</span>
+          <div className="text-xs text-gray-400">
+            <div className="font-medium text-gray-600">{dayName}</div>
+            <div>{month}</div>
+          </div>
+        </div>
+        {isAdmin && (
+          <button
+            type="button"
+            aria-label="Add activity"
+            onClick={() =>
+              setOpenAddDay((curr) => (curr === activeDay ? null : activeDay))
+            }
+            className="w-8 h-8 rounded-full bg-teal-50 hover:bg-teal-100 active:bg-teal-100 text-teal-600 flex items-center justify-center transition-colors"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+          </button>
+        )}
+      </div>
+    );
+  }
+
   return (
     <DndContext
       sensors={sensors}
@@ -302,85 +407,26 @@ export default function ItineraryBoard({
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
-      {/* Sticky day tab bar */}
-      <div
-        ref={tabBarRef}
-        className="sticky top-[6rem] z-30 -mx-4 px-4 py-2 bg-white border-b border-gray-100 flex gap-2 overflow-x-auto"
-      >
-        {days.map((day, idx) => {
-          const isActive = activeDay === day;
-          const dayNumber = String(idx + 1).padStart(2, "0");
-          return (
-            <button
-              key={day}
-              data-day={day}
-              onClick={() => scrollToSection(`day-${day}`)}
-              className={`shrink-0 w-14 py-1.5 rounded-xl text-center transition-colors ${
-                isActive
-                  ? "bg-teal-500 text-white"
-                  : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-              }`}
-            >
-              <div className={`text-[10px] font-semibold uppercase tracking-wider ${isActive ? "opacity-80" : "opacity-70"}`}>
-                Day
-              </div>
-              <div className="text-base font-bold leading-tight">
-                {dayNumber}
-              </div>
-            </button>
-          );
-        })}
-        {showKiv && (
-          <button
-            data-day="kiv"
-            onClick={() => scrollToSection("kiv-section")}
-            className={`shrink-0 w-14 py-1.5 rounded-xl text-center transition-colors ${
-              activeDay === "kiv"
-                ? "bg-amber-500 text-white"
-                : "bg-amber-50 text-amber-600 hover:bg-amber-100"
-            }`}
-          >
-            <div className="text-sm leading-none">📌</div>
-            <div className="text-sm font-bold leading-tight mt-1 tracking-wider">
-              KIV
-            </div>
-          </button>
+      {portalTarget &&
+        createPortal(
+          <>
+            {dayTabBar}
+            {activeDayRow}
+          </>,
+          portalTarget
         )}
-      </div>
 
       {/* Day sections */}
       <div className="space-y-6">
         {days.map((day) => {
-          const { dayName, dayNum, month } = formatDay(day);
           const dayItems = itemsByDay[day] || [];
 
           return (
             <DayDropZone key={day} dayDate={day} isAdmin={isAdmin} itemIds={dayItems.map((i) => i.id)}>
-              <section id={`day-${day}`} className="scroll-mt-[9.75rem]">
-                <div className="sticky top-[9.75rem] z-20 -mx-4 px-4 py-2 bg-white flex items-center justify-between">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold text-teal-600">
-                      {dayNum}
-                    </span>
-                    <div className="text-xs text-gray-400">
-                      <div className="font-medium text-gray-600">{dayName}</div>
-                      <div>{month}</div>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    aria-label="Add activity"
-                    onClick={() =>
-                      setOpenAddDay((curr) => (curr === day ? null : day))
-                    }
-                    className="w-8 h-8 rounded-full bg-teal-50 hover:bg-teal-100 active:bg-teal-100 text-teal-600 flex items-center justify-center transition-colors"
-                  >
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 5v14M5 12h14" />
-                    </svg>
-                  </button>
-                </div>
-
+              <section
+                id={`day-${day}`}
+                className="scroll-mt-[var(--trip-chrome-h,220px)]"
+              >
                 {dayItems.length === 0 ? (
                   <p className="text-xs text-gray-300 italic ml-1">
                     No activities yet
@@ -430,17 +476,8 @@ export default function ItineraryBoard({
           <DayDropZone dayDate={null} isAdmin={isAdmin} itemIds={kivItems.map((i) => i.id)}>
             <section
               id="kiv-section"
-              className="scroll-mt-[9.75rem] pt-4 border-t border-gray-200"
+              className="scroll-mt-[var(--trip-chrome-h,220px)] pt-4 border-t border-gray-200"
             >
-              <div className="sticky top-[9.75rem] z-20 -mx-4 px-4 py-2 bg-white flex items-center gap-2">
-                <span className="text-lg">📌</span>
-                <div>
-                  <p className="font-semibold text-sm text-amber-600">
-                    KIV ({kivItems.length})
-                  </p>
-                  <p className="text-xs text-gray-400">Keep In View</p>
-                </div>
-              </div>
               {kivItems.length === 0 ? (
                 <p className="text-xs text-gray-300 italic ml-1">
                   Drag activities here to park them

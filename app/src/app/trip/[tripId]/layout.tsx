@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import BottomNav from "@/components/BottomNav";
 import TripHeader from "@/components/TripHeader";
+import TripStickyChrome from "@/components/TripStickyChrome";
 import type { Trip } from "@/lib/types";
 
 async function TripHeaderFetcher({ tripId }: { tripId: string }) {
@@ -28,13 +29,11 @@ export default async function TripLayout({
 
   return (
     <div className="flex flex-col min-h-full">
-      <Suspense
-        fallback={
-          <div className="sticky top-0 z-40 h-[57px] border-b border-gray-100 bg-white/95" />
-        }
-      >
-        <TripHeaderFetcher tripId={tripId} />
-      </Suspense>
+      <TripStickyChrome>
+        <Suspense fallback={<div className="h-[120px] bg-white" />}>
+          <TripHeaderFetcher tripId={tripId} />
+        </Suspense>
+      </TripStickyChrome>
       <main className="flex-1 pb-nav">{children}</main>
       <BottomNav tripId={tripId} />
     </div>
