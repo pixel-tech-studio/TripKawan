@@ -23,10 +23,9 @@ export default function TripHeader({ trip }: TripHeaderProps) {
     <header className="sticky top-0 z-40 bg-white border-b border-gray-100 px-4 pt-3 pb-3">
       <Link
         href="/"
-        aria-label="Back to trips"
-        className="inline-flex items-center gap-1 -ml-2 mb-1.5 px-2 py-1.5 rounded-lg text-teal-600 hover:bg-teal-50 hover:text-teal-700 text-base font-medium transition-colors"
+        className="inline-flex items-center gap-0.5 text-teal-600 hover:text-teal-700 text-sm font-medium mb-1"
       >
-        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M15 18l-6-6 6-6" />
         </svg>
         Trips
