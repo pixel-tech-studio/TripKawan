@@ -356,8 +356,8 @@ export default function ItineraryBoard({
 
           return (
             <DayDropZone key={day} dayDate={day} isAdmin={isAdmin} itemIds={dayItems.map((i) => i.id)}>
-              <section id={`day-${day}`} className="scroll-mt-[9.7rem]">
-                <div className="sticky top-[9.7rem] z-20 -mx-4 px-4 py-2 bg-white flex items-center justify-between">
+              <section id={`day-${day}`} className="scroll-mt-[9.75rem]">
+                <div className="sticky top-[9.75rem] z-20 -mx-4 px-4 py-2 bg-white flex items-center justify-between">
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl font-bold text-teal-600">
                       {dayNum}
@@ -430,9 +430,9 @@ export default function ItineraryBoard({
           <DayDropZone dayDate={null} isAdmin={isAdmin} itemIds={kivItems.map((i) => i.id)}>
             <section
               id="kiv-section"
-              className="scroll-mt-[9.7rem] pt-4 border-t border-gray-200"
+              className="scroll-mt-[9.75rem] pt-4 border-t border-gray-200"
             >
-              <div className="sticky top-[9.7rem] z-20 -mx-4 px-4 py-2 bg-white flex items-center gap-2">
+              <div className="sticky top-[9.75rem] z-20 -mx-4 px-4 py-2 bg-white flex items-center gap-2">
                 <span className="text-lg">📌</span>
                 <div>
                   <p className="font-semibold text-sm text-amber-600">
