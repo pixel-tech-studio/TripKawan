@@ -32,18 +32,26 @@ export default function EnableNotifications() {
   const [state, setState] = useState<State>("loading");
   const [busy, setBusy] = useState(false);
 
+  useEffect(() => {
+    console.log("[push] state:", state);
+  }, [state]);
+
   // On mount, figure out what state we're in.
   useEffect(() => {
     (async () => {
+      // Check iOS-needs-install BEFORE the support check: regular iOS
+      // Safari doesn't expose PushManager at all, only the standalone PWA
+      // context does. If we checked support first we'd silently render
+      // nothing on iOS Safari instead of the "Add to Home Screen" hint.
+      const ua = navigator.userAgent;
+      const isIOS = /iPhone|iPad|iPod/.test(ua);
+      if (isIOS && !isStandalone()) return setState("needs-install");
+
       const supported =
         "serviceWorker" in navigator &&
         "PushManager" in window &&
         "Notification" in window;
       if (!supported) return setState("unsupported");
-
-      const ua = navigator.userAgent;
-      const isIOS = /iPhone|iPad|iPod/.test(ua);
-      if (isIOS && !isStandalone()) return setState("needs-install");
 
       if (Notification.permission === "denied") return setState("denied");
 
