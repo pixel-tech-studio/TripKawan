@@ -39,25 +39,34 @@ export default function EnableNotifications() {
   // On mount, figure out what state we're in.
   useEffect(() => {
     (async () => {
-      // Check iOS-needs-install BEFORE the support check: regular iOS
-      // Safari doesn't expose PushManager at all, only the standalone PWA
-      // context does. If we checked support first we'd silently render
-      // nothing on iOS Safari instead of the "Add to Home Screen" hint.
-      const ua = navigator.userAgent;
-      const isIOS = /iPhone|iPad|iPod/.test(ua);
-      if (isIOS && !isStandalone()) return setState("needs-install");
+      try {
+        const ua = navigator.userAgent;
+        const isIOS = /iPhone|iPad|iPod/.test(ua);
+        if (isIOS && !isStandalone()) {
+          console.log("[push] → needs-install (iOS, not standalone)");
+          return setState("needs-install");
+        }
 
-      const supported =
-        "serviceWorker" in navigator &&
-        "PushManager" in window &&
-        "Notification" in window;
-      if (!supported) return setState("unsupported");
+        const supported =
+          "serviceWorker" in navigator &&
+          "PushManager" in window &&
+          "Notification" in window;
+        console.log("[push] supported:", supported);
+        if (!supported) return setState("unsupported");
 
-      if (Notification.permission === "denied") return setState("denied");
+        console.log("[push] permission:", Notification.permission);
+        if (Notification.permission === "denied") return setState("denied");
 
-      const reg = await navigator.serviceWorker.ready;
-      const existing = await reg.pushManager.getSubscription();
-      setState(existing ? "on" : "off");
+        console.log("[push] awaiting serviceWorker.ready");
+        const reg = await navigator.serviceWorker.ready;
+        console.log("[push] SW ready, pushManager:", !!reg.pushManager);
+
+        const existing = await reg.pushManager.getSubscription();
+        console.log("[push] existing subscription:", existing?.endpoint ?? null);
+        setState(existing ? "on" : "off");
+      } catch (err) {
+        console.error("[push] setup threw:", err);
+      }
     })();
   }, []);
 
