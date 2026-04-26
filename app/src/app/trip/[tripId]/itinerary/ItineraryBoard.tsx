@@ -445,6 +445,7 @@ export default function ItineraryBoard({
       <div className="space-y-6">
         {days.map((day) => {
           const dayItems = itemsByDay[day] || [];
+          const { dayName, dayNum, month } = formatDay(day);
 
           return (
             <DayDropZone key={day} dayDate={day} isAdmin={isAdmin} itemIds={dayItems.map((i) => i.id)}>
@@ -452,6 +453,20 @@ export default function ItineraryBoard({
                 id={`day-${day}`}
                 className="scroll-mt-[var(--trip-chrome-h,220px)]"
               >
+                {/* Non-sticky date separator. The active-day row in the
+                    sticky chrome already shows the *current* day; this one
+                    marks the *start* of each day's items so the timeline
+                    doesn't feel like one endless list. */}
+                <div className="flex items-baseline gap-2 mb-3">
+                  <span className="text-2xl font-bold text-teal-600">
+                    {dayNum}
+                  </span>
+                  <div className="text-xs text-gray-400">
+                    <div className="font-medium text-gray-600">{dayName}</div>
+                    <div>{month}</div>
+                  </div>
+                </div>
+
                 {dayItems.length === 0 ? (
                   <p className="text-xs text-gray-300 italic ml-1">
                     No activities yet
