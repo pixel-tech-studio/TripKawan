@@ -136,20 +136,22 @@ export default async function TripsPage() {
   return (
     <div className="flex flex-col min-h-full">
       <EnableNotifications />
-      <header className="px-4 pt-6 pb-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs text-gray-400">Welcome back,</p>
-            <h1 className="text-xl font-bold">
-              {profile?.display_name || "Traveler"}
-            </h1>
-          </div>
-          <LogoutButton />
-        </div>
-      </header>
 
-      <main className="flex-1 pb-24">
-        {/* Top flip countdown — next upcoming trip */}
+      {/* Sticky top: welcome + countdown + Your Trips header. Stays in place
+          while the trip list below scrolls. */}
+      <div className="sticky top-0 z-30 bg-sand-50">
+        <header className="px-4 pt-6 pb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs text-gray-400">Welcome back,</p>
+              <h1 className="text-xl font-bold">
+                {profile?.display_name || "Traveler"}
+              </h1>
+            </div>
+            <LogoutButton />
+          </div>
+        </header>
+
         {nextTrip && (
           <FlipCountdown
             trip={nextTrip}
@@ -158,9 +160,8 @@ export default async function TripsPage() {
           />
         )}
 
-        <div className="px-4">
-          {/* ── New Trip button row ──────────────────────────────────────────── */}
-          <div className="flex items-center justify-between mb-5">
+        {hasSomeTrips && (
+          <div className="px-4 pt-4 pb-3 flex items-center justify-between">
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
               Your Trips
             </h2>
@@ -175,7 +176,11 @@ export default async function TripsPage() {
               </svg>
             </Link>
           </div>
+        )}
+      </div>
 
+      <main className="flex-1 pb-24">
+        <div className="px-4">
           {!hasSomeTrips ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
               <span className="text-5xl mb-4">🧳</span>
