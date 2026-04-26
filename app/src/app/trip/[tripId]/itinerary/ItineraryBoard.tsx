@@ -48,6 +48,7 @@ export default function ItineraryBoard({
   );
   const [activeDay, setActiveDay] = useState(days[0] || "");
   const [openAddDay, setOpenAddDay] = useState<string | null>(null);
+  const [showAiPrompt, setShowAiPrompt] = useState(false);
   const tabBarRef = useRef<HTMLDivElement>(null);
   const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
 
@@ -302,6 +303,13 @@ export default function ItineraryBoard({
 
   const showKiv = isAdmin || kivItems.length > 0;
 
+  // True if the trip already has AI-suggested items — switches the
+  // copy in the prompt sheet between "Plan with AI" and "Re-plan with AI".
+  const hasAiItems =
+    Object.values(itemsByDay).some((items) =>
+      items.some((it) => it.source === "ai")
+    ) || kivItems.some((it) => it.source === "ai");
+
   // The DAY tab bar + active-day label live INSIDE the layout's
   // TripStickyChrome via a portal, so the whole sticky region is one
   // contiguous element. Bigger back button, no sub-pixel sticky gaps.
@@ -310,6 +318,23 @@ export default function ItineraryBoard({
       ref={tabBarRef}
       className="px-4 py-2 bg-white flex gap-2 overflow-x-auto border-t border-gray-100"
     >
+      {isAdmin && (
+        <button
+          onClick={() => setShowAiPrompt(true)}
+          aria-label={hasAiItems ? "Re-plan with AI" : "Plan with AI"}
+          title={hasAiItems ? "Re-plan with AI" : "Plan with AI"}
+          className="shrink-0 w-14 py-1.5 rounded-xl text-center bg-gradient-to-br from-violet-500 to-fuchsia-500 hover:opacity-90 active:opacity-90 text-white transition-opacity"
+        >
+          <svg className="w-5 h-5 mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z" />
+            <path d="M5 21v-4" />
+            <path d="M19 5v-2" />
+          </svg>
+          <div className="text-[10px] font-bold leading-tight mt-1 tracking-wider">
+            AI
+          </div>
+        </button>
+      )}
       {days.map((day, idx) => {
         const isActive = activeDay === day;
         const dayNumber = String(idx + 1).padStart(2, "0");
@@ -512,17 +537,56 @@ export default function ItineraryBoard({
         ) : null}
       </DragOverlay>
 
-      {/* Re-plan FAB — admin only */}
-      {isAdmin && (
-        <Link
-          href={`/trip/${tripId}/setup`}
-          className="fixed bottom-[calc(env(safe-area-inset-bottom)+5rem)] right-4 z-40 flex items-center gap-1.5 pl-3 pr-4 py-2.5 rounded-full bg-teal-500 hover:bg-teal-600 active:bg-teal-600 text-white text-sm font-semibold shadow-lg transition-colors"
+      {/* AI plan / re-plan prompt sheet — opens when the sparkle button
+          in the day tab bar is tapped. Confirms intent before sending the
+          user to /setup where they review preferences and trigger the
+          actual generation. */}
+      {showAiPrompt && (
+        <div
+          className="fixed inset-0 z-50 bg-black/40 flex items-end justify-center"
+          onClick={() => setShowAiPrompt(false)}
+          role="dialog"
+          aria-modal="true"
         >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2l1.8 4.8L18.6 8.6l-4.8 1.8L12 15.2l-1.8-4.8L5.4 8.6l4.8-1.8zM19 14l1.2 3.2L23.4 18.4l-3.2 1.2L19 22.8l-1.2-3.2L14.6 18.4l3.2-1.2z" />
-          </svg>
-          Re-plan
-        </Link>
+          <div
+            className="bg-white w-full rounded-t-3xl px-6 pt-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] animate-slideUp shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-center mb-5">
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white mb-3">
+                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z" />
+                  <path d="M5 21v-4" />
+                  <path d="M19 5v-2" />
+                </svg>
+              </div>
+              <h2 className="text-lg font-bold text-gray-900 mb-1">
+                {hasAiItems
+                  ? "Need help re-planning your trip?"
+                  : "Need help planning your trip?"}
+              </h2>
+              <p className="text-sm text-gray-500 leading-snug">
+                {hasAiItems
+                  ? "We'll regenerate the itinerary based on your trip details and preferences. Existing AI-suggested items will be replaced; anything you've added manually stays."
+                  : "We'll suggest a day-by-day itinerary based on your destination, dates, and group preferences. You can edit anything afterwards."}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowAiPrompt(false)}
+                className="flex-1 py-3 rounded-full bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition-colors"
+              >
+                Not now
+              </button>
+              <Link
+                href={`/trip/${tripId}/setup`}
+                className="flex-1 py-3 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-medium text-center hover:opacity-90 transition-opacity"
+              >
+                {hasAiItems ? "Re-plan" : "Continue"}
+              </Link>
+            </div>
+          </div>
+        </div>
       )}
     </DndContext>
   );

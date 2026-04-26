@@ -166,9 +166,13 @@ export default async function TripsPage() {
             </h2>
             <Link
               href="/trip/new"
-              className="rounded-full bg-teal-500 px-4 py-2 text-sm font-medium text-white hover:bg-teal-600 transition-colors"
+              aria-label="Create a new trip"
+              title="Create a new trip"
+              className="w-10 h-10 rounded-full bg-teal-50 hover:bg-teal-100 active:bg-teal-100 text-teal-600 flex items-center justify-center transition-colors"
             >
-              + New Trip
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 5v14M5 12h14" />
+              </svg>
             </Link>
           </div>
 
