@@ -135,6 +135,7 @@ export default async function TripsPage() {
 
   return (
     <div className="flex flex-col min-h-full">
+      <EnableNotifications />
       <header className="px-4 pt-6 pb-4">
         <div className="flex items-center justify-between">
           <div>
@@ -147,11 +148,7 @@ export default async function TripsPage() {
         </div>
       </header>
 
-      <main className="flex-1 pb-8">
-        <div className="px-4 mb-4">
-          <EnableNotifications />
-        </div>
-
+      <main className="flex-1 pb-24">
         {/* Top flip countdown — next upcoming trip */}
         {nextTrip && (
           <FlipCountdown

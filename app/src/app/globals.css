@@ -75,3 +75,22 @@ body {
 .animate-slideUp {
   animation: slideUp 0.25s ease-out;
 }
+
+/* FAB attention jiggle — short shake every couple of seconds, used by the
+   notifications FAB while permission is still pending. Pivots from the top
+   so it reads like a bell ringing. */
+@keyframes fabJiggle {
+  0%, 65%, 100% { transform: rotate(0deg); }
+  68% { transform: rotate(-14deg); }
+  72% { transform: rotate(14deg); }
+  76% { transform: rotate(-10deg); }
+  80% { transform: rotate(10deg); }
+  84% { transform: rotate(-6deg); }
+  88% { transform: rotate(6deg); }
+  92% { transform: rotate(0deg); }
+}
+
+.animate-fab-jiggle {
+  animation: fabJiggle 2.4s ease-in-out infinite;
+  transform-origin: 50% 20%;
+}

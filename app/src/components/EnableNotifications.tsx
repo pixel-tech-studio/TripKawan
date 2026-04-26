@@ -28,22 +28,58 @@ function isStandalone(): boolean {
   return navAny.standalone === true;
 }
 
+function BellIcon({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+    </svg>
+  );
+}
+
+function BellOffIcon({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+      <path d="M18.63 13A17.89 17.89 0 0 1 18 8" />
+      <path d="M6.26 6.26A5.86 5.86 0 0 0 6 8c0 7-3 9-3 9h14" />
+      <path d="M18 8a6 6 0 0 0-9.33-5" />
+      <line x1="1" y1="1" x2="23" y2="23" />
+    </svg>
+  );
+}
+
 export default function EnableNotifications() {
   const [state, setState] = useState<State>("loading");
   const [busy, setBusy] = useState(false);
+  const [showHint, setShowHint] = useState(false);
 
   useEffect(() => {
     console.log("[push] state:", state);
   }, [state]);
 
-  // On mount, figure out what state we're in.
   useEffect(() => {
     (async () => {
       try {
         const ua = navigator.userAgent;
         const isIOS = /iPhone|iPad|iPod/.test(ua);
         if (isIOS && !isStandalone()) {
-          console.log("[push] → needs-install (iOS, not standalone)");
           return setState("needs-install");
         }
 
@@ -51,24 +87,12 @@ export default function EnableNotifications() {
           "serviceWorker" in navigator &&
           "PushManager" in window &&
           "Notification" in window;
-        console.log("[push] supported:", supported);
         if (!supported) return setState("unsupported");
 
-        console.log("[push] permission:", Notification.permission);
         if (Notification.permission === "denied") return setState("denied");
 
-        // Don't use serviceWorker.ready — it waits for the current page
-        // to be controlled by an active SW, but our basePath /app means
-        // the home page URL (/app) is outside scope /app/, so it never
-        // becomes controlled and ready hangs forever. register() returns
-        // the registration object directly; push subscriptions live on
-        // that and work regardless of which pages are controlled.
-        console.log("[push] registering SW");
         const reg = await navigator.serviceWorker.register("/app/sw.js");
-        console.log("[push] SW registered, pushManager:", !!reg.pushManager);
-
         const existing = await reg.pushManager.getSubscription();
-        console.log("[push] existing subscription:", existing?.endpoint ?? null);
         setState(existing ? "on" : "off");
       } catch (err) {
         console.error("[push] setup threw:", err);
@@ -100,9 +124,6 @@ export default function EnableNotifications() {
         body: JSON.stringify({ ...json, userAgent: navigator.userAgent }),
       });
       if (!res.ok) {
-        // Roll back the browser-side subscription if the server failed to
-        // store it — otherwise the user's device is "subscribed" with no
-        // record on our side and will never receive pushes.
         await sub.unsubscribe();
         throw new Error("server rejected subscription");
       }
@@ -137,62 +158,86 @@ export default function EnableNotifications() {
 
   if (state === "loading" || state === "unsupported") return null;
 
+  // Shared FAB position — bottom-right, above the iOS home-bar safe area.
+  const fabPosition =
+    "fixed right-5 z-50 bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))]";
+  const fabBase =
+    "w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-colors disabled:opacity-60";
+
+  // iOS Safari (not yet a PWA) — clicking opens a small inline hint card.
   if (state === "needs-install") {
     return (
-      <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
-        To get instant updates on iPhone, tap the share icon in Safari, then{" "}
-        <strong>Add to Home Screen</strong> and open from there.
-      </div>
+      <>
+        <button
+          onClick={() => setShowHint((s) => !s)}
+          aria-label="Notifications: install required"
+          className={`${fabPosition} ${fabBase} bg-amber-500 text-white animate-fab-jiggle`}
+        >
+          <BellIcon />
+        </button>
+        {showHint && (
+          <div
+            className={`fixed right-5 z-50 max-w-[calc(100vw-2.5rem)] w-72 rounded-2xl bg-amber-50 border border-amber-200 p-4 text-sm text-amber-900 shadow-xl bottom-[calc(1.25rem+4rem+env(safe-area-inset-bottom,0px))]`}
+            role="dialog"
+          >
+            <p className="leading-snug">
+              To get instant updates on iPhone: tap the share icon in Safari,
+              then <strong>Add to Home Screen</strong>, and open the app from
+              there.
+            </p>
+            <button
+              onClick={() => setShowHint(false)}
+              className="mt-2 text-xs font-medium text-amber-700 underline"
+            >
+              Got it
+            </button>
+          </div>
+        )}
+      </>
     );
   }
 
   if (state === "denied") {
     return (
-      <div className="rounded-xl bg-gray-50 border border-gray-200 px-4 py-3 text-sm text-gray-600">
-        Notifications are blocked. Enable them in your browser/system settings
-        to get instant updates.
-      </div>
+      <button
+        onClick={() => setShowHint((s) => !s)}
+        aria-label="Notifications blocked"
+        className={`${fabPosition} ${fabBase} bg-gray-300 text-gray-600`}
+      >
+        <BellOffIcon />
+        {showHint && (
+          <span className="sr-only">
+            Notifications blocked — enable them in your browser settings.
+          </span>
+        )}
+      </button>
     );
   }
 
   if (state === "on") {
     return (
-      <div className="flex items-center justify-between rounded-xl bg-emerald-50 border border-emerald-200 pl-4 pr-2 py-2 text-sm">
-        <span className="text-emerald-800">Notifications on for this device</span>
-        <button
-          onClick={disable}
-          disabled={busy}
-          aria-label="Disable notifications"
-          title="Disable notifications"
-          className="p-2 rounded-full text-emerald-700 hover:bg-emerald-100 disabled:opacity-50 transition-colors"
-        >
-          <svg
-            className="w-5 h-5"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-            <path d="M18.63 13A17.89 17.89 0 0 1 18 8" />
-            <path d="M6.26 6.26A5.86 5.86 0 0 0 6 8c0 7-3 9-3 9h14" />
-            <path d="M18 8a6 6 0 0 0-9.33-5" />
-            <line x1="1" y1="1" x2="23" y2="23" />
-          </svg>
-        </button>
-      </div>
+      <button
+        onClick={disable}
+        disabled={busy}
+        aria-label="Disable notifications"
+        title="Notifications on — tap to disable"
+        className={`${fabPosition} ${fabBase} bg-emerald-500 hover:bg-emerald-600 text-white`}
+      >
+        <BellIcon />
+      </button>
     );
   }
 
+  // state === "off" — needs the user's tap to grant permission.
   return (
     <button
       onClick={enable}
       disabled={busy}
-      className="w-full rounded-xl bg-teal-500 hover:bg-teal-600 disabled:opacity-50 px-4 py-3 text-sm font-medium text-white transition-colors"
+      aria-label="Enable instant notifications"
+      title="Enable instant notifications"
+      className={`${fabPosition} ${fabBase} bg-teal-500 hover:bg-teal-600 text-white animate-fab-jiggle`}
     >
-      {busy ? "Enabling…" : "Enable instant notifications"}
+      <BellIcon />
     </button>
   );
 }
