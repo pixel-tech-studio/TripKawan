@@ -48,8 +48,10 @@ export default async function ExpensesPage({
 
   return (
     <div className="py-4">
-      {/* Sticky header: totals + add button */}
-      <div className="sticky top-[57px] z-30 bg-sand-50 px-4 pb-3">
+      {/* Sticky header: totals + add button. Reads the trip chrome's
+          measured height from the CSS variable set by TripStickyChrome
+          so it lands flush below the trip header regardless of size. */}
+      <div className="sticky top-[var(--trip-chrome-h,120px)] z-30 bg-sand-50 px-4 pb-3">
         <div className="grid grid-cols-2 gap-3 mb-4">
           <div className="rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 p-4 text-white shadow-card">
             <p className="text-[10px] font-medium opacity-80 uppercase tracking-wide">

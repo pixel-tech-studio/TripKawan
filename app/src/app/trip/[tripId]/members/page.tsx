@@ -30,9 +30,15 @@ export default async function MembersPage({
   const adminCount = approved.filter((m) => m.role === "admin").length;
 
   return (
-    <div className="px-4 py-4">
-      {isAdmin && <ShareLink tripId={tripId} />}
+    <div>
+      {/* Sticky invite-link card for admins. Lists scroll underneath. */}
+      {isAdmin && (
+        <div className="sticky top-[var(--trip-chrome-h,120px)] z-30 bg-sand-50 px-4 pt-4 pb-1">
+          <ShareLink tripId={tripId} />
+        </div>
+      )}
 
+      <div className={`px-4 ${isAdmin ? "pt-2" : "pt-4"} pb-4`}>
       {/* Pending requests */}
       {isAdmin && pending.length > 0 && (
         <>
@@ -107,6 +113,7 @@ export default async function MembersPage({
           );
         })}
       </ul>
+      </div>
     </div>
   );
 }
