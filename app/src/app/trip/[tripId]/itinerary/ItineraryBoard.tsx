@@ -412,9 +412,9 @@ export default function ItineraryBoard({
             onClick={() =>
               setOpenAddDay((curr) => (curr === activeDay ? null : activeDay))
             }
-            className="w-8 h-8 rounded-full bg-teal-50 hover:bg-teal-100 active:bg-teal-100 text-teal-600 flex items-center justify-center transition-colors"
+            className="w-10 h-10 rounded-full bg-teal-50 hover:bg-teal-100 active:bg-teal-100 text-teal-600 flex items-center justify-center transition-colors"
           >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 5v14M5 12h14" />
             </svg>
           </button>
@@ -549,7 +549,7 @@ export default function ItineraryBoard({
           aria-modal="true"
         >
           <div
-            className="bg-white w-full rounded-t-3xl px-6 pt-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] animate-slideUp shadow-xl"
+            className="bg-white w-full rounded-t-3xl px-6 pt-6 pb-[calc(4rem+1.5rem+env(safe-area-inset-bottom))] animate-slideUp shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="text-center mb-5">
