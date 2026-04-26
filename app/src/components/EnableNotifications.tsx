@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type State =
   | "loading"
@@ -69,6 +69,9 @@ export default function EnableNotifications() {
   const [state, setState] = useState<State>("loading");
   const [busy, setBusy] = useState(false);
   const [showHint, setShowHint] = useState(false);
+  // Ref so the auto-prompt gesture listener can call the latest enable()
+  // without re-binding every render.
+  const enableRef = useRef<() => void>(() => {});
 
   useEffect(() => {
     console.log("[push] state:", state);
@@ -135,6 +138,36 @@ export default function EnableNotifications() {
     }
   };
 
+  // Keep the ref pointed at the latest enable() so the auto-prompt
+  // listener (registered once when state flips to "off") always calls the
+  // current closure.
+  useEffect(() => {
+    enableRef.current = enable;
+  });
+
+  // Auto-trigger on the user's first gesture once state settles to "off".
+  // Browsers require a user-gesture to call Notification.requestPermission(),
+  // so we can't prompt on page load — but we can hook the very next
+  // pointerdown anywhere on the page. localStorage flag prevents
+  // re-prompting across reloads if the user dismissed the OS dialog.
+  useEffect(() => {
+    if (state !== "off") return;
+    if (typeof window === "undefined") return;
+    if (localStorage.getItem("push-auto-prompted") === "1") return;
+
+    const handler = () => {
+      localStorage.setItem("push-auto-prompted", "1");
+      enableRef.current();
+    };
+    document.addEventListener("pointerdown", handler, {
+      once: true,
+      capture: true,
+    });
+    return () => {
+      document.removeEventListener("pointerdown", handler, { capture: true });
+    };
+  }, [state]);
+
   const disable = async () => {
     setBusy(true);
     try {
@@ -161,8 +194,62 @@ export default function EnableNotifications() {
   // Shared FAB position — bottom-right, above the iOS home-bar safe area.
   const fabPosition =
     "fixed right-5 z-50 bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))]";
-  const fabBase =
-    "w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-colors disabled:opacity-60";
+  // Toggle pill: 96×48, inner 40px circle slides to the side that matches
+  // the current state (left=off, right=on), like a mini ON/OFF switch.
+  const pillBase =
+    "h-12 w-24 rounded-full shadow-lg flex items-center transition-colors disabled:opacity-60";
+
+  // ON pill — circle on the right, "ON" text on the left.
+  const OnPill = ({ tone }: { tone: "teal" | "emerald" }) => (
+    <div
+      className={`flex items-center justify-between h-full w-full pl-3 pr-1 ${
+        tone === "teal" ? "text-white" : "text-white"
+      }`}
+    >
+      <span className="text-sm font-bold tracking-wider">ON</span>
+      <span className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+        <BellIcon
+          className={`w-5 h-5 ${tone === "teal" ? "text-teal-500" : "text-emerald-500"}`}
+        />
+      </span>
+    </div>
+  );
+
+  // OFF pill — circle (with optional jiggle) on the left, label on the right.
+  const OffPill = ({
+    label,
+    tone,
+    jiggle,
+    icon,
+  }: {
+    label: string;
+    tone: "gray" | "amber";
+    jiggle: boolean;
+    icon: "bell" | "bell-off";
+  }) => (
+    <div
+      className={`flex items-center justify-between h-full w-full pl-1 pr-3 ${
+        tone === "gray" ? "text-gray-600" : "text-amber-700"
+      }`}
+    >
+      <span
+        className={`w-10 h-10 rounded-full bg-white flex items-center justify-center ${
+          jiggle ? "animate-fab-jiggle" : ""
+        }`}
+      >
+        {icon === "bell" ? (
+          <BellIcon
+            className={`w-5 h-5 ${tone === "gray" ? "text-gray-500" : "text-amber-500"}`}
+          />
+        ) : (
+          <BellOffIcon
+            className={`w-5 h-5 ${tone === "gray" ? "text-gray-500" : "text-amber-500"}`}
+          />
+        )}
+      </span>
+      <span className="text-sm font-bold tracking-wider">{label}</span>
+    </div>
+  );
 
   // iOS Safari (not yet a PWA) — clicking opens a small inline hint card.
   if (state === "needs-install") {
@@ -171,13 +258,13 @@ export default function EnableNotifications() {
         <button
           onClick={() => setShowHint((s) => !s)}
           aria-label="Notifications: install required"
-          className={`${fabPosition} ${fabBase} bg-amber-500 text-white animate-fab-jiggle`}
+          className={`${fabPosition} ${pillBase} bg-amber-100 hover:bg-amber-200`}
         >
-          <BellIcon />
+          <OffPill label="OFF" tone="amber" jiggle icon="bell" />
         </button>
         {showHint && (
           <div
-            className={`fixed right-5 z-50 max-w-[calc(100vw-2.5rem)] w-72 rounded-2xl bg-amber-50 border border-amber-200 p-4 text-sm text-amber-900 shadow-xl bottom-[calc(1.25rem+4rem+env(safe-area-inset-bottom,0px))]`}
+            className="fixed right-5 z-50 max-w-[calc(100vw-2.5rem)] w-72 rounded-2xl bg-amber-50 border border-amber-200 p-4 text-sm text-amber-900 shadow-xl bottom-[calc(1.25rem+4rem+env(safe-area-inset-bottom,0px))]"
             role="dialog"
           >
             <p className="leading-snug">
@@ -200,16 +287,12 @@ export default function EnableNotifications() {
   if (state === "denied") {
     return (
       <button
-        onClick={() => setShowHint((s) => !s)}
-        aria-label="Notifications blocked"
-        className={`${fabPosition} ${fabBase} bg-gray-300 text-gray-600`}
+        aria-label="Notifications blocked — change in browser settings"
+        title="Notifications blocked — change in browser settings"
+        className={`${fabPosition} ${pillBase} bg-gray-200`}
+        disabled
       >
-        <BellOffIcon />
-        {showHint && (
-          <span className="sr-only">
-            Notifications blocked — enable them in your browser settings.
-          </span>
-        )}
+        <OffPill label="OFF" tone="gray" jiggle={false} icon="bell-off" />
       </button>
     );
   }
@@ -221,9 +304,9 @@ export default function EnableNotifications() {
         disabled={busy}
         aria-label="Disable notifications"
         title="Notifications on — tap to disable"
-        className={`${fabPosition} ${fabBase} bg-emerald-500 hover:bg-emerald-600 text-white`}
+        className={`${fabPosition} ${pillBase} bg-teal-500 hover:bg-teal-600`}
       >
-        <BellIcon />
+        <OnPill tone="teal" />
       </button>
     );
   }
@@ -235,9 +318,9 @@ export default function EnableNotifications() {
       disabled={busy}
       aria-label="Enable instant notifications"
       title="Enable instant notifications"
-      className={`${fabPosition} ${fabBase} bg-teal-500 hover:bg-teal-600 text-white animate-fab-jiggle`}
+      className={`${fabPosition} ${pillBase} bg-gray-200 hover:bg-gray-300`}
     >
-      <BellIcon />
+      <OffPill label="OFF" tone="gray" jiggle icon="bell" />
     </button>
   );
 }
